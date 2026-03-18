@@ -1,3 +1,5 @@
+import os
+
 import requests
 from config import BASE_URL, get_tenant
 
@@ -23,6 +25,8 @@ class RattleClient:
                 f"API error {resp.status_code} on {resp.request.method} {resp.url}: "
                 f"{resp.text}"
             )
+        if resp.status_code == 204 or not resp.content:
+            return None
         return resp.json()
 
     def get(self, path, **params):
@@ -34,8 +38,17 @@ class RattleClient:
     def patch(self, path, json=None):
         return self._handle(self.session.patch(self._url(path), json=json))
 
+    def put(self, path, json=None):
+        return self._handle(self.session.put(self._url(path), json=json))
+
     def delete(self, path):
         return self._handle(self.session.delete(self._url(path)))
+
+    def upload_image(self, path, filepath, field_name="file"):
+        with open(filepath, "rb") as f:
+            files = {field_name: (os.path.basename(filepath), f, "image/jpeg")}
+            resp = self.session.post(self._url(path), files=files)
+        return self._handle(resp)
 
     def list_all(self, path, **params):
         items = []
