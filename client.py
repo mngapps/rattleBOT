@@ -16,7 +16,8 @@ class RattleClient:
     def _url(self, path):
         return f"{self.base_url}/{path.lstrip('/')}"
 
-    def _handle(self, resp):
+    @staticmethod
+    def _handle(resp):
         if not resp.ok:
             raise RuntimeError(
                 f"API error {resp.status_code} on {resp.request.method} {resp.url}: "
