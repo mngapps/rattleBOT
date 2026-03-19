@@ -1,0 +1,11 @@
+{
+  "fetched_at": "2026-03-19T23:05:57Z",
+  "api_version": "1.0.0",
+  "endpoints": 240,
+  "schemas": 210,
+  "sources": {
+    "developer_guide": "https://www.rattleapp.de/api/v1/developers",
+    "interactive_docs": "https://www.rattleapp.de/api/v1/docs",
+    "openapi_spec": "https://www.rattleapp.de/api/v1/openapi.json"
+  }
+}
