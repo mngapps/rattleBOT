@@ -10,3 +10,4 @@ content/*
 *.egg-info/
 dist/
 build/
+api_reference/

@@ -32,6 +32,14 @@ Test your connection:
 python3 main.py mytenant test-connection
 ```
 
+Fetch the latest API docs (used by tools and AI agents):
+
+```bash
+python3 tools/fetch_api_docs.py
+```
+
+This downloads the OpenAPI spec and developer guide into `api_reference/` (gitignored). Re-run anytime to refresh.
+
 ### Optional dependencies
 
 The core client only needs `requests` and `python-dotenv`. Install extras as needed:

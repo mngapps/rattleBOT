@@ -2,15 +2,32 @@
 
 This document is for AI agents working with the Rattle API. Read this before generating any code or content. It explains what you're building, how the data model works, and the patterns that produce good results.
 
-## Before You Start
+## Before You Start — REQUIRED
 
-Always consult the latest API documentation before generating code. These are the authoritative sources:
+**You must read the latest API reference before writing any API calls.** The endpoint examples in this document are illustrative — the live docs are the only source of truth for endpoints, fields, and response shapes.
 
-- **Developer guide**: https://www.rattleapp.de/api/v1/developers — concepts, authentication, pagination, error handling, advanced features
-- **Interactive docs (Swagger UI)**: https://www.rattleapp.de/api/v1/docs — try endpoints, see request/response schemas
-- **OpenAPI spec**: https://www.rattleapp.de/api/v1/openapi.json — machine-readable, complete endpoint and schema reference
+### Option A: Read the local reference (preferred)
 
-If you have web access, fetch the developer guide or OpenAPI spec to verify endpoints, required fields, and response shapes before writing API calls. The endpoint examples in this document are illustrative — the live docs are the source of truth.
+If `api_reference/` exists, read these files first:
+- `api_reference/endpoints.md` — human-readable list of all endpoints, grouped by resource, with parameters
+- `api_reference/openapi.json` — full OpenAPI spec with request/response schemas
+- `api_reference/meta.json` — check `fetched_at` to see how fresh the docs are
+
+If the folder is missing or stale, run:
+```bash
+python3 tools/fetch_api_docs.py
+```
+
+### Option B: Fetch live docs directly
+
+If you have web access, fetch from these URLs:
+- **OpenAPI spec**: https://www.rattleapp.de/api/v1/openapi.json
+- **Developer guide**: https://www.rattleapp.de/api/v1/developers
+- **Interactive docs**: https://www.rattleapp.de/api/v1/docs
+
+### Why this matters
+
+The Rattle API evolves. Endpoints get added, fields get renamed, new features ship. Code generated against stale docs will break. Always verify against the live reference.
 
 ## What is Rattle?
 
