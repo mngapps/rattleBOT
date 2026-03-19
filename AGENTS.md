@@ -48,15 +48,6 @@ Option groups represent configurable aspects of a product (e.g., "Spindle Type",
 - Options have IDs, labels, and optional images
 - `POST options/{id}/image` — upload an option's image
 
-### The Mit/Ohne Pattern
-
-Many option groups follow a **mit/ohne** (with/without) pattern:
-
-- **"mit"** (with) — the option includes the feature, shown with the real product image
-- **"ohne"** (without) — the option excludes the feature, shown with a greyed-out/shadowed version of the same image
-
-The `image_utils.py` module automates this: given a "mit" image, it generates a desaturated, faded copy for the "ohne" option. This is a visual convention used across all configurator products.
-
 ## Rich Text Content (EditorJS)
 
 Area content uses the [EditorJS](https://editorjs.io/) block format. Each block has:
@@ -230,7 +221,7 @@ A typical product setup script follows these steps:
 5. **Build EditorJS blocks** using the extracted text and uploaded image URLs
 6. **Update area description** via `PATCH areas/{id}`
 7. **Update area content** via `PUT areas/{id}/content`
-8. **Upload option images** using `image_utils.upload_option_images()` with the mit/ohne pattern
+8. **Upload option images** using `image_utils.upload_option_images()`
 
 ## Tips for Good Output
 
