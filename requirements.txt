@@ -1,3 +1,12 @@
+# Core dependencies
 requests
 python-dotenv
+
+# Optional: spreadsheet support (source_reader.read_excel)
 openpyxl
+
+# Optional: image manipulation (image_utils, examples/extract_images)
+# Pillow
+
+# Optional: PDF image extraction (examples/extract_images)
+# PyMuPDF

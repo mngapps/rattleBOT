@@ -20,22 +20,24 @@ def cmd_test_connection(tenant):
 def cmd_list_sources(tenant):
     files = list_sources(tenant)
     if not files:
-        print(f"No source files found for tenant '{tenant}'")
+        print(f"No content files found for tenant '{tenant}'")
         return
-    print(f"Source files for '{tenant}':")
+    print(f"Content files for '{tenant}':")
     for f in files:
         print(f"  {f}")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Rattle API Control Panel")
-    parser.add_argument("tenant", help="Tenant name (e.g. pressta)")
-    parser.add_argument("command", choices=["test-connection", "list-sources"],
+    parser = argparse.ArgumentParser(description="Rattle API client CLI")
+    parser.add_argument("tenant", help="Tenant name (matches RATTLE_API_KEY_<TENANT> in .env)")
+    parser.add_argument("command",
+                        choices=["test-connection", "list-content", "list-sources"],
                         help="Command to run")
     args = parser.parse_args()
 
     commands = {
         "test-connection": cmd_test_connection,
+        "list-content": cmd_list_sources,
         "list-sources": cmd_list_sources,
     }
     commands[args.command](args.tenant)

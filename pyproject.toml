@@ -1,0 +1,15 @@
+[project]
+name = "rattle-api"
+version = "0.1.0"
+description = "Python client for the Rattle REST API"
+requires-python = ">= 3.9"
+license = "MIT"
+dependencies = [
+    "requests",
+    "python-dotenv",
+]
+
+[project.optional-dependencies]
+images = ["Pillow"]
+content = ["openpyxl"]
+pdf = ["PyMuPDF"]
