@@ -2,51 +2,73 @@
 
 This document is for AI agents working with the Rattle API. Read this before generating any code or content. It explains what you're building, how the data model works, and the patterns that produce good results.
 
+## Before You Start
+
+Always consult the latest API documentation before generating code. These are the authoritative sources:
+
+- **Developer guide**: https://www.rattleapp.de/api/v1/developers — concepts, authentication, pagination, error handling, advanced features
+- **Interactive docs (Swagger UI)**: https://www.rattleapp.de/api/v1/docs — try endpoints, see request/response schemas
+- **OpenAPI spec**: https://www.rattleapp.de/api/v1/openapi.json — machine-readable, complete endpoint and schema reference
+
+If you have web access, fetch the developer guide or OpenAPI spec to verify endpoints, required fields, and response shapes before writing API calls. The endpoint examples in this document are illustrative — the live docs are the source of truth.
+
 ## What is Rattle?
 
-Rattle is a **product configurator platform**. Manufacturers use it to present complex industrial products (machinery, equipment, systems) where customers choose from many options and variants. Think of it as a structured product catalog with interactive configuration.
+Rattle is a **CPQ (Configure, Price, Quote) platform**. Manufacturers use it to present complex industrial products (machinery, equipment, systems) where customers choose from many options and variants. Think of it as a structured product catalog with interactive configuration and quoting.
 
-The Rattle API (`https://www.rattleapp.de/api/v1`) lets you programmatically manage all configurator content: products, technical descriptions, option groups, images, and rich text.
+The Rattle API (`https://www.rattleapp.de/api/v1`) lets you programmatically manage all configurator content: products, areas, option groups, images, rich text, pricing, customers, quotes, and documents.
 
 ## Data Model
 
-The hierarchy is:
+The core configurator hierarchy:
 
 ```
 Tenant
   └── Products
         ├── Gallery Images          (product photos for the carousel)
+        ├── Price Overrides         (custom pricing rules)
+        ├── Pricing Presets         (surcharges, discounts, fees)
         └── Areas
               ├── Description        (plain text summary)
               ├── Content            (rich text in EditorJS format)
               ├── Content Images     (uploaded separately, referenced in content)
+              ├── Price Overrides
               └── Option Groups
                     └── Options
                           └── Option Image
 ```
 
+Beyond the configurator, the API also covers: Customers, Opportunities, Quotes, Line Items, Documents, Configurations, Parts/BOM, Connectors, Webhooks, and Change Management (branches, change requests, approvals).
+
 ### Products
 
-A product is a configurable item — typically an industrial machine or system. Each product has a gallery (image carousel) and one or more areas.
-
-- `GET products` — list all products (paginated)
-- `GET products/{id}` — get a single product with its areas and option groups
-- `POST products/{id}/gallery` — upload a gallery image (multipart file upload)
+A product is a configurable item — typically an industrial machine or system. Each product has a gallery (image carousel), pricing, and one or more areas.
 
 ### Areas
 
-An area is a content section within a product. It has a plain-text **description** (shown in search/listings) and **rich text content** (the detailed technical page). Areas also hold the option groups.
-
-- `PATCH areas/{id}` — update area description (`{"description": "..."}`)
-- `PUT areas/{id}/content` — replace area rich text content
-- `POST areas/{id}/content/images` — upload an image for embedding in content
+An area is a content section within a product. It has a plain-text **description** (shown in search/listings) and **rich text content** (the detailed technical page). Areas also hold the option groups. Areas can exist in a library (unassigned) or be assigned to products.
 
 ### Option Groups and Options
 
-Option groups represent configurable aspects of a product (e.g., "Spindle Type", "Software Package", "Accessories"). Each group contains options that the customer can select.
+Option groups represent configurable aspects of a product (e.g., "Spindle Type", "Software Package", "Accessories"). Each group contains options that the customer can select. Options have IDs, labels, pricing, and optional images.
 
-- Options have IDs, labels, and optional images
-- `POST options/{id}/image` — upload an option's image
+## API Conventions
+
+These conventions apply across all endpoints:
+
+- **Authentication**: Bearer token in the Authorization header: `Authorization: Bearer rk_live_...`
+- **Response envelope**: All responses return `{ "data": ..., "meta": ..., "links": ... }`
+- **Pagination**: Cursor-based. Default 25 items, max 100. Use `?per_page=N` and follow `meta.next_cursor`
+- **Errors**: RFC 9457 Problem Details format with field-level validation errors
+- **Rate limiting**: Check `X-RateLimit-*` headers. On 429, respect `Retry-After`
+- **ETags**: Use `If-Match` for safe updates, `If-None-Match` for conditional reads
+- **Idempotency**: Include `X-Idempotency-Key` on mutating requests to prevent duplicates
+- **Field selection**: `?fields=name,price` to reduce payload size
+- **Expansion**: `?expand=areas,groups` to embed related resources inline
+- **Sorting**: `?sort=name` (ascending) or `?sort=-created_at` (descending)
+- **Batch operations**: `POST /batch` for up to 100 operations in one request
+- **Max request body**: 1 MB
+- **Timeout**: 60 seconds
 
 ## Rich Text Content (EditorJS)
 
@@ -55,7 +77,7 @@ Area content uses the [EditorJS](https://editorjs.io/) block format. Each block 
 ```json
 {
     "id": "unique_string",
-    "type": "paragraph|header|table|image|list",
+    "type": "paragraph|header|table|image|list|quote|code",
     "data": { ... }
 }
 ```
@@ -203,6 +225,8 @@ Each tenant has its own API key, set via environment variables:
 RATTLE_API_KEY_TENANTNAME=rk_live_...
 ```
 
+API keys are created in the Rattle web dashboard under Settings > Connectors > API Keys. Each key has configurable permission scopes (products read/write, pricing, customers, quotes, etc.).
+
 The `RattleClient` reads these automatically:
 
 ```python
@@ -225,9 +249,12 @@ A typical product setup script follows these steps:
 
 ## Tips for Good Output
 
+- **Check the live API docs first.** Endpoints and fields may have changed since this document was written. Fetch https://www.rattleapp.de/api/v1/developers or the OpenAPI spec before writing API calls.
 - **Block IDs must be unique** within a content update. Use descriptive prefixes: `sec_specs_h`, `sec_specs_tbl`, `detail_img_01`.
 - **Tables are the primary format for technical specs.** Prefer tables over paragraphs for anything with units and values.
 - **Use inline HTML sparingly** in paragraphs. Bold for emphasis, italic for notes, that's it.
 - **Always filter out image blocks with empty URLs** before sending the content update — an upload might fail and you don't want broken image blocks.
 - **One area = one product variant's full technical description.** Don't split a product across multiple areas unless the API structure requires it.
 - **Option images should be product-contextual.** Show the actual component/feature being configured, not a generic icon.
+- **Use `?expand=` to reduce round-trips.** For example, `GET products/{id}?expand=areas,groups` returns everything in one call.
+- **Use ETags for safe updates.** When updating content that others may be editing, include `If-Match` to avoid overwriting changes.

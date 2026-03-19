@@ -2,30 +2,73 @@
 
 Python client for the [Rattle REST API](https://www.rattleapp.de/api/v1). Manage products, areas, options, images, and rich text content programmatically.
 
-## Quick Start
+## Setup
 
 ```bash
 git clone https://github.com/<your-username>/rattle-api.git
 cd rattle-api
-python -m venv .venv
-source .venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Copy `.env.example` to `.env` and add your API key:
+Create your `.env` file with your Rattle API key:
 
 ```bash
 cp .env.example .env
 ```
 
+Edit `.env` and replace the placeholder:
+
 ```env
 RATTLE_API_KEY_MYTENANT=rk_live_your_key_here
 ```
 
-Verify your connection:
+The name after `RATTLE_API_KEY_` becomes your tenant name (case-insensitive). Add multiple lines for multiple tenants.
+
+Test your connection:
 
 ```bash
-python main.py mytenant test-connection
+python3 main.py mytenant test-connection
+```
+
+### Optional dependencies
+
+The core client only needs `requests` and `python-dotenv`. Install extras as needed:
+
+```bash
+pip install Pillow          # Image manipulation (image_utils.py)
+pip install openpyxl        # Excel reading (source_reader.py)
+pip install PyMuPDF         # PDF extraction (tools/, examples/)
+pip install python-docx     # DOCX extraction (tools/)
+```
+
+Or install everything at once:
+
+```bash
+pip install Pillow openpyxl PyMuPDF python-docx
+```
+
+## Project Structure
+
+```
+rattle-api/
+├── client.py              # RattleClient — core API wrapper
+├── config.py              # Multi-tenant config (reads .env automatically)
+├── main.py                # CLI entry point
+├── source_reader.py       # Content file discovery + Excel reader
+├── image_utils.py         # Image manipulation for option uploads
+├── tools/
+│   └── extract_content.py # Extract text/tables from PDF, DOCX, XLSX
+├── examples/              # Workflow templates (copy and adapt)
+│   ├── update_product.py
+│   ├── upload_option_images.py
+│   └── extract_images.py
+├── content/               # Your data goes here (gitignored)
+│   └── README.md
+├── .env.example           # API key template
+├── AGENTS.md              # Data model primer for AI agents
+└── pyproject.toml
 ```
 
 ## Usage
@@ -35,138 +78,102 @@ from client import RattleClient
 
 client = RattleClient("mytenant")
 
-# List products
+# List all products (handles pagination automatically)
 products = client.list_all("products")
 
 # Get a single product
 product = client.get("products/42")
 
-# Create a product
+# Create
 client.post("products", json={"name": "New Product"})
 
-# Update a product
+# Update
 client.patch("products/42", json={"name": "Updated Name"})
 
-# Delete a product
+# Delete
 client.delete("products/42")
 
 # Upload an image to a product gallery
-client.upload_image("products/42/gallery", "path/to/image.jpg")
+client.upload_image("products/42/gallery", "photo.jpg")
 
-# Upload an image for area content embedding
-client.upload_image("areas/100/content/images", "path/to/image.jpg")
-
-# Paginated listing (automatic cursor handling)
-all_items = client.list_all("products", per_page=50)
-```
-
-## Multi-Tenant Support
-
-Configure multiple tenants via environment variables:
-
-```env
-RATTLE_API_KEY_TENANT1=rk_live_...
-RATTLE_API_KEY_TENANT2=rk_live_...
-```
-
-Each `RATTLE_API_KEY_<NAME>` becomes a tenant you can reference by name:
-
-```python
-client_a = RattleClient("tenant1")
-client_b = RattleClient("tenant2")
+# Upload a content image (for embedding in rich text)
+result = client.upload_image("areas/100/content/images", "diagram.jpg")
+url = result["data"]["file"]["url"]
 ```
 
 ## CLI
 
 ```bash
-# Test API connection
-python main.py <tenant> test-connection
-
-# List content files for a tenant
-python main.py <tenant> list-content
+python3 main.py <tenant> test-connection   # Verify API access
+python3 main.py <tenant> list-content      # List content files for a tenant
 ```
 
 ## Content Folder
 
-The `content/` directory is where you place your product documents, images, and data files. It is gitignored so your proprietary data stays local.
-
-Suggested structure:
+Place your product documents, images, and data in `content/`. This folder is gitignored so proprietary data stays local.
 
 ```
 content/
   mytenant/
     documents/    # DOCX, PDF source files
-    images/       # Product photos, extracted images
+    images/       # Product photos
     data/         # Excel sheets, CSV files
 ```
 
-The `source_reader.py` module discovers files in this folder automatically. AI agents can use this as a standardized location to find and process content for Rattle uploads.
-
-See `content/README.md` for details.
+Scripts and AI agents discover files here automatically via `source_reader.list_sources("mytenant")`.
 
 ## Tools
 
-### tools/extract_content.py
+### Extract content from documents
 
-Extract structured content (headings, paragraphs, tables, lists) from source documents:
+Pull structured text, headings, and tables from source documents:
 
 ```bash
-# Extract to normalized JSON
-python tools/extract_content.py content/mytenant/documents/datasheet.pdf
+# PDF → normalized JSON
+python3 tools/extract_content.py datasheet.pdf
 
-# Extract directly to EditorJS blocks
-python tools/extract_content.py content/mytenant/documents/datasheet.docx --format editorjs
+# DOCX → EditorJS blocks (ready for the Rattle API)
+python3 tools/extract_content.py datasheet.docx --format editorjs
 
-# Extract a specific Excel sheet
-python tools/extract_content.py content/mytenant/data/specs.xlsx --sheet "Specs"
+# Excel sheet
+python3 tools/extract_content.py specs.xlsx --sheet "Specs"
 
 # Save to file
-python tools/extract_content.py datasheet.pdf --format editorjs -o blocks.json
+python3 tools/extract_content.py datasheet.pdf --format editorjs -o blocks.json
 ```
 
-Supports PDF (via PyMuPDF), DOCX (via python-docx), and XLSX (via openpyxl). Install optional deps: `pip install PyMuPDF python-docx openpyxl`.
+### Extract images from documents
 
-## Utilities
-
-### image_utils.py
-
-Image manipulation for option management:
-
-- `create_shadowed_image(src, dst)` — Generate a greyed-out "ohne" (without) version of an image
-- `upload_option_images(client, img_dir, option_groups)` — Upload option images with automatic shadow generation for mit/ohne patterns
-
-Requires `Pillow` (`pip install Pillow`).
-
-### source_reader.py
-
-Content file discovery and data reading:
-
-- `list_sources(tenant)` — List all content files for a tenant
-- `read_excel(filepath)` — Read an Excel file into a list of dicts
-
-Requires `openpyxl` for Excel support.
+```bash
+python3 examples/extract_images.py datasheet.pdf -o images/
+python3 examples/extract_images.py document.docx --min-size 10000
+```
 
 ## Examples
 
-See the `examples/` folder for working templates:
+The `examples/` folder contains workflow templates you can copy and adapt:
 
-| Script | Description |
-|--------|-------------|
-| `update_product.py` | Full workflow: gallery upload, content images, EditorJS rich text |
-| `upload_option_images.py` | Option group images with automatic shadow generation |
-| `extract_images.py` | Extract images from DOCX and PDF files |
+| Script | What it demonstrates |
+|--------|---------------------|
+| `update_product.py` | Gallery upload, content images, EditorJS rich text blocks |
+| `upload_option_images.py` | Option group image uploads with shadow generation |
+| `extract_images.py` | Image extraction from DOCX and PDF files |
 
-## AI Agents
+See `examples/README.md` for how to adapt them to your products.
 
-See [AGENTS.md](AGENTS.md) for a comprehensive primer on the Rattle data model, EditorJS content format, and conventions. This document is designed to be read by AI agents before generating configurator content.
+## For AI Agents
 
-## API Reference
+See [AGENTS.md](AGENTS.md) for a primer on the Rattle data model, EditorJS block format, and content conventions. Point your agent at this file before it starts generating configurator content.
 
-This client wraps the Rattle REST API at `https://www.rattleapp.de/api/v1`. Refer to your Rattle account documentation for available endpoints and data schemas.
+## API Documentation
+
+- [Developer guide](https://www.rattleapp.de/api/v1/developers) — concepts, authentication, pagination, error handling
+- [Interactive docs (Swagger UI)](https://www.rattleapp.de/api/v1/docs) — try endpoints, see request/response schemas
+- [OpenAPI spec](https://www.rattleapp.de/api/v1/openapi.json) — machine-readable endpoint and schema reference
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
