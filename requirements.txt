@@ -8,5 +8,8 @@ openpyxl
 # Optional: image manipulation (image_utils, examples/extract_images)
 # Pillow
 
-# Optional: PDF image extraction (examples/extract_images)
+# Optional: PDF image/content extraction (examples/extract_images, tools/extract_content)
 # PyMuPDF
+
+# Optional: DOCX content extraction (tools/extract_content)
+# python-docx

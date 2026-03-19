@@ -9,4 +9,6 @@
 - Content folder for user documents and AI agent integration
 - Image utilities with automatic shadow generation for option images
 - Example scripts for common workflows
+- Content extraction tool for PDF, DOCX, and XLSX with EditorJS output
+- Agent primer (AGENTS.md) with Rattle data model and configurator conventions
 - Source reader with Excel support

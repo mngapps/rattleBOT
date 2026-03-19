@@ -13,3 +13,5 @@ dependencies = [
 images = ["Pillow"]
 content = ["openpyxl"]
 pdf = ["PyMuPDF"]
+docx = ["python-docx"]
+tools = ["PyMuPDF", "python-docx", "openpyxl", "Pillow"]

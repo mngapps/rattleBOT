@@ -104,6 +104,28 @@ The `source_reader.py` module discovers files in this folder automatically. AI a
 
 See `content/README.md` for details.
 
+## Tools
+
+### tools/extract_content.py
+
+Extract structured content (headings, paragraphs, tables, lists) from source documents:
+
+```bash
+# Extract to normalized JSON
+python tools/extract_content.py content/mytenant/documents/datasheet.pdf
+
+# Extract directly to EditorJS blocks
+python tools/extract_content.py content/mytenant/documents/datasheet.docx --format editorjs
+
+# Extract a specific Excel sheet
+python tools/extract_content.py content/mytenant/data/specs.xlsx --sheet "Specs"
+
+# Save to file
+python tools/extract_content.py datasheet.pdf --format editorjs -o blocks.json
+```
+
+Supports PDF (via PyMuPDF), DOCX (via python-docx), and XLSX (via openpyxl). Install optional deps: `pip install PyMuPDF python-docx openpyxl`.
+
 ## Utilities
 
 ### image_utils.py
@@ -133,6 +155,10 @@ See the `examples/` folder for working templates:
 | `update_product.py` | Full workflow: gallery upload, content images, EditorJS rich text |
 | `upload_option_images.py` | Option group images with automatic shadow generation |
 | `extract_images.py` | Extract images from DOCX and PDF files |
+
+## AI Agents
+
+See [AGENTS.md](AGENTS.md) for a comprehensive primer on the Rattle data model, EditorJS content format, and conventions. This document is designed to be read by AI agents before generating configurator content.
 
 ## API Reference
 
