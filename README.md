@@ -1,141 +1,217 @@
-# Rattle API
+<p align="center">
+  <strong>Rattle API</strong><br>
+  <em>AI-agnostic rental data toolkit</em>
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
-[![CI](https://github.com/mngapps/rattle_api/actions/workflows/ci.yml/badge.svg)](https://github.com/mngapps/rattle_api/actions/workflows/ci.yml)
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%2B-blue.svg" alt="Python 3.10+"></a>
+  <a href="https://github.com/mngapps/rattle_api/actions/workflows/ci.yml"><img src="https://github.com/mngapps/rattle_api/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/mngapps/rattle_api/blob/main/CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-Keep%20a%20Changelog-orange.svg" alt="Changelog"></a>
+</p>
 
-AI-agnostic rental data toolkit for the [Rattle](https://www.rattleapp.de) platform. Manage rental product catalogues, generate descriptions, classify items, and transform interchange data — all from the command line with your choice of AI backend.
+<p align="center">
+  Manage rental product catalogues, enrich data with AI, and transform industry<br>
+  interchange formats — all from the command line, with <strong>your choice of AI backend</strong>.
+</p>
 
 ---
 
-## Features
+## Why Rattle API?
 
-- **AI-agnostic** — swap between OpenAI, Anthropic, Ollama (local), or any custom HTTP endpoint with a single environment variable.
-- **CLI-first** — designed for automation, scripting, and use with coding agents (Claude Code, Codex, Aider, Cursor, …).
-- **Data interchange** — transform between Datanorm, eCl@ss, BMEcat, and Rattle formats.
-- **Product enrichment** — generate marketing descriptions and category tags via AI.
-- **Rental data analysis** — ask open-ended questions about your catalogue.
-- **Image processing** — extract images from PDF/DOCX price lists and generate option-group variants.
+- **Swap AI providers in seconds** — OpenAI, Anthropic, Ollama (local), or any custom endpoint. One env var, zero code changes.
+- **Built for automation** — pure CLI with JSON output, no interactive prompts. Works out of the box with Claude Code, Codex, Aider, Cursor, and any tool that can run shell commands.
+- **Industry data formats** — transform between Datanorm, eCl@ss, BMEcat, and Rattle with a single command.
+- **Local-first option** — run completely offline with Ollama. No API keys, no costs, full privacy.
+
+## Table of Contents
+
+- [Quick Start](#quick-start)
+- [Commands](#commands)
+- [AI Providers](#ai-providers)
+- [Using with CLI Agents](#using-with-cli-agents)
+- [Architecture](#architecture)
+- [Docker](#docker)
+- [Development](#development)
+- [Contributing](#contributing)
 
 ## Quick Start
 
-### 1. Clone & install
+### 1. Install
 
 ```bash
 git clone https://github.com/mngapps/rattle_api.git
 cd rattle_api
+python -m venv .venv && source .venv/bin/activate
+```
 
-# Create a virtual environment (recommended)
-python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+Pick your AI provider:
 
-# Install with your preferred AI provider
-pip install -e ".[openai]"      # OpenAI / Azure / vLLM / LM Studio
-pip install -e ".[anthropic]"   # Anthropic Claude
-pip install -e ".[all-ai]"      # Both providers
+```bash
+pip install -e ".[openai]"       # OpenAI / Azure / vLLM / LM Studio
+pip install -e ".[anthropic]"    # Anthropic Claude
+pip install -e ".[all-ai]"       # All providers
 ```
 
 ### 2. Configure
 
 ```bash
 cp .env.example .env
-# Edit .env with your API keys and provider choice
+# Edit .env — add your Rattle API key and AI provider credentials
 ```
 
-| Variable | Description |
-|---|---|
-| `RATTLE_API_KEY_<TENANT>` | Rattle API key — one per tenant (e.g. `RATTLE_API_KEY_PRESSTA`) |
-| `AI_PROVIDER` | `openai` (default), `anthropic`, `ollama`, or `custom` |
-| `OPENAI_API_KEY` | OpenAI API key |
-| `ANTHROPIC_API_KEY` | Anthropic API key |
-| `OLLAMA_BASE_URL` | Ollama server URL (default: `http://localhost:11434`) |
-
-See [`.env.example`](.env.example) for the full list of configuration options.
-
-### 3. Run
+### 3. Verify
 
 ```bash
-# Verify connectivity
-python main.py pressta test-connection
-
-# Generate product descriptions
-python main.py pressta ai-describe --limit 5 --language de
-
-# Classify products
-python main.py pressta ai-classify --limit 10
-
-# Transform interchange data
-python main.py pressta ai-transform datanorm rattle data.json --push
-
-# Analyse rental data
-python main.py pressta ai-analyse --question "Which products lack descriptions?"
-
-# List available AI providers
-python main.py pressta ai-providers
+$ python main.py pressta test-connection
+Connection OK for tenant 'pressta'
 ```
+
+### 4. Use
+
+```bash
+# Generate product descriptions
+$ python main.py pressta ai-describe --limit 3 --language de
+[{"id": "p-001", "description": "Professionelle Industriebohrmaschine …"}, …]
+
+# Classify products into categories
+$ python main.py pressta ai-classify --limit 5
+
+# Transform interchange data and push to Rattle
+$ python main.py pressta ai-transform datanorm rattle import.json --push
+
+# Ask questions about your catalogue
+$ python main.py pressta ai-analyse --question "Which products lack descriptions?"
+```
+
+## Commands
+
+| Command | Description | Key Options |
+|---|---|---|
+| `test-connection` | Verify API connectivity | |
+| `list-sources` | List local data files | |
+| `ai-describe` | Generate marketing descriptions | `--limit`, `--language` |
+| `ai-classify` | Classify products into categories | `--limit` |
+| `ai-transform` | Convert between data formats | `source_format`, `target_format`, `--push` |
+| `ai-analyse` | Run data quality audits & analysis | `--question` |
+| `ai-providers` | Show available AI backends | |
+
+Every command outputs JSON to stdout — pipe it, parse it, chain it.
+
+## AI Providers
+
+Switch providers with a single environment variable:
+
+```bash
+AI_PROVIDER=openai     python main.py pressta ai-describe  # default
+AI_PROVIDER=anthropic  python main.py pressta ai-describe
+AI_PROVIDER=ollama     python main.py pressta ai-describe  # local, free
+AI_PROVIDER=custom     python main.py pressta ai-describe  # your endpoint
+```
+
+| Provider | Backend | Env Vars |
+|---|---|---|
+| `openai` | OpenAI, Azure, vLLM, LM Studio | `OPENAI_API_KEY`, `OPENAI_BASE_URL`*, `OPENAI_MODEL`* |
+| `anthropic` | Anthropic Claude | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`* |
+| `ollama` | Local Ollama server | `OLLAMA_BASE_URL`*, `OLLAMA_MODEL`* |
+| `custom` | Any OpenAI-compatible REST API | `CUSTOM_AI_BASE_URL`, `CUSTOM_AI_API_KEY`*, `CUSTOM_AI_MODEL`* |
+
+<sub>* optional</sub>
+
+See [`.env.example`](.env.example) for all configuration options.
+
+## Using with CLI Agents
+
+Rattle API is designed to be driven by any CLI coding agent:
+
+```bash
+# Claude Code
+python main.py pressta ai-analyse --question "Summarise product categories"
+
+# Codex CLI
+python main.py pressta ai-describe --limit 10
+
+# Any agent — just run shell commands and parse JSON stdout
+python main.py pressta ai-transform datanorm rattle data.json --push
+```
+
+No interactive prompts, no TUI, no special SDKs — just `stdin`/`stdout`/`stderr` and JSON.
 
 ## Architecture
 
 ```
 rattle_api/
-├── main.py            # CLI entry point (argparse)
-├── config.py          # Environment & tenant configuration
-├── client.py          # Rattle API HTTP client
-├── ai_provider.py     # AI provider abstraction layer
-├── ai_tasks.py        # AI-powered task implementations
-├── source_reader.py   # Data source file reader (Excel, …)
-├── image_utils.py     # Image processing utilities
-├── pyproject.toml     # Project metadata & dependencies
-└── source/            # Local data files (per-tenant, gitignored)
+├── main.py            CLI entry point (argparse dispatch)
+├── config.py          Tenant & provider configuration via .env
+├── client.py          Rattle API HTTP client (REST + pagination)
+├── ai_provider.py     Provider abstraction layer
+├── ai_tasks.py        AI task implementations
+├── source_reader.py   Data file reader (Excel, JSON)
+├── image_utils.py     Image processing & shadow generation
+└── tests/             Test suite
 ```
 
-### AI Provider Layer
-
-The provider abstraction (`ai_provider.py`) implements a simple interface:
-
-```python
-from ai_provider import get_provider
-
-provider = get_provider()  # Uses AI_PROVIDER env var
-result = provider.complete("Summarise this rental data: ...")
-data = provider.complete_json("Return JSON: ...")
+```
+         ┌───────────────────┐
+         │  CLI / AI Agent   │
+         └────────┬──────────┘
+                  │
+         ┌────────▼──────────┐
+         │    ai_tasks.py     │  describe · classify · transform · analyse
+         └────────┬──────────┘
+                  │
+         ┌────────▼──────────┐
+         │  ai_provider.py    │  complete() · complete_json()
+         └────────┬──────────┘
+                  │
+    ┌─────┬───────┼───────┬─────────┐
+    │     │       │       │         │
+ OpenAI  Anthropic  Ollama  Custom HTTP
 ```
 
-Supported backends:
+### Adding a new provider
 
-| Provider | Env var | Notes |
-|---|---|---|
-| OpenAI | `AI_PROVIDER=openai` | Also works with Azure, vLLM, LM Studio via `OPENAI_BASE_URL` |
-| Anthropic | `AI_PROVIDER=anthropic` | Claude models |
-| Ollama | `AI_PROVIDER=ollama` | Local inference, no API key needed |
-| Custom | `AI_PROVIDER=custom` | Any OpenAI-compatible REST endpoint |
+1. Subclass `AIProvider` in `ai_provider.py`
+2. Implement `complete()`
+3. Register in the `PROVIDERS` dict
+4. Document env vars in `config.py` and `.env.example`
+
+## Docker
+
+```bash
+docker build -t rattle-api .
+docker run --env-file .env rattle-api pressta test-connection
+docker run --env-file .env rattle-api pressta ai-describe --limit 3
+```
 
 ## Development
 
 ```bash
-# Install dev dependencies
-pip install -e ".[dev]"
+# Install everything
+pip install -e ".[dev,all-ai]"
 
-# Run linter
-make lint
+# Run checks
+make lint          # Ruff linter + formatter check
+make test          # pytest
+make check         # All of the above
 
-# Run tests
-make test
+# Auto-format
+make format
 
-# Run all checks
-make check
+# Pre-commit hooks (optional but recommended)
+pre-commit install
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full guidelines.
 
 ## Contributing
 
-Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a pull request.
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 
-## Security
-
-For reporting vulnerabilities, see [SECURITY.md](SECURITY.md).
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Security Policy](SECURITY.md)
+- [Changelog](CHANGELOG.md)
 
 ## License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+[MIT](LICENSE)
