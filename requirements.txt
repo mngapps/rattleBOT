@@ -1,3 +1,7 @@
 requests
 python-dotenv
 openpyxl
+
+# AI providers (install the one(s) you need)
+# openai          # for OpenAI / Azure / vLLM / LM Studio
+# anthropic       # for Anthropic Claude models
