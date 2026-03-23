@@ -15,7 +15,7 @@ body:
       label: Steps to reproduce
       description: How can we reproduce the issue?
       placeholder: |
-        1. Run `rattle mycompany ai-describe --limit 1`
+        1. Run `rattle acme ai-describe --limit 1`
         2. See error …
     validations:
       required: true

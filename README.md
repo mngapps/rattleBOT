@@ -65,25 +65,25 @@ cp .env.example .env
 ### 3. Verify
 
 ```bash
-$ rattle mycompany test-connection
-Connection OK for tenant 'mycompany'
+$ rattle acme test-connection
+Connection OK for tenant 'acme'
 ```
 
 ### 4. Use
 
 ```bash
 # Generate product descriptions
-$ rattle mycompany ai-describe --limit 3 --language de
+$ rattle acme ai-describe --limit 3 --language de
 [{"id": "p-001", "description": "Professionelle Industriebohrmaschine …"}, …]
 
 # Classify products into categories
-$ rattle mycompany ai-classify --limit 5
+$ rattle acme ai-classify --limit 5
 
 # Transform interchange data and push to Rattle
-$ rattle mycompany ai-transform datanorm rattle import.json --push
+$ rattle acme ai-transform datanorm rattle import.json --push
 
 # Ask questions about your product data
-$ rattle mycompany ai-analyse --question "Which products lack descriptions?"
+$ rattle acme ai-analyse --question "Which products lack descriptions?"
 ```
 
 ## Commands
@@ -105,10 +105,10 @@ Every command outputs JSON to stdout — pipe it, parse it, chain it.
 Switch providers with a single environment variable:
 
 ```bash
-AI_PROVIDER=openai     rattle mycompany ai-describe  # default
-AI_PROVIDER=anthropic  rattle mycompany ai-describe
-AI_PROVIDER=ollama     rattle mycompany ai-describe  # local, free
-AI_PROVIDER=custom     rattle mycompany ai-describe  # your endpoint
+AI_PROVIDER=openai     rattle acme ai-describe  # default
+AI_PROVIDER=anthropic  rattle acme ai-describe
+AI_PROVIDER=ollama     rattle acme ai-describe  # local, free
+AI_PROVIDER=custom     rattle acme ai-describe  # your endpoint
 ```
 
 | Provider | Backend | Env Vars |
@@ -128,13 +128,13 @@ Rattle AI Workspace is designed to be driven by any CLI coding agent:
 
 ```bash
 # Claude Code
-rattle mycompany ai-analyse --question "Summarise product categories"
+rattle acme ai-analyse --question "Summarise product categories"
 
 # Codex CLI
-rattle mycompany ai-describe --limit 10
+rattle acme ai-describe --limit 10
 
 # Any agent — just run shell commands and parse JSON stdout
-rattle mycompany ai-transform datanorm rattle data.json --push
+rattle acme ai-transform datanorm rattle data.json --push
 ```
 
 No interactive prompts, no TUI, no special SDKs — just `stdin`/`stdout`/`stderr` and JSON.
@@ -160,7 +160,7 @@ rattle_api/                      # Main package
          ┌───────────────────┐
          │  CLI / AI Agent   │
          └────────┬──────────┘
-                  │  rattle mycompany ai-describe
+                  │  rattle acme ai-describe
          ┌────────▼──────────┐
          │     tasks.py       │  describe · classify · transform · analyse
          └────────┬──────────┘
@@ -185,8 +185,8 @@ rattle_api/                      # Main package
 
 ```bash
 docker build -t rattle-api .
-docker run --env-file .env rattle-api mycompany test-connection
-docker run --env-file .env rattle-api mycompany ai-describe --limit 3
+docker run --env-file .env rattle-api acme test-connection
+docker run --env-file .env rattle-api acme ai-describe --limit 3
 ```
 
 ## Development
