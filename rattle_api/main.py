@@ -102,12 +102,12 @@ def main():
             "AI provider is selected via the AI_PROVIDER env var:\n"
             "  openai (default), anthropic, ollama, custom\n\n"
             "Examples:\n"
-            "  rattle pressta test-connection\n"
-            "  AI_PROVIDER=anthropic rattle pressta ai-describe --limit 3\n"
-            "  rattle pressta ai-transform datanorm rattle data.json --push\n"
+            "  rattle mycompany test-connection\n"
+            "  AI_PROVIDER=anthropic rattle mycompany ai-describe --limit 3\n"
+            "  rattle mycompany ai-transform datanorm rattle data.json --push\n"
         ),
     )
-    parser.add_argument("tenant", help="Tenant name (e.g. pressta)")
+    parser.add_argument("tenant", help="Tenant name (e.g. mycompany)")
     sub = parser.add_subparsers(dest="command", required=True, help="Command")
 
     # -- existing commands ---------------------------------------------------

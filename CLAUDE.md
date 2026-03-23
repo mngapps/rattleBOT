@@ -19,7 +19,7 @@ Standard Python package layout — all source lives in `rattle_api/`:
 ## Key Patterns
 
 - **Env-var config**: All configuration via environment variables (see `.env.example`). No config files.
-- **Tenant convention**: `RATTLE_API_KEY_PRESSTA=abc` → tenant name `pressta` on CLI.
+- **Tenant convention**: `RATTLE_API_KEY_MYCOMPANY=abc` → tenant name `mycompany` on CLI.
 - **AI provider registry**: Add provider by subclassing `AIProvider`, implementing `complete()`, registering in `PROVIDERS` dict in `provider.py`.
 - **Lazy AI imports**: `main.py` imports AI task functions inside command handlers to avoid requiring AI SDKs for non-AI commands.
 - **JSON stdout**: All commands output JSON to stdout for piping/parsing. Progress messages go to stderr.
