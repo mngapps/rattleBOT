@@ -1,7 +1,10 @@
 import os
 
 import requests
+
 from config import BASE_URL, get_tenant
+
+DEFAULT_TIMEOUT = 30
 
 
 class RattleClient:
@@ -30,24 +33,25 @@ class RattleClient:
         return resp.json()
 
     def get(self, path, **params):
-        return self._handle(self.session.get(self._url(path), params=params))
+        resp = self.session.get(self._url(path), params=params, timeout=DEFAULT_TIMEOUT)
+        return self._handle(resp)
 
     def post(self, path, json=None):
-        return self._handle(self.session.post(self._url(path), json=json))
+        return self._handle(self.session.post(self._url(path), json=json, timeout=DEFAULT_TIMEOUT))
 
     def patch(self, path, json=None):
-        return self._handle(self.session.patch(self._url(path), json=json))
+        return self._handle(self.session.patch(self._url(path), json=json, timeout=DEFAULT_TIMEOUT))
 
     def put(self, path, json=None):
-        return self._handle(self.session.put(self._url(path), json=json))
+        return self._handle(self.session.put(self._url(path), json=json, timeout=DEFAULT_TIMEOUT))
 
     def delete(self, path):
-        return self._handle(self.session.delete(self._url(path)))
+        return self._handle(self.session.delete(self._url(path), timeout=DEFAULT_TIMEOUT))
 
     def upload_image(self, path, filepath, field_name="file"):
         with open(filepath, "rb") as f:
             files = {field_name: (os.path.basename(filepath), f, "image/jpeg")}
-            resp = self.session.post(self._url(path), files=files)
+            resp = self.session.post(self._url(path), files=files, timeout=DEFAULT_TIMEOUT)
         return self._handle(resp)
 
     def list_all(self, path, **params):

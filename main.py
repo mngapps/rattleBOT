@@ -1,10 +1,10 @@
 import argparse
 import json
+import os
 import sys
 
 from client import RattleClient
 from source_reader import list_sources
-
 
 # ---------------------------------------------------------------------------
 # Original commands
@@ -73,7 +73,6 @@ def cmd_ai_providers(tenant, args):
     print("Available AI providers:")
     for name in list_providers():
         print(f"  - {name}")
-    import os
     current = os.environ.get("AI_PROVIDER", "openai")
     print(f"\nActive provider (AI_PROVIDER): {current}")
 
@@ -84,7 +83,7 @@ def cmd_ai_providers(tenant, args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Rattle API Control Panel — AI-agnostic rental data toolkit",
+        description="Rattle AI Workspace — AI-agnostic rental data toolkit",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "AI provider is selected via the AI_PROVIDER env var:\n"

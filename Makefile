@@ -1,4 +1,4 @@
-.PHONY: help install dev lint test check clean
+.PHONY: help install dev lint format type-check test test-cov check clean
 
 help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | \
@@ -18,13 +18,16 @@ format: ## Auto-format code with Ruff
 	ruff check --fix .
 	ruff format .
 
+type-check: ## Run mypy type checker
+	mypy . --ignore-missing-imports
+
 test: ## Run tests with pytest
 	pytest
 
 test-cov: ## Run tests with coverage report
 	pytest --cov --cov-report=term-missing
 
-check: lint test ## Run all checks (lint + test)
+check: lint type-check test ## Run all checks (lint + type-check + test)
 
 clean: ## Remove build artefacts and caches
 	rm -rf build/ dist/ *.egg-info/

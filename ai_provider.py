@@ -1,5 +1,5 @@
 """
-AI-agnostic provider abstraction for the Rattle API.
+AI-agnostic provider abstraction for the Rattle AI Workspace.
 
 Supports any LLM backend (OpenAI, Anthropic, local/Ollama, or custom HTTP
 endpoints) through a unified interface.  CLI coding agents (Claude Code,
@@ -15,10 +15,6 @@ Usage:
 import json
 import os
 from abc import ABC, abstractmethod
-
-from config import load_dotenv
-
-load_dotenv()
 
 # ---------------------------------------------------------------------------
 # Base class
@@ -74,6 +70,8 @@ class OpenAIProvider(AIProvider):
                 "Install the openai package:  pip install openai"
             )
         self._api_key = os.environ.get("OPENAI_API_KEY", "")
+        if not self._api_key:
+            raise ValueError("OPENAI_API_KEY environment variable is required for OpenAI provider")
         self._base_url = os.environ.get("OPENAI_BASE_URL")  # None → default
         self._model = os.environ.get("OPENAI_MODEL", "gpt-4o")
 
@@ -116,6 +114,10 @@ class AnthropicProvider(AIProvider):
                 "Install the anthropic package:  pip install anthropic"
             )
         self._api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+        if not self._api_key:
+            raise ValueError(
+                "ANTHROPIC_API_KEY environment variable is required for Anthropic provider"
+            )
         self._model = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
 
     def complete(self, prompt, *, system=None, max_tokens=1024, temperature=0.2):

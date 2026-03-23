@@ -1,9 +1,10 @@
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
 
-BASE_URL = "https://www.rattleapp.de/api/v1"
+BASE_URL = os.environ.get("RATTLE_BASE_URL", "https://www.rattleapp.de/api/v1")
 
 # ---------------------------------------------------------------------------
 # Tenant configuration (Rattle API keys)

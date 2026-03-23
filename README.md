@@ -1,6 +1,8 @@
 <p align="center">
-  <strong>Rattle API</strong><br>
-  <em>AI-agnostic rental data toolkit</em>
+  <img src="rattle_logos/rattle_long_black_transparent.png" width="320" alt="Rattle">
+  <br>
+  <strong>Rattle AI Workspace</strong><br>
+  <em>AI-agnostic rental data toolkit for the Rattle API</em>
 </p>
 
 <p align="center">
@@ -17,7 +19,7 @@
 
 ---
 
-## Why Rattle API?
+## Why Rattle AI Workspace?
 
 - **Swap AI providers in seconds** — OpenAI, Anthropic, Ollama (local), or any custom endpoint. One env var, zero code changes.
 - **Built for automation** — pure CLI with JSON output, no interactive prompts. Works out of the box with Claude Code, Codex, Aider, Cursor, and any tool that can run shell commands.
@@ -122,7 +124,7 @@ See [`.env.example`](.env.example) for all configuration options.
 
 ## Using with CLI Agents
 
-Rattle API is designed to be driven by any CLI coding agent:
+Rattle AI Workspace is designed to be driven by any CLI coding agent:
 
 ```bash
 # Claude Code
