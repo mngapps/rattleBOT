@@ -1,0 +1,60 @@
+# Rattle AI Workspace
+
+AI-powered console CLI for the Rattle API. Users run CLI commands with their choice of AI backend (OpenAI, Anthropic, Ollama, or any custom endpoint) to enrich, classify, transform, and analyse product data.
+
+## Architecture
+
+Standard Python package layout — all source lives in `rattle_api/`:
+
+| Module | Purpose |
+|--------|---------|
+| `rattle_api/main.py` | CLI entry point (argparse dispatch). All AI imports are lazy to avoid import errors when a provider SDK isn't installed. |
+| `rattle_api/config.py` | Loads `.env`, resolves tenant API keys from `RATTLE_API_KEY_*` env vars, selects AI provider. |
+| `rattle_api/client.py` | `RattleClient` — HTTP client for the Rattle REST API (GET/POST/PATCH/PUT/DELETE + pagination + image upload). |
+| `rattle_api/provider.py` | `AIProvider` ABC + 4 implementations (OpenAI, Anthropic, Ollama, CustomHTTP). Registry pattern via `PROVIDERS` dict. |
+| `rattle_api/tasks.py` | Task functions: `describe_products`, `classify_products`, `transform_interchange`, `analyse_data`. Each fetches data from Rattle, sends to AI, optionally pushes results back. |
+| `rattle_api/source.py` | Reads local Excel files from `source/<tenant>/`. |
+| `rattle_api/image.py` | Image processing — shadow generation for "ohne" (without) product options. |
+
+## Key Patterns
+
+- **Env-var config**: All configuration via environment variables (see `.env.example`). No config files.
+- **Tenant convention**: `RATTLE_API_KEY_PRESSTA=abc` → tenant name `pressta` on CLI.
+- **AI provider registry**: Add provider by subclassing `AIProvider`, implementing `complete()`, registering in `PROVIDERS` dict in `provider.py`.
+- **Lazy AI imports**: `main.py` imports AI task functions inside command handlers to avoid requiring AI SDKs for non-AI commands.
+- **JSON stdout**: All commands output JSON to stdout for piping/parsing. Progress messages go to stderr.
+- **Relative imports**: Within the package, modules use relative imports (e.g. `from .config import BASE_URL`).
+
+## Development
+
+```bash
+pip install -e ".[dev,all-ai]"    # Install everything
+make check                         # Run lint + type-check + test
+make lint                          # Ruff linter + formatter check
+make type-check                    # mypy
+make test                          # pytest
+make format                        # Auto-format with Ruff
+```
+
+## Testing
+
+- `pytest` — 135+ tests, ~97% coverage
+- All tests run **without network or real API keys** — `conftest.py` has an autouse `clean_env` fixture that strips credentials
+- `FakeAIProvider` in `conftest.py` provides deterministic responses for testing
+- Tests that need file I/O use `tmp_path` fixture
+- Config tests use `importlib.reload(rattle_api.config)` to test env var changes
+- Tests import from `rattle_api.*` (e.g. `from rattle_api.provider import get_provider`)
+
+## Adding a New AI Provider
+
+1. Subclass `AIProvider` in `rattle_api/provider.py`
+2. Implement `complete(self, prompt, *, system=None, max_tokens=1024, temperature=0.2) -> str`
+3. Register in the `PROVIDERS` dict at the bottom of `provider.py`
+4. Document env vars in `config.py` comments and `.env.example`
+
+## Adding a New CLI Command
+
+1. Add handler function `cmd_your_command(tenant, args)` in `rattle_api/main.py`
+2. Add subparser in `main()` function
+3. Register in the `commands` dispatch dict
+4. Add tests in `tests/test_main.py`

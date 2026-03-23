@@ -1,7 +1,10 @@
 import os
+
 from openpyxl import load_workbook
 
-SOURCE_DIR = os.path.join(os.path.dirname(__file__), "source")
+# source/ directory lives at the project root, one level above this package
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SOURCE_DIR = os.path.join(_ROOT, "source")
 
 
 def list_sources(tenant):
