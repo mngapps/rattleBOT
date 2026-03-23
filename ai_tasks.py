@@ -1,11 +1,11 @@
 """
-AI-driven task runner for Rattle rental and interchange data.
+AI-driven task runner for Rattle product and interchange data.
 
 Provides ready-made tasks that any CLI coding agent or automated pipeline
 can invoke to:
-  - Analyse / enrich product catalogues
+  - Analyse / enrich product data
   - Transform interchange data between formats
-  - Generate rental descriptions, pricing suggestions, etc.
+  - Generate product descriptions, pricing suggestions, etc.
   - Push AI-produced results back to the Rattle API
 
 All tasks are model-agnostic — the active AI provider is selected at
@@ -47,7 +47,7 @@ def describe_products(tenant, *, provider=None, limit=5, language="de"):
     products = client.list_all("products", per_page=min(limit, 100))[:limit]
 
     system = (
-        f"You are a product copywriter.  Write a short, professional rental "
+        f"You are a product copywriter.  Write a short, professional "
         f"product description in {'German' if language == 'de' else language}.  "
         f"Return ONLY the description text, no headings or markdown."
     )
@@ -61,7 +61,7 @@ def describe_products(tenant, *, provider=None, limit=5, language="de"):
         prompt = (
             f"Product name: {name}\n\n"
             f"Raw data:\n{details}\n\n"
-            f"Write a 2-3 sentence rental product description."
+            f"Write a 2-3 sentence product description."
         )
 
         try:
@@ -93,7 +93,7 @@ def classify_products(tenant, *, provider=None, limit=10):
     products = client.list_all("products", per_page=min(limit, 100))[:limit]
 
     system = (
-        "You are a product classifier for a machinery rental catalogue. "
+        "You are a product classifier for a product catalogue. "
         "Given the product JSON, return a JSON array of 1-5 category tag "
         "strings (in English). Return ONLY the JSON array, nothing else."
     )
@@ -177,12 +177,12 @@ def transform_interchange(
 
 
 # ---------------------------------------------------------------------------
-# Task: analyse_rental_data
+# Task: analyse_data
 # ---------------------------------------------------------------------------
 
 
-def analyse_rental_data(tenant, *, provider=None, question=None):
-    """Ask an AI an open-ended question about the tenant's rental data.
+def analyse_data(tenant, *, provider=None, question=None):
+    """Ask an AI an open-ended question about the tenant's product data.
 
     Fetches a sample of products and lets the AI answer *question*
     (or a default analytical prompt).
@@ -195,8 +195,8 @@ def analyse_rental_data(tenant, *, provider=None, question=None):
     sample = client.list_all("products", per_page=20)[:20]
 
     system = (
-        "You are a rental data analyst.  You receive a JSON sample of "
-        "products from a rental catalogue.  Answer the user's question "
+        "You are a data analyst.  You receive a JSON sample of "
+        "products from a catalogue.  Answer the user's question "
         "with clear, actionable insights."
     )
     if not question:
@@ -224,5 +224,5 @@ TASKS = {
     "describe-products": describe_products,
     "classify-products": classify_products,
     "transform-interchange": transform_interchange,
-    "analyse-rental-data": analyse_rental_data,
+    "analyse-data": analyse_data,
 }

@@ -238,39 +238,39 @@ class TestTransformInterchange:
 
 
 # ---------------------------------------------------------------------------
-# analyse_rental_data
+# analyse_data
 # ---------------------------------------------------------------------------
 
 
-class TestAnalyseRentalData:
-    """Open-ended AI analysis of rental catalogue data."""
+class TestAnalyseData:
+    """Open-ended AI analysis of product data."""
 
     def test_returns_analysis_text(self, patched_client):
-        from ai_tasks import analyse_rental_data
+        from ai_tasks import analyse_data
 
         fake = FakeAIProvider(text_response="Your data has 2 products with good coverage.")
-        result = analyse_rental_data("testco", provider=fake)
+        result = analyse_data("testco", provider=fake)
         assert "2 products" in result
 
     def test_custom_question(self, patched_client):
-        from ai_tasks import analyse_rental_data
+        from ai_tasks import analyse_data
 
         fake = FakeAIProvider(text_response="answer")
-        analyse_rental_data("testco", provider=fake, question="How many drills?")
+        analyse_data("testco", provider=fake, question="How many drills?")
         assert "How many drills?" in fake.calls[0]["prompt"]
 
     def test_default_question_is_quality_audit(self, patched_client):
-        from ai_tasks import analyse_rental_data
+        from ai_tasks import analyse_data
 
         fake = FakeAIProvider(text_response="audit")
-        analyse_rental_data("testco", provider=fake)
+        analyse_data("testco", provider=fake)
         assert "data quality" in fake.calls[0]["prompt"].lower()
 
     def test_fetches_sample(self, patched_client):
-        from ai_tasks import analyse_rental_data
+        from ai_tasks import analyse_data
 
         fake = FakeAIProvider(text_response="analysis")
-        analyse_rental_data("testco", provider=fake)
+        analyse_data("testco", provider=fake)
         patched_client.list_all.assert_called_once_with("products", per_page=20)
 
 

@@ -2,7 +2,7 @@
   <img src="rattle_logos/rattle_long_black_transparent.png" width="320" alt="Rattle">
   <br>
   <strong>Rattle AI Workspace</strong><br>
-  <em>AI-agnostic rental data toolkit for the Rattle API</em>
+  <em>AI-powered console CLI for the Rattle API</em>
 </p>
 
 <p align="center">
@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  Manage rental product catalogues, enrich data with AI, and transform industry<br>
+  Manage product data, enrich with AI, and transform industry<br>
   interchange formats — all from the command line, with <strong>your choice of AI backend</strong>.
 </p>
 
@@ -82,7 +82,7 @@ $ python main.py pressta ai-classify --limit 5
 # Transform interchange data and push to Rattle
 $ python main.py pressta ai-transform datanorm rattle import.json --push
 
-# Ask questions about your catalogue
+# Ask questions about your product data
 $ python main.py pressta ai-analyse --question "Which products lack descriptions?"
 ```
 

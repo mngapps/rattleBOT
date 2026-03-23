@@ -72,10 +72,10 @@ def cmd_ai_transform(tenant, args):
 
 
 def cmd_ai_analyse(tenant, args):
-    """Ask AI to analyse rental data."""
-    from ai_tasks import analyse_rental_data
+    """Ask AI to analyse product data."""
+    from ai_tasks import analyse_data
 
-    analyse_rental_data(tenant, question=args.question)
+    analyse_data(tenant, question=args.question)
 
 
 def cmd_ai_providers(tenant, args):
@@ -96,7 +96,7 @@ def cmd_ai_providers(tenant, args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Rattle AI Workspace — AI-agnostic rental data toolkit",
+        description="Rattle AI Workspace — AI-powered console CLI for the Rattle API",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "AI provider is selected via the AI_PROVIDER env var:\n"
@@ -141,7 +141,7 @@ def main():
 
     p_analyse = sub.add_parser(
         "ai-analyse",
-        help="Ask AI to analyse rental data",
+        help="Ask AI to analyse product data",
     )
     p_analyse.add_argument(
         "--question", default=None, help="Custom question (default: data quality audit)"

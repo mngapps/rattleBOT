@@ -1,6 +1,6 @@
 # Rattle AI Workspace
 
-AI-agnostic rental data toolkit for the Rattle API. Users run CLI commands with their choice of AI backend (OpenAI, Anthropic, Ollama, or any custom endpoint) to enrich, classify, transform, and analyse rental product data.
+AI-powered console CLI for the Rattle API. Users run CLI commands with their choice of AI backend (OpenAI, Anthropic, Ollama, or any custom endpoint) to enrich, classify, transform, and analyse product data.
 
 ## Architecture
 
@@ -12,7 +12,7 @@ Flat module structure — all core modules live in the project root:
 | `config.py` | Loads `.env`, resolves tenant API keys from `RATTLE_API_KEY_*` env vars, selects AI provider. |
 | `client.py` | `RattleClient` — HTTP client for the Rattle REST API (GET/POST/PATCH/PUT/DELETE + pagination + image upload). |
 | `ai_provider.py` | `AIProvider` ABC + 4 implementations (OpenAI, Anthropic, Ollama, CustomHTTP). Registry pattern via `PROVIDERS` dict. |
-| `ai_tasks.py` | Task functions: `describe_products`, `classify_products`, `transform_interchange`, `analyse_rental_data`. Each fetches data from Rattle, sends to AI, optionally pushes results back. |
+| `ai_tasks.py` | Task functions: `describe_products`, `classify_products`, `transform_interchange`, `analyse_data`. Each fetches data from Rattle, sends to AI, optionally pushes results back. |
 | `source_reader.py` | Reads local Excel files from `source/<tenant>/`. |
 | `image_utils.py` | Image processing — shadow generation for "ohne" (without) product options. |
 
