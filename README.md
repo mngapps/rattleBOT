@@ -26,8 +26,12 @@
 - **Industry data formats** — transform between Datanorm, eCl@ss, BMEcat, and Rattle with a single command.
 - **Local-first option** — run completely offline with Ollama. No API keys, no costs, full privacy.
 
+> **New here?** Follow the **[Fast Setup Guide (SETUP.md)](SETUP.md)** for detailed,
+> beginner-friendly instructions to get up and running — no programming experience needed.
+
 ## Table of Contents
 
+- [Fast Setup Guide](SETUP.md)
 - [Quick Start](#quick-start)
 - [Commands](#commands)
 - [AI Providers](#ai-providers)
