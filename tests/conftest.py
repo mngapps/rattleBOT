@@ -31,7 +31,7 @@ def tenant_env(monkeypatch):
     # Reload config module to pick up new env
     import importlib
 
-    import config
+    import rattle_api.config as config
 
     importlib.reload(config)
     return "testco"
@@ -40,7 +40,7 @@ def tenant_env(monkeypatch):
 @pytest.fixture
 def mock_session():
     """Return a mocked requests.Session for RattleClient tests."""
-    with patch("client.requests.Session") as mock_cls:
+    with patch("rattle_api.client.requests.Session") as mock_cls:
         session = MagicMock()
         mock_cls.return_value = session
         yield session

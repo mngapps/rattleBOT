@@ -1,4 +1,4 @@
-"""Tests for image_utils.py — shadow generation and option image upload."""
+"""Tests for rattle_api.image — shadow generation and option image upload."""
 
 import os
 from unittest.mock import MagicMock
@@ -19,7 +19,7 @@ class TestCreateShadowedImage:
         img.save(str(src))
 
         dst = tmp_path / "shadow.jpg"
-        from image_utils import create_shadowed_image
+        from rattle_api.image import create_shadowed_image
 
         create_shadowed_image(str(src), str(dst))
 
@@ -33,7 +33,7 @@ class TestCreateShadowedImage:
         Image.new("RGB", (50, 50), color=(0, 128, 255)).save(str(src))
 
         dst = tmp_path / "shadow.jpg"
-        from image_utils import create_shadowed_image
+        from rattle_api.image import create_shadowed_image
 
         create_shadowed_image(str(src), str(dst))
 
@@ -48,7 +48,7 @@ class TestCreateShadowedImage:
         Image.new("RGB", (50, 50), color=(255, 0, 0)).save(str(src))
 
         dst = tmp_path / "shadow.jpg"
-        from image_utils import create_shadowed_image
+        from rattle_api.image import create_shadowed_image
 
         create_shadowed_image(str(src), str(dst))
 
@@ -66,7 +66,7 @@ class TestCreateShadowedImage:
         Image.new("RGB", (50, 50), color=(0, 0, 0)).save(str(src))
 
         dst = tmp_path / "shadow.jpg"
-        from image_utils import create_shadowed_image
+        from rattle_api.image import create_shadowed_image
 
         create_shadowed_image(str(src), str(dst))
 
@@ -82,7 +82,7 @@ class TestCreateShadowedImage:
         Image.new("RGB", (200, 300), color=(100, 100, 100)).save(str(src))
 
         dst = tmp_path / "shadow.jpg"
-        from image_utils import create_shadowed_image
+        from rattle_api.image import create_shadowed_image
 
         create_shadowed_image(str(src), str(dst))
 
@@ -98,7 +98,7 @@ class TestCreateShadowedImage:
 
         dst1 = tmp_path / "shadow1.jpg"
         dst2 = tmp_path / "shadow2.jpg"
-        from image_utils import create_shadowed_image
+        from rattle_api.image import create_shadowed_image
 
         create_shadowed_image(str(src), str(dst1))
         create_shadowed_image(str(src), str(dst2))
@@ -129,7 +129,7 @@ class TestUploadOptionImages:
         return client
 
     def test_uploads_regular_option(self, mock_client, img_dir):
-        from image_utils import upload_option_images
+        from rattle_api.image import upload_option_images
 
         groups = [
             {
@@ -143,7 +143,7 @@ class TestUploadOptionImages:
         mock_client.upload_image.assert_called_once()
 
     def test_generates_shadow_for_ohne(self, mock_client, img_dir):
-        from image_utils import upload_option_images
+        from rattle_api.image import upload_option_images
 
         groups = [
             {
@@ -163,7 +163,7 @@ class TestUploadOptionImages:
         assert "shadow_" in shadow_files[0].name
 
     def test_ohne_uses_explicit_image(self, mock_client, img_dir):
-        from image_utils import upload_option_images
+        from rattle_api.image import upload_option_images
 
         groups = [
             {
@@ -181,7 +181,7 @@ class TestUploadOptionImages:
         assert any("saw" in f.name for f in shadow_files)
 
     def test_skips_ohne_without_source(self, mock_client, img_dir, capsys):
-        from image_utils import upload_option_images
+        from rattle_api.image import upload_option_images
 
         groups = [
             {
@@ -196,7 +196,7 @@ class TestUploadOptionImages:
         assert "SKIP" in captured.out
 
     def test_skips_missing_image(self, mock_client, img_dir, capsys):
-        from image_utils import upload_option_images
+        from rattle_api.image import upload_option_images
 
         groups = [
             {
@@ -212,7 +212,7 @@ class TestUploadOptionImages:
         mock_client.upload_image.assert_not_called()
 
     def test_skips_option_without_image(self, mock_client, img_dir, capsys):
-        from image_utils import upload_option_images
+        from rattle_api.image import upload_option_images
 
         groups = [
             {
@@ -230,7 +230,7 @@ class TestUploadOptionImages:
         """If shadow already exists and source hasn't changed, reuse it."""
         from PIL import Image
 
-        from image_utils import upload_option_images
+        from rattle_api.image import upload_option_images
 
         # Pre-create shadow
         shadow_dir = img_dir / "shadowed"
@@ -256,7 +256,7 @@ class TestUploadOptionImages:
 
     def test_upload_failure_handled(self, mock_client, img_dir, capsys):
         mock_client.upload_image.side_effect = RuntimeError("Upload failed")
-        from image_utils import upload_option_images
+        from rattle_api.image import upload_option_images
 
         groups = [
             {
@@ -272,7 +272,7 @@ class TestUploadOptionImages:
         assert "FAIL" in captured.out
 
     def test_multiple_groups(self, mock_client, img_dir):
-        from image_utils import upload_option_images
+        from rattle_api.image import upload_option_images
 
         groups = [
             {

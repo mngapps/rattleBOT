@@ -65,7 +65,7 @@ cp .env.example .env
 ### 3. Verify
 
 ```bash
-$ python main.py pressta test-connection
+$ rattle pressta test-connection
 Connection OK for tenant 'pressta'
 ```
 
@@ -73,17 +73,17 @@ Connection OK for tenant 'pressta'
 
 ```bash
 # Generate product descriptions
-$ python main.py pressta ai-describe --limit 3 --language de
+$ rattle pressta ai-describe --limit 3 --language de
 [{"id": "p-001", "description": "Professionelle Industriebohrmaschine …"}, …]
 
 # Classify products into categories
-$ python main.py pressta ai-classify --limit 5
+$ rattle pressta ai-classify --limit 5
 
 # Transform interchange data and push to Rattle
-$ python main.py pressta ai-transform datanorm rattle import.json --push
+$ rattle pressta ai-transform datanorm rattle import.json --push
 
 # Ask questions about your product data
-$ python main.py pressta ai-analyse --question "Which products lack descriptions?"
+$ rattle pressta ai-analyse --question "Which products lack descriptions?"
 ```
 
 ## Commands
@@ -105,10 +105,10 @@ Every command outputs JSON to stdout — pipe it, parse it, chain it.
 Switch providers with a single environment variable:
 
 ```bash
-AI_PROVIDER=openai     python main.py pressta ai-describe  # default
-AI_PROVIDER=anthropic  python main.py pressta ai-describe
-AI_PROVIDER=ollama     python main.py pressta ai-describe  # local, free
-AI_PROVIDER=custom     python main.py pressta ai-describe  # your endpoint
+AI_PROVIDER=openai     rattle pressta ai-describe  # default
+AI_PROVIDER=anthropic  rattle pressta ai-describe
+AI_PROVIDER=ollama     rattle pressta ai-describe  # local, free
+AI_PROVIDER=custom     rattle pressta ai-describe  # your endpoint
 ```
 
 | Provider | Backend | Env Vars |
@@ -128,13 +128,13 @@ Rattle AI Workspace is designed to be driven by any CLI coding agent:
 
 ```bash
 # Claude Code
-python main.py pressta ai-analyse --question "Summarise product categories"
+rattle pressta ai-analyse --question "Summarise product categories"
 
 # Codex CLI
-python main.py pressta ai-describe --limit 10
+rattle pressta ai-describe --limit 10
 
 # Any agent — just run shell commands and parse JSON stdout
-python main.py pressta ai-transform datanorm rattle data.json --push
+rattle pressta ai-transform datanorm rattle data.json --push
 ```
 
 No interactive prompts, no TUI, no special SDKs — just `stdin`/`stdout`/`stderr` and JSON.
@@ -142,28 +142,31 @@ No interactive prompts, no TUI, no special SDKs — just `stdin`/`stdout`/`stder
 ## Architecture
 
 ```
-rattle_api/
-├── main.py            CLI entry point (argparse dispatch)
-├── config.py          Tenant & provider configuration via .env
-├── client.py          Rattle API HTTP client (REST + pagination)
-├── ai_provider.py     Provider abstraction layer
-├── ai_tasks.py        AI task implementations
-├── source_reader.py   Data file reader (Excel, JSON)
-├── image_utils.py     Image processing & shadow generation
-└── tests/             Test suite
+rattle_api/                      # Main package
+├── rattle_api/
+│   ├── main.py                  # CLI entry point (argparse dispatch)
+│   ├── config.py                # Tenant & provider configuration via .env
+│   ├── client.py                # Rattle API HTTP client (REST + pagination)
+│   ├── provider.py              # AI provider abstraction layer
+│   ├── tasks.py                 # AI task implementations
+│   ├── source.py                # Data file reader (Excel, JSON)
+│   └── image.py                 # Image processing & shadow generation
+├── tests/                       # Test suite (135 tests, 97% coverage)
+├── source/                      # Local data files per tenant
+└── pyproject.toml
 ```
 
 ```
          ┌───────────────────┐
          │  CLI / AI Agent   │
          └────────┬──────────┘
-                  │
+                  │  rattle pressta ai-describe
          ┌────────▼──────────┐
-         │    ai_tasks.py     │  describe · classify · transform · analyse
+         │     tasks.py       │  describe · classify · transform · analyse
          └────────┬──────────┘
                   │
          ┌────────▼──────────┐
-         │  ai_provider.py    │  complete() · complete_json()
+         │   provider.py      │  complete() · complete_json()
          └────────┬──────────┘
                   │
     ┌─────┬───────┼───────┬─────────┐
@@ -173,7 +176,7 @@ rattle_api/
 
 ### Adding a new provider
 
-1. Subclass `AIProvider` in `ai_provider.py`
+1. Subclass `AIProvider` in `rattle_api/provider.py`
 2. Implement `complete()`
 3. Register in the `PROVIDERS` dict
 4. Document env vars in `config.py` and `.env.example`

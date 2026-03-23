@@ -56,10 +56,10 @@ Write clear, concise commit messages:
 
 ## Adding a New AI Provider
 
-1. Create a new class in `ai_provider.py` that extends `AIProvider`.
+1. Create a new class in `rattle_api/provider.py` that extends `AIProvider`.
 2. Implement the `complete()` method.
 3. Register it in the `PROVIDERS` dict.
-4. Document required environment variables in `config.py` and `.env.example`.
+4. Document required environment variables in `rattle_api/config.py` and `.env.example`.
 5. Add the provider to the table in `README.md`.
 
 ## Reporting Issues

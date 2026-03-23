@@ -1,4 +1,4 @@
-"""Tests for ai_provider.py — provider registry, complete_json parsing, all backends."""
+"""Tests for rattle_api.provider — provider registry, complete_json parsing, all backends."""
 
 import json
 from unittest.mock import MagicMock, patch
@@ -14,24 +14,24 @@ class TestProviderRegistry:
     """get_provider() and list_providers() — provider lookup and enumeration."""
 
     def test_list_providers_returns_all(self):
-        from ai_provider import list_providers
+        from rattle_api.provider import list_providers
 
         names = list_providers()
         assert set(names) == {"openai", "anthropic", "ollama", "custom"}
 
     def test_list_providers_is_stable(self):
-        from ai_provider import list_providers
+        from rattle_api.provider import list_providers
 
         assert list_providers() == list_providers()
 
     def test_get_provider_unknown_raises(self):
-        from ai_provider import get_provider
+        from rattle_api.provider import get_provider
 
         with pytest.raises(ValueError, match="Unknown AI provider"):
             get_provider("nonexistent")
 
     def test_get_provider_error_lists_available(self):
-        from ai_provider import get_provider
+        from rattle_api.provider import get_provider
 
         with pytest.raises(ValueError) as exc_info:
             get_provider("bad")
@@ -42,27 +42,27 @@ class TestProviderRegistry:
     def test_get_provider_defaults_to_openai(self, monkeypatch):
         monkeypatch.delenv("AI_PROVIDER", raising=False)
         monkeypatch.setenv("OPENAI_API_KEY", "test")
-        from ai_provider import get_provider
+        from rattle_api.provider import get_provider
 
         provider = get_provider()
         assert provider.name == "openai"
 
     def test_get_provider_respects_env_var(self, monkeypatch):
         monkeypatch.setenv("AI_PROVIDER", "ollama")
-        from ai_provider import get_provider
+        from rattle_api.provider import get_provider
 
         provider = get_provider()
         assert provider.name == "ollama"
 
     def test_get_provider_explicit_overrides_env(self, monkeypatch):
         monkeypatch.setenv("AI_PROVIDER", "anthropic")
-        from ai_provider import get_provider
+        from rattle_api.provider import get_provider
 
         provider = get_provider("ollama")
         assert provider.name == "ollama"
 
     def test_get_provider_case_insensitive(self):
-        from ai_provider import get_provider
+        from rattle_api.provider import get_provider
 
         provider = get_provider("OLLAMA")
         assert provider.name == "ollama"
@@ -78,7 +78,7 @@ class TestCompleteJSON:
 
     def _make_provider(self, text_response):
         """Create a concrete provider subclass for testing complete_json."""
-        from ai_provider import AIProvider
+        from rattle_api.provider import AIProvider
 
         class TestProvider(AIProvider):
             name = "test"
@@ -131,7 +131,7 @@ class TestOpenAIProvider:
     def test_requires_openai_package(self, monkeypatch):
         monkeypatch.setenv("OPENAI_API_KEY", "test")
         with patch.dict("sys.modules", {"openai": None}):
-            from ai_provider import OpenAIProvider
+            from rattle_api.provider import OpenAIProvider
 
             with pytest.raises(ImportError, match="openai"):
                 OpenAIProvider()
@@ -140,7 +140,7 @@ class TestOpenAIProvider:
         monkeypatch.setenv("OPENAI_API_KEY", "test-key")
         monkeypatch.delenv("OPENAI_MODEL", raising=False)
         with patch.dict("sys.modules", {"openai": MagicMock()}):
-            from ai_provider import OpenAIProvider
+            from rattle_api.provider import OpenAIProvider
 
             p = OpenAIProvider()
             assert p._model == "gpt-4o"
@@ -149,7 +149,7 @@ class TestOpenAIProvider:
         monkeypatch.setenv("OPENAI_API_KEY", "test-key")
         monkeypatch.setenv("OPENAI_MODEL", "gpt-3.5-turbo")
         with patch.dict("sys.modules", {"openai": MagicMock()}):
-            from ai_provider import OpenAIProvider
+            from rattle_api.provider import OpenAIProvider
 
             p = OpenAIProvider()
             assert p._model == "gpt-3.5-turbo"
@@ -158,7 +158,7 @@ class TestOpenAIProvider:
         monkeypatch.setenv("OPENAI_API_KEY", "test-key")
         monkeypatch.setenv("OPENAI_BASE_URL", "http://localhost:8080")
         with patch.dict("sys.modules", {"openai": MagicMock()}):
-            from ai_provider import OpenAIProvider
+            from rattle_api.provider import OpenAIProvider
 
             p = OpenAIProvider()
             assert p._base_url == "http://localhost:8080"
@@ -173,7 +173,7 @@ class TestOpenAIProvider:
         ]
 
         with patch.dict("sys.modules", {"openai": mock_openai}):
-            from ai_provider import OpenAIProvider
+            from rattle_api.provider import OpenAIProvider
 
             p = OpenAIProvider()
             result = p.complete("hello", system="be helpful")
@@ -195,7 +195,7 @@ class TestAnthropicProvider:
 
     def test_requires_anthropic_package(self):
         with patch.dict("sys.modules", {"anthropic": None}):
-            from ai_provider import AnthropicProvider
+            from rattle_api.provider import AnthropicProvider
 
             with pytest.raises(ImportError, match="anthropic"):
                 AnthropicProvider()
@@ -204,7 +204,7 @@ class TestAnthropicProvider:
         monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
         monkeypatch.delenv("ANTHROPIC_MODEL", raising=False)
         with patch.dict("sys.modules", {"anthropic": MagicMock()}):
-            from ai_provider import AnthropicProvider
+            from rattle_api.provider import AnthropicProvider
 
             p = AnthropicProvider()
             assert "claude" in p._model
@@ -217,7 +217,7 @@ class TestAnthropicProvider:
         mock_client.messages.create.return_value.content = [MagicMock(text="response text")]
 
         with patch.dict("sys.modules", {"anthropic": mock_anthropic}):
-            from ai_provider import AnthropicProvider
+            from rattle_api.provider import AnthropicProvider
 
             p = AnthropicProvider()
             result = p.complete("hello", system="be helpful")
@@ -238,7 +238,7 @@ class TestOllamaProvider:
     def test_default_config(self, monkeypatch):
         monkeypatch.delenv("OLLAMA_BASE_URL", raising=False)
         monkeypatch.delenv("OLLAMA_MODEL", raising=False)
-        from ai_provider import OllamaProvider
+        from rattle_api.provider import OllamaProvider
 
         p = OllamaProvider()
         assert "localhost" in p._base_url
@@ -247,7 +247,7 @@ class TestOllamaProvider:
     def test_custom_config(self, monkeypatch):
         monkeypatch.setenv("OLLAMA_BASE_URL", "http://gpu-server:11434")
         monkeypatch.setenv("OLLAMA_MODEL", "mistral")
-        from ai_provider import OllamaProvider
+        from rattle_api.provider import OllamaProvider
 
         p = OllamaProvider()
         assert p._base_url == "http://gpu-server:11434"
@@ -255,7 +255,7 @@ class TestOllamaProvider:
 
     def test_complete_calls_api(self, monkeypatch):
         monkeypatch.delenv("OLLAMA_BASE_URL", raising=False)
-        from ai_provider import OllamaProvider
+        from rattle_api.provider import OllamaProvider
 
         p = OllamaProvider()
 
@@ -283,7 +283,7 @@ class TestCustomHTTPProvider:
 
     def test_requires_base_url(self, monkeypatch):
         monkeypatch.delenv("CUSTOM_AI_BASE_URL", raising=False)
-        from ai_provider import CustomHTTPProvider
+        from rattle_api.provider import CustomHTTPProvider
 
         with pytest.raises(ValueError, match="CUSTOM_AI_BASE_URL"):
             CustomHTTPProvider()
@@ -291,7 +291,7 @@ class TestCustomHTTPProvider:
     def test_optional_api_key(self, monkeypatch):
         monkeypatch.setenv("CUSTOM_AI_BASE_URL", "http://my-api")
         monkeypatch.delenv("CUSTOM_AI_API_KEY", raising=False)
-        from ai_provider import CustomHTTPProvider
+        from rattle_api.provider import CustomHTTPProvider
 
         p = CustomHTTPProvider()
         assert p._api_key == ""
@@ -299,7 +299,7 @@ class TestCustomHTTPProvider:
     def test_complete_sends_bearer(self, monkeypatch):
         monkeypatch.setenv("CUSTOM_AI_BASE_URL", "http://my-api")
         monkeypatch.setenv("CUSTOM_AI_API_KEY", "secret-token")
-        from ai_provider import CustomHTTPProvider
+        from rattle_api.provider import CustomHTTPProvider
 
         p = CustomHTTPProvider()
 
@@ -317,7 +317,7 @@ class TestCustomHTTPProvider:
 
     def test_strips_trailing_slash_from_url(self, monkeypatch):
         monkeypatch.setenv("CUSTOM_AI_BASE_URL", "http://my-api/")
-        from ai_provider import CustomHTTPProvider
+        from rattle_api.provider import CustomHTTPProvider
 
         p = CustomHTTPProvider()
 

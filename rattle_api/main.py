@@ -3,8 +3,8 @@ import json
 import os
 import sys
 
-from client import RattleClient
-from source_reader import list_sources
+from .client import RattleClient
+from .source import list_sources
 
 # ---------------------------------------------------------------------------
 # Original commands
@@ -39,7 +39,7 @@ def cmd_list_sources(tenant, args):
 
 def cmd_ai_describe(tenant, args):
     """Generate AI product descriptions and push to Rattle."""
-    from ai_tasks import describe_products
+    from .tasks import describe_products
 
     results = describe_products(
         tenant,
@@ -51,7 +51,7 @@ def cmd_ai_describe(tenant, args):
 
 def cmd_ai_classify(tenant, args):
     """Classify products using AI."""
-    from ai_tasks import classify_products
+    from .tasks import classify_products
 
     results = classify_products(tenant, limit=args.limit)
     print(json.dumps(results, indent=2, ensure_ascii=False))
@@ -59,7 +59,7 @@ def cmd_ai_classify(tenant, args):
 
 def cmd_ai_transform(tenant, args):
     """Transform interchange data between formats using AI."""
-    from ai_tasks import transform_interchange
+    from .tasks import transform_interchange
 
     results = transform_interchange(
         tenant,
@@ -73,14 +73,14 @@ def cmd_ai_transform(tenant, args):
 
 def cmd_ai_analyse(tenant, args):
     """Ask AI to analyse product data."""
-    from ai_tasks import analyse_data
+    from .tasks import analyse_data
 
     analyse_data(tenant, question=args.question)
 
 
 def cmd_ai_providers(tenant, args):
     """List available AI providers."""
-    from ai_provider import list_providers
+    from .provider import list_providers
 
     print("Available AI providers:")
     for name in list_providers():
@@ -102,9 +102,9 @@ def main():
             "AI provider is selected via the AI_PROVIDER env var:\n"
             "  openai (default), anthropic, ollama, custom\n\n"
             "Examples:\n"
-            "  python main.py pressta test-connection\n"
-            "  AI_PROVIDER=anthropic python main.py pressta ai-describe --limit 3\n"
-            "  python main.py pressta ai-transform datanorm rattle data.json --push\n"
+            "  rattle pressta test-connection\n"
+            "  AI_PROVIDER=anthropic rattle pressta ai-describe --limit 3\n"
+            "  rattle pressta ai-transform datanorm rattle data.json --push\n"
         ),
     )
     parser.add_argument("tenant", help="Tenant name (e.g. pressta)")

@@ -1,4 +1,4 @@
-"""Tests for source_reader.py — file listing and Excel parsing."""
+"""Tests for rattle_api.source — file listing and Excel parsing."""
 
 import os
 from unittest.mock import MagicMock, patch
@@ -13,8 +13,8 @@ class TestListSources:
         (tenant_dir / "data.xlsx").write_text("x")
         (tenant_dir / "prices.json").write_text("x")
 
-        with patch("source_reader.SOURCE_DIR", str(tmp_path)):
-            from source_reader import list_sources
+        with patch("rattle_api.source.SOURCE_DIR", str(tmp_path)):
+            from rattle_api.source import list_sources
 
             files = list_sources("acme")
 
@@ -26,8 +26,8 @@ class TestListSources:
         (tenant_dir / ".hidden").write_text("x")
         (tenant_dir / "visible.txt").write_text("x")
 
-        with patch("source_reader.SOURCE_DIR", str(tmp_path)):
-            from source_reader import list_sources
+        with patch("rattle_api.source.SOURCE_DIR", str(tmp_path)):
+            from rattle_api.source import list_sources
 
             files = list_sources("acme")
 
@@ -38,23 +38,23 @@ class TestListSources:
         sub.mkdir(parents=True)
         (sub / "mecal.pdf").write_text("x")
 
-        with patch("source_reader.SOURCE_DIR", str(tmp_path)):
-            from source_reader import list_sources
+        with patch("rattle_api.source.SOURCE_DIR", str(tmp_path)):
+            from rattle_api.source import list_sources
 
             files = list_sources("acme")
 
         assert files == [os.path.join("pricelists", "mecal.pdf")]
 
     def test_nonexistent_tenant_returns_empty(self, tmp_path):
-        with patch("source_reader.SOURCE_DIR", str(tmp_path)):
-            from source_reader import list_sources
+        with patch("rattle_api.source.SOURCE_DIR", str(tmp_path)):
+            from rattle_api.source import list_sources
 
             assert list_sources("nonexistent") == []
 
     def test_empty_directory_returns_empty(self, tmp_path):
         (tmp_path / "empty").mkdir()
-        with patch("source_reader.SOURCE_DIR", str(tmp_path)):
-            from source_reader import list_sources
+        with patch("rattle_api.source.SOURCE_DIR", str(tmp_path)):
+            from rattle_api.source import list_sources
 
             assert list_sources("empty") == []
 
@@ -62,8 +62,8 @@ class TestListSources:
         (tmp_path / "acme").mkdir()
         (tmp_path / "acme" / "file.txt").write_text("x")
 
-        with patch("source_reader.SOURCE_DIR", str(tmp_path)):
-            from source_reader import list_sources
+        with patch("rattle_api.source.SOURCE_DIR", str(tmp_path)):
+            from rattle_api.source import list_sources
 
             # Tenant is lowercased in list_sources
             files = list_sources("ACME")
@@ -76,8 +76,8 @@ class TestListSources:
         for name in ["c.txt", "a.txt", "b.txt"]:
             (tenant_dir / name).write_text("x")
 
-        with patch("source_reader.SOURCE_DIR", str(tmp_path)):
-            from source_reader import list_sources
+        with patch("rattle_api.source.SOURCE_DIR", str(tmp_path)):
+            from rattle_api.source import list_sources
 
             files = list_sources("acme")
 
@@ -97,8 +97,8 @@ class TestReadExcel:
         mock_wb = MagicMock()
         mock_wb.active = mock_ws
 
-        with patch("source_reader.load_workbook", return_value=mock_wb):
-            from source_reader import read_excel
+        with patch("rattle_api.source.load_workbook", return_value=mock_wb):
+            from rattle_api.source import read_excel
 
             result = read_excel("test.xlsx")
 
@@ -116,8 +116,8 @@ class TestReadExcel:
         mock_wb = MagicMock()
         mock_wb.active = mock_ws
 
-        with patch("source_reader.load_workbook", return_value=mock_wb):
-            from source_reader import read_excel
+        with patch("rattle_api.source.load_workbook", return_value=mock_wb):
+            from rattle_api.source import read_excel
 
             result = read_excel("test.xlsx")
 
@@ -129,8 +129,8 @@ class TestReadExcel:
         mock_wb = MagicMock()
         mock_wb.active = mock_ws
 
-        with patch("source_reader.load_workbook", return_value=mock_wb):
-            from source_reader import read_excel
+        with patch("rattle_api.source.load_workbook", return_value=mock_wb):
+            from rattle_api.source import read_excel
 
             assert read_excel("empty.xlsx") == []
 
@@ -140,8 +140,8 @@ class TestReadExcel:
         mock_wb = MagicMock()
         mock_wb.active = mock_ws
 
-        with patch("source_reader.load_workbook", return_value=mock_wb):
-            from source_reader import read_excel
+        with patch("rattle_api.source.load_workbook", return_value=mock_wb):
+            from rattle_api.source import read_excel
 
             assert read_excel("headers-only.xlsx") == []
 
@@ -151,8 +151,8 @@ class TestReadExcel:
         mock_wb = MagicMock()
         mock_wb.active = mock_ws
 
-        with patch("source_reader.load_workbook", return_value=mock_wb) as mock_load:
-            from source_reader import read_excel
+        with patch("rattle_api.source.load_workbook", return_value=mock_wb) as mock_load:
+            from rattle_api.source import read_excel
 
             read_excel("test.xlsx")
 
@@ -164,8 +164,8 @@ class TestReadExcel:
         mock_wb = MagicMock()
         mock_wb.active = mock_ws
 
-        with patch("source_reader.load_workbook", return_value=mock_wb):
-            from source_reader import read_excel
+        with patch("rattle_api.source.load_workbook", return_value=mock_wb):
+            from rattle_api.source import read_excel
 
             read_excel("test.xlsx")
 

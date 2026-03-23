@@ -15,8 +15,8 @@ runtime via the ``AI_PROVIDER`` env var or explicit argument.
 import json
 import sys
 
-from ai_provider import get_provider
-from client import RattleClient
+from .client import RattleClient
+from .provider import get_provider
 
 # ---------------------------------------------------------------------------
 # Helpers

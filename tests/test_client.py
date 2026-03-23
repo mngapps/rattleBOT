@@ -1,4 +1,4 @@
-"""Tests for client.py — RattleClient HTTP wrapper, error handling, pagination."""
+"""Tests for rattle_api.client — RattleClient HTTP wrapper, error handling, pagination."""
 
 import importlib
 from unittest.mock import MagicMock, patch
@@ -12,15 +12,15 @@ from tests.conftest import make_response
 def client(monkeypatch):
     """Create a RattleClient with a mocked session."""
     monkeypatch.setenv("RATTLE_API_KEY_TESTCO", "test-key-123")
-    import config
+    import rattle_api.config as config
 
     importlib.reload(config)
 
-    with patch("client.requests.Session") as mock_cls:
+    with patch("rattle_api.client.requests.Session") as mock_cls:
         session = MagicMock()
         mock_cls.return_value = session
 
-        from client import RattleClient
+        from rattle_api.client import RattleClient
 
         c = RattleClient("testco")
         c._session = session
@@ -38,11 +38,11 @@ class TestClientInit:
         assert call_args["Accept"] == "application/json"
 
     def test_unknown_tenant_raises(self, monkeypatch):
-        import config
+        import rattle_api.config as config
 
         importlib.reload(config)
-        with patch("client.requests.Session"):
-            from client import RattleClient
+        with patch("rattle_api.client.requests.Session"):
+            from rattle_api.client import RattleClient
 
             with pytest.raises(ValueError, match="Unknown tenant"):
                 RattleClient("nonexistent")

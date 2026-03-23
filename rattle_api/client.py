@@ -2,7 +2,7 @@ import os
 
 import requests
 
-from config import BASE_URL, get_tenant
+from .config import BASE_URL, get_tenant
 
 DEFAULT_TIMEOUT = 30
 

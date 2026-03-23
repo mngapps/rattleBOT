@@ -47,7 +47,7 @@ dev = [
 ]
 
 [project.scripts]
-rattle = "main:main"
+rattle = "rattle_api.main:main"
 
 [project.urls]
 Homepage = "https://github.com/mngapps/rattle_api"
@@ -56,8 +56,8 @@ Repository = "https://github.com/mngapps/rattle_api"
 Issues = "https://github.com/mngapps/rattle_api/issues"
 Changelog = "https://github.com/mngapps/rattle_api/blob/main/CHANGELOG.md"
 
-[tool.setuptools]
-py-modules = ["main", "config", "client", "ai_provider", "ai_tasks", "source_reader", "image_utils"]
+[tool.setuptools.packages]
+find = {}
 
 [tool.ruff]
 target-version = "py310"
