@@ -114,24 +114,15 @@ This means the virtual environment is active.
 
 ## Step 4: Install Rattle AI Workspace
 
-Choose **one** of the following commands depending on which AI provider you want
-to use:
+Run this single command to install everything:
 
-```bash
-# If you want to use OpenAI (ChatGPT):
-pip install -e ".[openai]"
-
-# If you want to use Anthropic (Claude):
-pip install -e ".[anthropic]"
-
-# If you want all AI providers available:
+```
 pip install -e ".[all-ai]"
-
-# If you only need basic commands (no AI features):
-pip install -e .
 ```
 
 Wait for the installation to finish. You will see a success message at the end.
+This installs Rattle together with all supported AI providers (OpenAI, Anthropic)
+so you can switch between them freely without reinstalling anything.
 
 ---
 
@@ -222,7 +213,6 @@ Connection OK for tenant 'mycompany'
 | `command not found: rattle` | Make sure your virtual environment is activated (Step 3). |
 | `Unknown tenant 'mycompany'` | Check that `RATTLE_API_KEY_MYCOMPANY=...` is in your `.env` file and the key is correct. |
 | `Connection FAILED` | Verify your API key is correct and you have internet access. |
-| `ModuleNotFoundError: openai` | Run `pip install -e ".[openai]"` (or the provider you need). |
 
 ---
 
