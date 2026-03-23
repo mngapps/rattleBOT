@@ -1,10 +1,9 @@
 """Tests for ai_provider.py — provider registry, complete_json parsing, all backends."""
 
 import json
-import importlib
-import pytest
 from unittest.mock import MagicMock, patch
 
+import pytest
 
 # ---------------------------------------------------------------------------
 # Registry

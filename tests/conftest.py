@@ -1,10 +1,10 @@
 """Shared fixtures for the Rattle API test suite."""
 
-import os
 import json
-import pytest
+import os
 from unittest.mock import MagicMock, patch
 
+import pytest
 
 # ---------------------------------------------------------------------------
 # Environment isolation — prevent real API calls
@@ -12,13 +12,15 @@ from unittest.mock import MagicMock, patch
 
 @pytest.fixture(autouse=True)
 def clean_env(monkeypatch):
-    """Remove real credentials from the environment for every test."""
+    """Remove real credentials and prevent .env from re-populating them."""
     for key in list(os.environ):
         if key.startswith("RATTLE_API_KEY_"):
             monkeypatch.delenv(key, raising=False)
     monkeypatch.delenv("AI_PROVIDER", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    # Prevent load_dotenv() from re-reading .env during importlib.reload()
+    monkeypatch.setattr("dotenv.load_dotenv", lambda *a, **kw: None)
 
 
 @pytest.fixture
@@ -26,8 +28,9 @@ def tenant_env(monkeypatch):
     """Set up a fake tenant credential."""
     monkeypatch.setenv("RATTLE_API_KEY_TESTCO", "test-key-abc123")
     # Reload config module to pick up new env
-    import config
     import importlib
+
+    import config
     importlib.reload(config)
     return "testco"
 

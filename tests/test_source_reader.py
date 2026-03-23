@@ -1,8 +1,7 @@
 """Tests for source_reader.py — file listing and Excel parsing."""
 
 import os
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 
 class TestListSources:

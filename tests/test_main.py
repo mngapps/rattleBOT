@@ -1,10 +1,9 @@
 """Tests for main.py — CLI argument parsing and command dispatch."""
 
 import importlib
-import json
-import sys
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 
 
 @pytest.fixture(autouse=True)
@@ -44,7 +43,8 @@ class TestCLIParsing:
                 assert args_obj.language == "de"
 
     def test_ai_describe_custom(self):
-        with patch("sys.argv", ["main.py", "testco", "ai-describe", "--limit", "10", "--language", "en"]):
+        argv = ["main.py", "testco", "ai-describe", "--limit", "10", "--language", "en"]
+        with patch("sys.argv", argv):
             with patch("main.cmd_ai_describe") as mock_cmd:
                 from main import main
                 main()
@@ -61,7 +61,8 @@ class TestCLIParsing:
                 assert args_obj.limit == 10
 
     def test_ai_transform_args(self):
-        with patch("sys.argv", ["main.py", "testco", "ai-transform", "datanorm", "rattle", "data.json", "--push"]):
+        argv = ["main.py", "testco", "ai-transform", "datanorm", "rattle", "data.json", "--push"]
+        with patch("sys.argv", argv):
             with patch("main.cmd_ai_transform") as mock_cmd:
                 from main import main
                 main()
@@ -72,7 +73,8 @@ class TestCLIParsing:
                 assert args_obj.push is True
 
     def test_ai_transform_no_push(self):
-        with patch("sys.argv", ["main.py", "testco", "ai-transform", "eclass", "bmecat", "in.json"]):
+        argv = ["main.py", "testco", "ai-transform", "eclass", "bmecat", "in.json"]
+        with patch("sys.argv", argv):
             with patch("main.cmd_ai_transform") as mock_cmd:
                 from main import main
                 main()
@@ -119,7 +121,6 @@ class TestCommandDispatch:
     """Commands dispatch to the correct handler functions."""
 
     def test_all_commands_registered(self):
-        from main import main
         # Verify command mapping covers all subparsers
         expected = {
             "test-connection", "list-sources",

@@ -1,10 +1,9 @@
 """Tests for image_utils.py — shadow generation and option image upload."""
 
 import os
-import json
-import time
+from unittest.mock import MagicMock
+
 import pytest
-from unittest.mock import MagicMock, patch, call
 
 
 class TestCreateShadowedImage:
@@ -198,8 +197,9 @@ class TestUploadOptionImages:
 
     def test_reuses_existing_shadow(self, mock_client, img_dir, capsys):
         """If shadow already exists and source hasn't changed, reuse it."""
-        from image_utils import upload_option_images
         from PIL import Image
+
+        from image_utils import upload_option_images
 
         # Pre-create shadow
         shadow_dir = img_dir / "shadowed"

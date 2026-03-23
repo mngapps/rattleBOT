@@ -1,4 +1,5 @@
 import os
+
 from openpyxl import load_workbook
 
 SOURCE_DIR = os.path.join(os.path.dirname(__file__), "source")

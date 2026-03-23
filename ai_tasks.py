@@ -18,7 +18,6 @@ import sys
 from ai_provider import get_provider
 from client import RattleClient
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -139,7 +138,7 @@ def transform_interchange(tenant, source_format, target_format,
     """
     ai = _ai(provider)
 
-    with open(data_file, "r", encoding="utf-8") as fh:
+    with open(data_file, encoding="utf-8") as fh:
         source_data = json.load(fh)
 
     if not isinstance(source_data, list):

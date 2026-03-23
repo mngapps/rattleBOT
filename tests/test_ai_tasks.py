@@ -1,11 +1,12 @@
 """Tests for ai_tasks.py — AI-driven tasks with mocked API and providers."""
 
-import json
 import importlib
-import pytest
-from unittest.mock import MagicMock, patch, mock_open
+import json
+from unittest.mock import MagicMock, patch
 
-from tests.conftest import FakeAIProvider, make_response
+import pytest
+
+from tests.conftest import FakeAIProvider
 
 
 @pytest.fixture

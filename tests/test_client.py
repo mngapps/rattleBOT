@@ -1,9 +1,9 @@
 """Tests for client.py — RattleClient HTTP wrapper, error handling, pagination."""
 
-import json
 import importlib
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import MagicMock, patch, mock_open
 
 from tests.conftest import make_response
 
