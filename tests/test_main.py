@@ -11,6 +11,7 @@ def setup_tenant(monkeypatch):
     """Ensure a tenant is available for CLI tests."""
     monkeypatch.setenv("RATTLE_API_KEY_TESTCO", "test-key")
     import config
+
     importlib.reload(config)
 
 
@@ -21,6 +22,7 @@ class TestCLIParsing:
         with patch("sys.argv", ["main.py", "testco", "test-connection"]):
             with patch("main.cmd_test_connection") as mock_cmd:
                 from main import main
+
                 main()
                 mock_cmd.assert_called_once()
                 args = mock_cmd.call_args[0]
@@ -30,6 +32,7 @@ class TestCLIParsing:
         with patch("sys.argv", ["main.py", "testco", "list-sources"]):
             with patch("main.cmd_list_sources") as mock_cmd:
                 from main import main
+
                 main()
                 mock_cmd.assert_called_once()
 
@@ -37,6 +40,7 @@ class TestCLIParsing:
         with patch("sys.argv", ["main.py", "testco", "ai-describe"]):
             with patch("main.cmd_ai_describe") as mock_cmd:
                 from main import main
+
                 main()
                 args_obj = mock_cmd.call_args[0][1]
                 assert args_obj.limit == 5
@@ -47,6 +51,7 @@ class TestCLIParsing:
         with patch("sys.argv", argv):
             with patch("main.cmd_ai_describe") as mock_cmd:
                 from main import main
+
                 main()
                 args_obj = mock_cmd.call_args[0][1]
                 assert args_obj.limit == 10
@@ -56,6 +61,7 @@ class TestCLIParsing:
         with patch("sys.argv", ["main.py", "testco", "ai-classify"]):
             with patch("main.cmd_ai_classify") as mock_cmd:
                 from main import main
+
                 main()
                 args_obj = mock_cmd.call_args[0][1]
                 assert args_obj.limit == 10
@@ -65,6 +71,7 @@ class TestCLIParsing:
         with patch("sys.argv", argv):
             with patch("main.cmd_ai_transform") as mock_cmd:
                 from main import main
+
                 main()
                 args_obj = mock_cmd.call_args[0][1]
                 assert args_obj.source_format == "datanorm"
@@ -77,6 +84,7 @@ class TestCLIParsing:
         with patch("sys.argv", argv):
             with patch("main.cmd_ai_transform") as mock_cmd:
                 from main import main
+
                 main()
                 args_obj = mock_cmd.call_args[0][1]
                 assert args_obj.push is False
@@ -85,6 +93,7 @@ class TestCLIParsing:
         with patch("sys.argv", ["main.py", "testco", "ai-analyse", "--question", "How many?"]):
             with patch("main.cmd_ai_analyse") as mock_cmd:
                 from main import main
+
                 main()
                 args_obj = mock_cmd.call_args[0][1]
                 assert args_obj.question == "How many?"
@@ -93,6 +102,7 @@ class TestCLIParsing:
         with patch("sys.argv", ["main.py", "testco", "ai-analyse"]):
             with patch("main.cmd_ai_analyse") as mock_cmd:
                 from main import main
+
                 main()
                 args_obj = mock_cmd.call_args[0][1]
                 assert args_obj.question is None
@@ -101,6 +111,7 @@ class TestCLIParsing:
         with patch("sys.argv", ["main.py", "testco", "ai-providers"]):
             with patch("main.cmd_ai_providers") as mock_cmd:
                 from main import main
+
                 main()
                 mock_cmd.assert_called_once()
 
@@ -108,12 +119,14 @@ class TestCLIParsing:
         with patch("sys.argv", ["main.py", "testco"]):
             with pytest.raises(SystemExit):
                 from main import main
+
                 main()
 
     def test_missing_tenant_exits(self):
         with patch("sys.argv", ["main.py"]):
             with pytest.raises(SystemExit):
                 from main import main
+
                 main()
 
 
@@ -123,12 +136,17 @@ class TestCommandDispatch:
     def test_all_commands_registered(self):
         # Verify command mapping covers all subparsers
         expected = {
-            "test-connection", "list-sources",
-            "ai-describe", "ai-classify", "ai-transform", "ai-analyse",
+            "test-connection",
+            "list-sources",
+            "ai-describe",
+            "ai-classify",
+            "ai-transform",
+            "ai-analyse",
             "ai-providers",
         }
         # Read the commands dict from main module
         import main as main_mod
+
         # The commands dict is inside main() — test by calling each
         for cmd in expected:
             argv = ["main.py", "testco", cmd]
@@ -151,6 +169,7 @@ class TestCommandTestConnection:
             mock_cls.return_value = mock_client
 
             from main import cmd_test_connection
+
             cmd_test_connection("testco", MagicMock())
 
         captured = capsys.readouterr()
@@ -163,6 +182,7 @@ class TestCommandTestConnection:
             mock_cls.return_value = mock_client
 
             from main import cmd_test_connection
+
             with pytest.raises(SystemExit):
                 cmd_test_connection("testco", MagicMock())
 
@@ -173,6 +193,7 @@ class TestCommandListSources:
     def test_prints_files(self, capsys):
         with patch("main.list_sources", return_value=["a.xlsx", "b.json"]):
             from main import cmd_list_sources
+
             cmd_list_sources("testco", MagicMock())
 
         captured = capsys.readouterr()
@@ -182,6 +203,7 @@ class TestCommandListSources:
     def test_no_files_message(self, capsys):
         with patch("main.list_sources", return_value=[]):
             from main import cmd_list_sources
+
             cmd_list_sources("testco", MagicMock())
 
         captured = capsys.readouterr()

@@ -15,6 +15,7 @@ class TestListSources:
 
         with patch("source_reader.SOURCE_DIR", str(tmp_path)):
             from source_reader import list_sources
+
             files = list_sources("acme")
 
         assert sorted(files) == ["data.xlsx", "prices.json"]
@@ -27,6 +28,7 @@ class TestListSources:
 
         with patch("source_reader.SOURCE_DIR", str(tmp_path)):
             from source_reader import list_sources
+
             files = list_sources("acme")
 
         assert files == ["visible.txt"]
@@ -38,6 +40,7 @@ class TestListSources:
 
         with patch("source_reader.SOURCE_DIR", str(tmp_path)):
             from source_reader import list_sources
+
             files = list_sources("acme")
 
         assert files == [os.path.join("pricelists", "mecal.pdf")]
@@ -45,12 +48,14 @@ class TestListSources:
     def test_nonexistent_tenant_returns_empty(self, tmp_path):
         with patch("source_reader.SOURCE_DIR", str(tmp_path)):
             from source_reader import list_sources
+
             assert list_sources("nonexistent") == []
 
     def test_empty_directory_returns_empty(self, tmp_path):
         (tmp_path / "empty").mkdir()
         with patch("source_reader.SOURCE_DIR", str(tmp_path)):
             from source_reader import list_sources
+
             assert list_sources("empty") == []
 
     def test_case_insensitive_tenant(self, tmp_path):
@@ -59,6 +64,7 @@ class TestListSources:
 
         with patch("source_reader.SOURCE_DIR", str(tmp_path)):
             from source_reader import list_sources
+
             # Tenant is lowercased in list_sources
             files = list_sources("ACME")
 
@@ -72,6 +78,7 @@ class TestListSources:
 
         with patch("source_reader.SOURCE_DIR", str(tmp_path)):
             from source_reader import list_sources
+
             files = list_sources("acme")
 
         assert files == ["a.txt", "b.txt", "c.txt"]
@@ -92,6 +99,7 @@ class TestReadExcel:
 
         with patch("source_reader.load_workbook", return_value=mock_wb):
             from source_reader import read_excel
+
             result = read_excel("test.xlsx")
 
         assert result == [
@@ -110,6 +118,7 @@ class TestReadExcel:
 
         with patch("source_reader.load_workbook", return_value=mock_wb):
             from source_reader import read_excel
+
             result = read_excel("test.xlsx")
 
         assert result == [{"Name": "Drill", "col_1": "extra", "Price": 100}]
@@ -122,6 +131,7 @@ class TestReadExcel:
 
         with patch("source_reader.load_workbook", return_value=mock_wb):
             from source_reader import read_excel
+
             assert read_excel("empty.xlsx") == []
 
     def test_header_only_returns_empty(self):
@@ -132,6 +142,7 @@ class TestReadExcel:
 
         with patch("source_reader.load_workbook", return_value=mock_wb):
             from source_reader import read_excel
+
             assert read_excel("headers-only.xlsx") == []
 
     def test_opens_read_only_and_data_only(self):
@@ -142,6 +153,7 @@ class TestReadExcel:
 
         with patch("source_reader.load_workbook", return_value=mock_wb) as mock_load:
             from source_reader import read_excel
+
             read_excel("test.xlsx")
 
         mock_load.assert_called_once_with("test.xlsx", read_only=True, data_only=True)
@@ -154,6 +166,7 @@ class TestReadExcel:
 
         with patch("source_reader.load_workbook", return_value=mock_wb):
             from source_reader import read_excel
+
             read_excel("test.xlsx")
 
         mock_wb.close.assert_called_once()

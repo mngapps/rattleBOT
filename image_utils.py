@@ -98,22 +98,27 @@ def upload_option_images(client, img_dir, option_groups):
                 # or fall back to the first mit image in the group.
                 shadow_src_name = opt.get("image") or mit_image
                 if not shadow_src_name:
-                    print(f"  SKIP option {opt_id} ({label}): "
-                          f"no source image for shadow in group '{group_name}'")
+                    print(
+                        f"  SKIP option {opt_id} ({label}): "
+                        f"no source image for shadow in group '{group_name}'"
+                    )
                     continue
 
                 src_path = os.path.join(img_dir, shadow_src_name)
                 if not os.path.exists(src_path):
-                    print(f"  SKIP option {opt_id} ({label}): "
-                          f"source image not found: {shadow_src_name}")
+                    print(
+                        f"  SKIP option {opt_id} ({label}): "
+                        f"source image not found: {shadow_src_name}"
+                    )
                     continue
 
                 shadow_name = f"shadow_{shadow_src_name}"
                 shadow_path = os.path.join(shadow_dir, shadow_name)
 
                 # Only regenerate if missing or source is newer
-                if (not os.path.exists(shadow_path)
-                        or os.path.getmtime(src_path) > os.path.getmtime(shadow_path)):
+                if not os.path.exists(shadow_path) or os.path.getmtime(src_path) > os.path.getmtime(
+                    shadow_path
+                ):
                     create_shadowed_image(src_path, shadow_path)
                     total_shadows += 1
                 else:
@@ -130,8 +135,7 @@ def upload_option_images(client, img_dir, option_groups):
 
                 filepath = os.path.join(img_dir, image_name)
                 if not os.path.exists(filepath):
-                    print(f"  SKIP option {opt_id} ({label}): "
-                          f"image not found: {image_name}")
+                    print(f"  SKIP option {opt_id} ({label}): image not found: {image_name}")
                     continue
 
                 _upload_one(client, opt_id, filepath, label)

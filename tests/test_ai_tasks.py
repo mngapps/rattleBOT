@@ -27,6 +27,7 @@ def patched_client(mock_client, monkeypatch):
     """Patch RattleClient constructor to return our mock."""
     monkeypatch.setenv("RATTLE_API_KEY_TESTCO", "test-key")
     import config
+
     importlib.reload(config)
 
     with patch("ai_tasks.RattleClient", return_value=mock_client):
@@ -37,11 +38,13 @@ def patched_client(mock_client, monkeypatch):
 # describe_products
 # ---------------------------------------------------------------------------
 
+
 class TestDescribeProducts:
     """AI-generated product descriptions, pushed back to Rattle API."""
 
     def test_generates_descriptions(self, patched_client):
         from ai_tasks import describe_products
+
         fake = FakeAIProvider(text_response="A professional drilling machine.")
         results = describe_products("testco", provider=fake, limit=2)
 
@@ -52,16 +55,16 @@ class TestDescribeProducts:
 
     def test_patches_back_to_api(self, patched_client):
         from ai_tasks import describe_products
+
         fake = FakeAIProvider(text_response="desc")
         describe_products("testco", provider=fake, limit=2)
 
         assert patched_client.patch.call_count == 2
-        patched_client.patch.assert_any_call(
-            "products/p1", json={"description": "desc"}
-        )
+        patched_client.patch.assert_any_call("products/p1", json={"description": "desc"})
 
     def test_respects_limit(self, patched_client):
         from ai_tasks import describe_products
+
         fake = FakeAIProvider(text_response="desc")
         results = describe_products("testco", provider=fake, limit=1)
         assert len(results) == 1
@@ -80,6 +83,7 @@ class TestDescribeProducts:
 
     def test_language_passed_to_system_prompt(self, patched_client):
         from ai_tasks import describe_products
+
         fake = FakeAIProvider(text_response="Beschreibung")
         describe_products("testco", provider=fake, limit=1, language="de")
         assert fake.calls[0]["system"] is not None
@@ -87,6 +91,7 @@ class TestDescribeProducts:
 
     def test_english_language(self, patched_client):
         from ai_tasks import describe_products
+
         fake = FakeAIProvider(text_response="Description")
         describe_products("testco", provider=fake, limit=1, language="en")
         assert "en" in fake.calls[0]["system"]
@@ -94,6 +99,7 @@ class TestDescribeProducts:
     def test_idempotent_same_result(self, patched_client):
         """Running describe twice with same data produces same results."""
         from ai_tasks import describe_products
+
         fake = FakeAIProvider(text_response="desc")
         r1 = describe_products("testco", provider=fake, limit=2)
         r2 = describe_products("testco", provider=fake, limit=2)
@@ -104,11 +110,13 @@ class TestDescribeProducts:
 # classify_products
 # ---------------------------------------------------------------------------
 
+
 class TestClassifyProducts:
     """AI-generated category tags for products."""
 
     def test_returns_tags(self, patched_client):
         from ai_tasks import classify_products
+
         fake = FakeAIProvider(json_response=["Power Tools", "Drilling"])
         results = classify_products("testco", provider=fake, limit=2)
 
@@ -127,6 +135,7 @@ class TestClassifyProducts:
 
     def test_respects_limit(self, patched_client):
         from ai_tasks import classify_products
+
         fake = FakeAIProvider(json_response=["tag"])
         results = classify_products("testco", provider=fake, limit=1)
         assert len(results) == 1
@@ -135,6 +144,7 @@ class TestClassifyProducts:
 # ---------------------------------------------------------------------------
 # transform_interchange
 # ---------------------------------------------------------------------------
+
 
 class TestTransformInterchange:
     """Format conversion with optional push to Rattle API."""
@@ -187,9 +197,7 @@ class TestTransformInterchange:
         data_file.write_text(json.dumps([{"id": "1"}]))
 
         fake = FakeAIProvider(json_response=[{"name": "A"}])
-        transform_interchange(
-            "testco", "datanorm", "rattle", str(data_file), provider=fake
-        )
+        transform_interchange("testco", "datanorm", "rattle", str(data_file), provider=fake)
 
         patched_client.post.assert_not_called()
 
@@ -209,6 +217,7 @@ class TestTransformInterchange:
 
     def test_file_not_found_raises(self, patched_client):
         from ai_tasks import transform_interchange
+
         fake = FakeAIProvider(json_response=[])
         with pytest.raises(FileNotFoundError):
             transform_interchange(
@@ -223,12 +232,8 @@ class TestTransformInterchange:
         data_file.write_text(json.dumps([{"id": "1"}]))
 
         fake = FakeAIProvider(json_response=[{"name": "Converted"}])
-        r1 = transform_interchange(
-            "testco", "datanorm", "rattle", str(data_file), provider=fake
-        )
-        r2 = transform_interchange(
-            "testco", "datanorm", "rattle", str(data_file), provider=fake
-        )
+        r1 = transform_interchange("testco", "datanorm", "rattle", str(data_file), provider=fake)
+        r2 = transform_interchange("testco", "datanorm", "rattle", str(data_file), provider=fake)
         assert r1 == r2
 
 
@@ -236,29 +241,34 @@ class TestTransformInterchange:
 # analyse_rental_data
 # ---------------------------------------------------------------------------
 
+
 class TestAnalyseRentalData:
     """Open-ended AI analysis of rental catalogue data."""
 
     def test_returns_analysis_text(self, patched_client):
         from ai_tasks import analyse_rental_data
+
         fake = FakeAIProvider(text_response="Your data has 2 products with good coverage.")
         result = analyse_rental_data("testco", provider=fake)
         assert "2 products" in result
 
     def test_custom_question(self, patched_client):
         from ai_tasks import analyse_rental_data
+
         fake = FakeAIProvider(text_response="answer")
         analyse_rental_data("testco", provider=fake, question="How many drills?")
         assert "How many drills?" in fake.calls[0]["prompt"]
 
     def test_default_question_is_quality_audit(self, patched_client):
         from ai_tasks import analyse_rental_data
+
         fake = FakeAIProvider(text_response="audit")
         analyse_rental_data("testco", provider=fake)
         assert "data quality" in fake.calls[0]["prompt"].lower()
 
     def test_fetches_sample(self, patched_client):
         from ai_tasks import analyse_rental_data
+
         fake = FakeAIProvider(text_response="analysis")
         analyse_rental_data("testco", provider=fake)
         patched_client.list_all.assert_called_once_with("products", per_page=20)
@@ -268,16 +278,19 @@ class TestAnalyseRentalData:
 # _ai() helper
 # ---------------------------------------------------------------------------
 
+
 class TestAIHelper:
     """_ai() — lazy provider resolution."""
 
     def test_returns_explicit_provider(self):
         from ai_tasks import _ai
+
         fake = FakeAIProvider()
         assert _ai(fake) is fake
 
     def test_falls_back_to_get_provider(self, monkeypatch):
         from ai_tasks import _ai
+
         monkeypatch.setenv("AI_PROVIDER", "ollama")
         provider = _ai()
         assert provider.name == "ollama"

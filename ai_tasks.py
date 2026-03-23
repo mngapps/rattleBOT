@@ -22,6 +22,7 @@ from client import RattleClient
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _ai(provider=None):
     """Resolve AI provider (lazy so callers can override)."""
     return provider or get_provider()
@@ -30,6 +31,7 @@ def _ai(provider=None):
 # ---------------------------------------------------------------------------
 # Task: describe_products
 # ---------------------------------------------------------------------------
+
 
 def describe_products(tenant, *, provider=None, limit=5, language="de"):
     """Use AI to generate marketing descriptions for products.
@@ -79,6 +81,7 @@ def describe_products(tenant, *, provider=None, limit=5, language="de"):
 # Task: classify_products
 # ---------------------------------------------------------------------------
 
+
 def classify_products(tenant, *, provider=None, limit=10):
     """Use AI to suggest category tags for products.
 
@@ -115,8 +118,10 @@ def classify_products(tenant, *, provider=None, limit=10):
 # Task: transform_interchange
 # ---------------------------------------------------------------------------
 
-def transform_interchange(tenant, source_format, target_format,
-                          data_file, *, provider=None, push=False):
+
+def transform_interchange(
+    tenant, source_format, target_format, data_file, *, provider=None, push=False
+):
     """Use AI to transform interchange data between formats.
 
     Reads *data_file* (JSON), asks the AI to convert from *source_format*
@@ -157,8 +162,7 @@ def transform_interchange(tenant, source_format, target_format,
     if not isinstance(transformed, list):
         transformed = [transformed]
 
-    print(f"  Transformed {len(transformed)} record(s) "
-          f"({source_format} → {target_format})")
+    print(f"  Transformed {len(transformed)} record(s) ({source_format} → {target_format})")
 
     if push:
         client = RattleClient(tenant)
@@ -175,6 +179,7 @@ def transform_interchange(tenant, source_format, target_format,
 # ---------------------------------------------------------------------------
 # Task: analyse_rental_data
 # ---------------------------------------------------------------------------
+
 
 def analyse_rental_data(tenant, *, provider=None, question=None):
     """Ask an AI an open-ended question about the tenant's rental data.
@@ -216,8 +221,8 @@ def analyse_rental_data(tenant, *, provider=None, question=None):
 # ---------------------------------------------------------------------------
 
 TASKS = {
-    "describe-products":      describe_products,
-    "classify-products":      classify_products,
-    "transform-interchange":  transform_interchange,
-    "analyse-rental-data":    analyse_rental_data,
+    "describe-products": describe_products,
+    "classify-products": classify_products,
+    "transform-interchange": transform_interchange,
+    "analyse-rental-data": analyse_rental_data,
 }

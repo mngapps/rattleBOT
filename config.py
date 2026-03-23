@@ -13,9 +13,7 @@ BASE_URL = os.environ.get("RATTLE_BASE_URL", "https://www.rattleapp.de/api/v1")
 PREFIX = "RATTLE_API_KEY_"
 
 TENANTS = {
-    key[len(PREFIX):].lower(): value
-    for key, value in os.environ.items()
-    if key.startswith(PREFIX)
+    key[len(PREFIX) :].lower(): value for key, value in os.environ.items() if key.startswith(PREFIX)
 }
 
 

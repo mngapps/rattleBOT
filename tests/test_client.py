@@ -13,6 +13,7 @@ def client(monkeypatch):
     """Create a RattleClient with a mocked session."""
     monkeypatch.setenv("RATTLE_API_KEY_TESTCO", "test-key-123")
     import config
+
     importlib.reload(config)
 
     with patch("client.requests.Session") as mock_cls:
@@ -20,6 +21,7 @@ def client(monkeypatch):
         mock_cls.return_value = session
 
         from client import RattleClient
+
         c = RattleClient("testco")
         c._session = session
         yield c, session
@@ -37,9 +39,11 @@ class TestClientInit:
 
     def test_unknown_tenant_raises(self, monkeypatch):
         import config
+
         importlib.reload(config)
         with patch("client.requests.Session"):
             from client import RattleClient
+
             with pytest.raises(ValueError, match="Unknown tenant"):
                 RattleClient("nonexistent")
 
@@ -161,23 +165,32 @@ class TestListAll:
 
     def test_paginated_single_page(self, client):
         c, session = client
-        session.get.return_value = make_response(200, json_data={
-            "data": [{"id": 1}],
-            "meta": {"next_cursor": None},
-        })
+        session.get.return_value = make_response(
+            200,
+            json_data={
+                "data": [{"id": 1}],
+                "meta": {"next_cursor": None},
+            },
+        )
         result = c.list_all("products")
         assert result == [{"id": 1}]
 
     def test_paginated_multiple_pages(self, client):
         c, session = client
-        page1 = make_response(200, json_data={
-            "data": [{"id": 1}],
-            "meta": {"next_cursor": "cursor-2"},
-        })
-        page2 = make_response(200, json_data={
-            "data": [{"id": 2}],
-            "meta": {"next_cursor": None},
-        })
+        page1 = make_response(
+            200,
+            json_data={
+                "data": [{"id": 1}],
+                "meta": {"next_cursor": "cursor-2"},
+            },
+        )
+        page2 = make_response(
+            200,
+            json_data={
+                "data": [{"id": 2}],
+                "meta": {"next_cursor": None},
+            },
+        )
         session.get.side_effect = [page1, page2]
         result = c.list_all("products")
         assert result == [{"id": 1}, {"id": 2}]
@@ -185,14 +198,20 @@ class TestListAll:
 
     def test_paginated_preserves_params(self, client):
         c, session = client
-        page1 = make_response(200, json_data={
-            "data": [{"id": 1}],
-            "meta": {"next_cursor": "c2"},
-        })
-        page2 = make_response(200, json_data={
-            "data": [{"id": 2}],
-            "meta": {},
-        })
+        page1 = make_response(
+            200,
+            json_data={
+                "data": [{"id": 1}],
+                "meta": {"next_cursor": "c2"},
+            },
+        )
+        page2 = make_response(
+            200,
+            json_data={
+                "data": [{"id": 2}],
+                "meta": {},
+            },
+        )
         session.get.side_effect = [page1, page2]
         c.list_all("products", per_page=50)
         # Second call should include cursor
@@ -201,10 +220,13 @@ class TestListAll:
 
     def test_empty_data(self, client):
         c, session = client
-        session.get.return_value = make_response(200, json_data={
-            "data": [],
-            "meta": {},
-        })
+        session.get.return_value = make_response(
+            200,
+            json_data={
+                "data": [],
+                "meta": {},
+            },
+        )
         result = c.list_all("products")
         assert result == []
 

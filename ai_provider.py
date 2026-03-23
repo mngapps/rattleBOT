@@ -20,6 +20,7 @@ from abc import ABC, abstractmethod
 # Base class
 # ---------------------------------------------------------------------------
 
+
 class AIProvider(ABC):
     """Vendor-neutral interface every AI backend must implement."""
 
@@ -41,9 +42,7 @@ class AIProvider(ABC):
 
     def complete_json(self, prompt, *, system=None, max_tokens=2048, temperature=0.0):
         """Convenience wrapper that parses the response as JSON."""
-        raw = self.complete(
-            prompt, system=system, max_tokens=max_tokens, temperature=temperature
-        )
+        raw = self.complete(prompt, system=system, max_tokens=max_tokens, temperature=temperature)
         # Strip markdown fences if the model wraps its response
         text = raw.strip()
         if text.startswith("```"):
@@ -57,6 +56,7 @@ class AIProvider(ABC):
 # OpenAI-compatible provider (works with OpenAI, Azure, vLLM, LM Studio…)
 # ---------------------------------------------------------------------------
 
+
 class OpenAIProvider(AIProvider):
     """OpenAI-compatible chat completions (v1/chat/completions)."""
 
@@ -66,9 +66,7 @@ class OpenAIProvider(AIProvider):
         try:
             import openai  # noqa: F401
         except ImportError:
-            raise ImportError(
-                "Install the openai package:  pip install openai"
-            )
+            raise ImportError("Install the openai package:  pip install openai")
         self._api_key = os.environ.get("OPENAI_API_KEY", "")
         if not self._api_key:
             raise ValueError("OPENAI_API_KEY environment variable is required for OpenAI provider")
@@ -101,6 +99,7 @@ class OpenAIProvider(AIProvider):
 # Anthropic provider
 # ---------------------------------------------------------------------------
 
+
 class AnthropicProvider(AIProvider):
     """Anthropic Messages API."""
 
@@ -110,9 +109,7 @@ class AnthropicProvider(AIProvider):
         try:
             import anthropic  # noqa: F401
         except ImportError:
-            raise ImportError(
-                "Install the anthropic package:  pip install anthropic"
-            )
+            raise ImportError("Install the anthropic package:  pip install anthropic")
         self._api_key = os.environ.get("ANTHROPIC_API_KEY", "")
         if not self._api_key:
             raise ValueError(
@@ -141,6 +138,7 @@ class AnthropicProvider(AIProvider):
 # ---------------------------------------------------------------------------
 # Ollama / local models
 # ---------------------------------------------------------------------------
+
 
 class OllamaProvider(AIProvider):
     """Local inference via Ollama HTTP API."""
@@ -176,6 +174,7 @@ class OllamaProvider(AIProvider):
 # ---------------------------------------------------------------------------
 # Generic HTTP provider (any REST endpoint)
 # ---------------------------------------------------------------------------
+
 
 class CustomHTTPProvider(AIProvider):
     """Bring-your-own endpoint.  Must accept and return OpenAI-shaped JSON."""

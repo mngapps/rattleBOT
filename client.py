@@ -13,10 +13,12 @@ class RattleClient:
         self.api_key = get_tenant(tenant)
         self.base_url = BASE_URL.rstrip("/")
         self.session = requests.Session()
-        self.session.headers.update({
-            "Authorization": f"Bearer {self.api_key}",
-            "Accept": "application/json",
-        })
+        self.session.headers.update(
+            {
+                "Authorization": f"Bearer {self.api_key}",
+                "Accept": "application/json",
+            }
+        )
 
     def _url(self, path):
         return f"{self.base_url}/{path.lstrip('/')}"
@@ -25,8 +27,7 @@ class RattleClient:
     def _handle(resp):
         if not resp.ok:
             raise RuntimeError(
-                f"API error {resp.status_code} on {resp.request.method} {resp.url}: "
-                f"{resp.text}"
+                f"API error {resp.status_code} on {resp.request.method} {resp.url}: {resp.text}"
             )
         if resp.status_code == 204 or not resp.content:
             return None

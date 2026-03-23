@@ -10,6 +10,7 @@ import pytest
 # Environment isolation — prevent real API calls
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture(autouse=True)
 def clean_env(monkeypatch):
     """Remove real credentials and prevent .env from re-populating them."""
@@ -31,6 +32,7 @@ def tenant_env(monkeypatch):
     import importlib
 
     import config
+
     importlib.reload(config)
     return "testco"
 
@@ -48,6 +50,7 @@ def mock_session():
 # Fake AI provider
 # ---------------------------------------------------------------------------
 
+
 class FakeAIProvider:
     """Deterministic AI provider for testing — returns canned responses."""
 
@@ -59,17 +62,25 @@ class FakeAIProvider:
         self.calls = []
 
     def complete(self, prompt, *, system=None, max_tokens=1024, temperature=0.2):
-        self.calls.append({
-            "prompt": prompt, "system": system,
-            "max_tokens": max_tokens, "temperature": temperature,
-        })
+        self.calls.append(
+            {
+                "prompt": prompt,
+                "system": system,
+                "max_tokens": max_tokens,
+                "temperature": temperature,
+            }
+        )
         return self._text
 
     def complete_json(self, prompt, *, system=None, max_tokens=2048, temperature=0.0):
-        self.calls.append({
-            "prompt": prompt, "system": system,
-            "max_tokens": max_tokens, "temperature": temperature,
-        })
+        self.calls.append(
+            {
+                "prompt": prompt,
+                "system": system,
+                "max_tokens": max_tokens,
+                "temperature": temperature,
+            }
+        )
         if self._json is not None:
             return self._json
         return json.loads(self._text)
@@ -78,14 +89,17 @@ class FakeAIProvider:
 @pytest.fixture
 def fake_ai():
     """Return a FakeAIProvider factory."""
+
     def _make(text_response="AI response", json_response=None):
         return FakeAIProvider(text_response=text_response, json_response=json_response)
+
     return _make
 
 
 # ---------------------------------------------------------------------------
 # Fake HTTP response
 # ---------------------------------------------------------------------------
+
 
 def make_response(status_code=200, json_data=None, text="", method="GET", url="http://test"):
     """Build a fake requests.Response."""
