@@ -75,34 +75,37 @@ This codebase embeds deep consulting expertise about building correct product co
 
 **NEVER build 'base product + add-ons' where the base configuration is implicit.** Every configurable feature MUST have an explicit group with ALL variants as separate options — including the 'standard' variant.
 
-**Why?** Without an explicit option for the standard variant, it is impossible to write a `usage_subclause` that adds the standard parts to the BOM. The configurator cannot remove an implicit baseline — it can only activate parts linked to selected options.
+**Why?** Without an explicit option for the standard variant, no BOM item can carry a `usage_subclause` referencing it. The configurator can only activate BOM lines linked to selected options — it cannot remove an implicit baseline.
 
 **Example — WRONG (classic pricelist):**
-Product comes with 17" wheels as standard. Option: '19 inch wheels (+500€)'. Problem: no way to create a usage_subclause that removes 17" wheels from BOM when 19" is selected.
+Product comes with 17" wheels as standard. Option '19 inch' (price: 500). Problem: no BOM item can have a usage_subclause for the 17" wheels because no option represents them.
 
 **Example — CORRECT (BOM-aware):**
-Group 'Wheels': Option '17 inch wheels' (default), Option '19 inch wheels' (+500€). usage_subclause: if '17 inch' selected → add 17" parts; if '19 inch' selected → add 19" parts.
+Group 'Wheels' (is_multi: false): Option '17 inch' (recommended: true, price: 0), Option '19 inch' (recommended: false, price: 500). BOM: child_part '17-inch wheel assy' with usage_subclauses: [{option_id: <17_inch>, factor: 1.0}]; child_part '19-inch wheel assy' with usage_subclauses: [{option_id: <19_inch>, factor: 1.0}].
 
 ### Rattle Data Model
 
 ```
 Product
-  ├── Areas (rich text content sections)
-  ├── Groups (configuration groups, e.g. 'Wheels', 'Frässpindel')
-  │   └── Options (choices: '17 inch', '19 inch', 'ohne', 'mit')
-  ├── Parts (BOM items — physical components)
-  └── Part Placements (connect parts to areas)
-      └── Usage Subclauses (conditional BOM rules based on selected options)
+  ├── Areas (configurable sections, assigned via /products/{id}/areas)
+  │   └── Groups (linked to areas via /groups/{id}/areas, is_multi: single/multi)
+  │       └── Options (name, price, key, recommended)
+  ├── Parts (physical components)
+  │   └── BOM items (parent→child, quantity, usage_subclauses)
+  └── Constraints (/constraints + /constraints/rules)
 ```
 
-- **Area Overrides**: allow reusing groups/options across products with per-product price differences (avoids duplicating groups).
+- **usage_subclauses** on BOM items: `[{"option_id": 301, "factor": 1.0}]` — when option 301 is selected, this BOM line is active with quantity × factor.
+- **Option area-config** (`/options/{id}/area-config`): per-area overrides for option price, description, recommended flag — avoids duplicating groups.
+- **Pair-level constraints** (`POST /constraints`): simple option-option exclusions as `{option_id1, option_id2}` pairs. Atomically replaces all pairs for a product (use `X-Constraints-Version` header).
+- **Constraint rules** (`POST /constraints/rules`): conditional logic with `rule_json: [{"if": {"option_selected": X}, "then": {"forbid_options": [Y, Z]}}]`.
 
 ### Configuration Rules
 
 - **explicit-options-for-all-variants**: Every configurable feature MUST have an explicit group with ALL variants as separate options — including the "standard" variant. The standard variant must be a named, selectable option, never an implicit baseline.
-- **price-on-option**: Price modifiers belong on the option level, not as separate line items
-- **reuse-over-duplicate**: Always prefer reusing existing groups/options over creating duplicates; use areaOverrides for product-specific price differences
-- **forbidden-combinations**: Identify and define rules for invalid option combinations across groups (e.g., machine variant X incompatible with accessory Y)
+- **price-on-option**: Price modifiers belong on the option level (the `price` field), not as separate line items
+- **reuse-over-duplicate**: Always prefer reusing existing groups/options over creating duplicates; use option area-config and price-overrides for area-specific differences
+- **forbidden-combinations**: Identify and define constraints for invalid option combinations. Use pair-level constraints (`POST /constraints` with `{option_id1, option_id2}` pairs) for simple exclusions, constraint rules (`POST /constraints/rules`) for conditional logic
 
 Note: Not every option maps to BOM parts. Options for software features, services, or cosmetic choices may have no usage_subclauses — that is normal. Usage subclauses are only needed for options that affect the physical bill of materials.
 

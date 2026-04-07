@@ -25,9 +25,9 @@ class TestRattleDataModel:
         "group",
         "option",
         "part",
-        "part_placement",
-        "usage_subclause",
-        "area_override",
+        "bom_item",
+        "constraint",
+        "option_area_config",
     ]
 
     def test_has_all_entity_types(self):
@@ -124,9 +124,10 @@ class TestSystemPromptBase:
 
     def test_contains_data_model(self):
         prompt = system_prompt_base()
-        assert "Usage Subclauses" in prompt
+        assert "usage_subclauses" in prompt
         assert "Groups" in prompt
         assert "Options" in prompt
+        assert "BOM" in prompt
 
     def test_contains_car_example(self):
         prompt = system_prompt_base()
@@ -193,7 +194,7 @@ class TestSystemPromptSuggestConfiguration:
         prompt = system_prompt_suggest_configuration(existing_groups=groups)
         assert "Frässpindel" in prompt
         assert "reuse_existing" in prompt
-        assert "area_overrides" in prompt
+        assert "price" in prompt.lower()
 
     def test_requests_json_output(self):
         prompt = system_prompt_suggest_configuration()
@@ -288,7 +289,8 @@ class TestAsMarkdown:
         assert "Product" in md
         assert "Groups" in md
         assert "Options" in md
-        assert "Usage Subclauses" in md
+        assert "usage_subclauses" in md
+        assert "BOM" in md
 
     def test_contains_cli_commands(self):
         md = as_markdown()

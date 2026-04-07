@@ -20,83 +20,110 @@ RATTLE_DATA_MODEL: dict = {
     "product": {
         "description": (
             "Top-level entity representing a configurable product "
-            "(e.g. a machine, furniture piece, vehicle)."
+            "(e.g. a machine, furniture piece, vehicle). Areas are "
+            "assigned to products via /products/{id}/areas."
         ),
-        "key_fields": ["id", "name", "description", "price"],
+        "key_fields": ["id", "name", "description", "base_price", "currency", "is_active"],
         "api_endpoint": "/products",
-        "relationships": ["areas", "groups", "parts"],
+        "relationships": ["areas", "parts", "constraints"],
     },
     "area": {
         "description": (
-            "Rich-text content section of a product. Contains structured "
-            "blocks (paragraphs, headers, images, tables, lists). "
-            "Multiple areas per product (e.g. different sections or languages)."
+            "A configurable section of a product. Areas are assigned to "
+            "products and groups are linked to areas. Rich-text content "
+            "(EditorJS blocks) is managed via /areas/{id}/content. "
+            "Multiple areas per product (e.g. different configurable zones)."
         ),
-        "key_fields": ["id", "description", "content", "language"],
+        "key_fields": ["id", "name", "description", "price", "language", "allow_disable"],
         "api_endpoint": "/areas",
-        "relationships": ["product", "part_placements"],
+        "relationships": ["product", "groups"],
     },
     "group": {
         "description": (
             "Configuration group collecting related options "
             "(e.g. 'Wheels', 'Frässpindel', 'Auftragsverwaltung IoT'). "
-            "Each group represents ONE configurable feature."
+            "Groups are linked to areas (not directly to products) via "
+            "/groups/{id}/areas. The is_multi field controls whether "
+            "the user can select one option (single-select) or multiple "
+            "(multi-select)."
         ),
-        "key_fields": ["id", "name", "description"],
+        "key_fields": ["id", "name", "description", "key", "is_multi", "area_ids"],
         "api_endpoint": "/groups",
-        "relationships": ["product", "options"],
+        "relationships": ["areas", "options"],
     },
     "option": {
         "description": (
             "A single selectable choice within a group "
             "(e.g. '17 inch wheels', '19 inch wheels', 'ohne', 'mit'). "
             "Every variant — including the default/standard — must be an "
-            "explicit option."
+            "explicit option. The 'recommended' flag marks the pre-selected "
+            "default. Per-area overrides (price, description) are set via "
+            "/options/{id}/area-config?area_id=X."
         ),
-        "key_fields": ["id", "label", "is_default", "price_modifier", "image"],
+        "key_fields": ["id", "name", "description", "price", "key", "recommended", "group_id"],
         "api_endpoint": "/options",
-        "relationships": ["group", "usage_subclauses"],
+        "relationships": ["group"],
     },
     "part": {
         "description": (
-            "A physical BOM item — a component, sub-assembly, or finished "
-            "good that can appear in a product's bill of materials."
+            "A physical component, sub-assembly, or finished good that "
+            "can appear in a product's bill of materials."
         ),
-        "key_fields": ["id", "name", "sku", "price", "unit"],
+        "key_fields": ["id", "part_number", "part_name", "part_cost", "part_type", "status"],
         "api_endpoint": "/parts",
-        "relationships": ["part_placements"],
+        "relationships": ["bom_items", "placements"],
     },
-    "part_placement": {
+    "bom_item": {
         "description": (
-            "Connects a part to an area, specifying quantity and placement. "
-            "This is the bridge between the physical BOM and the product "
-            "structure."
+            "A parent→child relationship in the hierarchical BOM. "
+            "Each BOM item links a parent part to a child part with a "
+            "quantity. The 'usage_subclauses' array conditionally includes "
+            "this BOM line based on selected options: each entry is "
+            '{"option_id": <id>, "factor": <multiplier>}. When the '
+            "referenced option is selected, this BOM line is active with "
+            "quantity × factor. This is the core mechanism that makes "
+            "configuration drive the bill of materials."
         ),
-        "key_fields": ["id", "part_id", "area_id", "quantity"],
-        "api_endpoint": "/part-placements",
-        "relationships": ["part", "area", "usage_subclauses"],
+        "key_fields": [
+            "id",
+            "parent_part_id",
+            "child_part_id",
+            "quantity",
+            "uom",
+            "usage_subclauses",
+            "option_scalings",
+        ],
+        "api_endpoint": "/parts/{id}/bom",
+        "relationships": ["parent_part", "child_part", "options (via usage_subclauses)"],
     },
-    "usage_subclause": {
+    "constraint": {
         "description": (
-            "Conditional BOM rule: when a specific option is selected, "
-            "the linked part placement becomes active in the final BOM. "
-            "This is the core mechanism that makes configuration drive "
-            "the bill of materials."
+            "Forbidden option combinations. Two mechanisms:\n"
+            "1) Pair-level: simple option-option exclusions. "
+            "POST /constraints atomically replaces all pairs for a product "
+            "(use X-Constraints-Version header). Each pair is "
+            "{option_id1, option_id2} — selecting one forbids the other. "
+            "Check via POST /constraints/check "
+            '{"product_id", "option_id1", "option_id2"}.\n'
+            "2) Rule-level: conditional rules via /constraints/rules. "
+            "Each rule has rule_json: "
+            '[{"if": {"option_selected": X}, "then": {"forbid_options": [Y, Z]}}]. '
+            "Scoped to product_id and optionally area_id."
         ),
-        "key_fields": ["id", "part_placement_id", "option_id", "condition"],
-        "api_endpoint": "/usage-subclauses",
-        "relationships": ["part_placement", "option"],
+        "key_fields": ["id", "product_id", "area_id", "description", "rule_json"],
+        "api_endpoint": "/constraints (pairs), /constraints/rules (conditional)",
+        "relationships": ["product", "options"],
     },
-    "area_override": {
+    "option_area_config": {
         "description": (
-            "Per-product override for a shared group or option. Allows "
-            "reusing the same group/option across products while adjusting "
-            "price, label, or availability for a specific product/area. "
-            "Avoids duplicating groups and options."
+            "Per-area override for an option's price, key, description, "
+            "or recommended flag. Allows reusing the same group/option "
+            "across areas while adjusting properties per area. Avoids "
+            "duplicating groups and options."
         ),
-        "key_fields": ["id", "area_id", "group_id", "option_id", "price_modifier"],
-        "api_endpoint": "/area-overrides",
-        "relationships": ["area", "group", "option"],
+        "key_fields": ["option_id", "area_id", "price", "key", "description", "recommended"],
+        "api_endpoint": "/options/{id}/area-config?area_id=X",
+        "relationships": ["option", "area"],
     },
 }
 
@@ -141,30 +168,32 @@ CONFIGURATION_RULES: list[dict] = [
         "id": "reuse-over-duplicate",
         "rule": (
             "Always prefer reusing existing groups and options over "
-            "creating duplicates. Use areaOverrides for product-specific "
-            "price or label differences."
+            "creating duplicates. Use option area-config "
+            "(/options/{id}/area-config) and price-overrides for "
+            "per-area differences."
         ),
         "rationale": (
             "Duplicate groups with identical names fragment the "
             "configuration catalogue and make maintenance harder. "
-            "areaOverrides let one group/option serve many products "
-            "with per-product pricing."
+            "Option area-config lets one group/option serve many areas "
+            "with per-area pricing and descriptions."
         ),
-        "applies_to": ["groups", "options", "area_overrides"],
+        "applies_to": ["groups", "options"],
     },
     {
         "id": "forbidden-combinations",
         "rule": (
-            "Identify and define rules for invalid option combinations "
-            "across groups (e.g. machine variant X is incompatible with "
-            "accessory Y)."
+            "Identify and define constraints for invalid option "
+            "combinations. Use pair-level constraints (POST /constraints "
+            "with {option_id1, option_id2} pairs) for simple exclusions. "
+            "Use constraint rules (POST /constraints/rules with rule_json) "
+            "for conditional logic."
         ),
         "rationale": (
-            "Without forbidden-combination rules, users can select "
-            "impossible configurations that cannot be manufactured or "
-            "delivered."
+            "Without constraints, users can select impossible "
+            "configurations that cannot be manufactured or delivered."
         ),
-        "applies_to": ["groups", "options", "rules"],
+        "applies_to": ["options", "constraints"],
     },
 ]
 
@@ -199,15 +228,18 @@ ANTI_PATTERNS: list[dict] = [
         ),
         "example_wrong": (
             'Product comes with 17" wheels as standard. '
-            "Option: '19 inch wheels (+500€)'. "
-            "Problem: no way to create a usage_subclause that removes "
-            '17" wheels from BOM when 19" is selected.'
+            "Option '19 inch wheels' (price: 500). "
+            "Problem: no BOM item can carry a usage_subclause for the "
+            '17" wheels because no option represents them.'
         ),
         "example_correct": (
-            "Group 'Wheels': Option '17 inch wheels' (default), "
-            "Option '19 inch wheels' (+500€). "
-            "usage_subclause: if '17 inch' → add 17\" parts; "
-            "if '19 inch' → add 19\" parts."
+            "Group 'Wheels' (is_multi: false): "
+            "Option '17 inch' (recommended: true, price: 0), "
+            "Option '19 inch' (recommended: false, price: 500). "
+            "BOM: child_part '17-inch wheel assy' with "
+            "usage_subclauses: [{option_id: <17_inch>, factor: 1.0}]; "
+            "child_part '19-inch wheel assy' with "
+            "usage_subclauses: [{option_id: <19_inch>, factor: 1.0}]."
         ),
     },
     {
@@ -237,9 +269,10 @@ ANTI_PATTERNS: list[dict] = [
             "Problem: what is the default spindle? No option exists for it."
         ),
         "example_correct": (
-            "Group 'Frässpindel': Option 'ISO 30 Standard' (default), "
-            "Option 'HSK-63F ohne Encoder' (+1.800€), "
-            "Option 'HSK-63F mit Encoder' (+2.500€)."
+            "Group 'Frässpindel' (is_multi: false): "
+            "Option 'ISO 30 Standard' (recommended: true, price: 0), "
+            "Option 'HSK-63F ohne Encoder' (price: 1800), "
+            "Option 'HSK-63F mit Encoder' (price: 2500)."
         ),
     },
 ]
@@ -266,20 +299,39 @@ def system_prompt_base() -> str:
         "building correct, BOM-aware product configurations for the Rattle "
         "product configurator platform.\n\n"
         "## Rattle Data Model\n"
-        "Product → Areas (rich text), Groups → Options, "
-        "Parts → Part Placements → Usage Subclauses.\n"
-        "- Groups collect related Options (e.g. 'Wheels' → '17 inch', '19 inch')\n"
-        "- Usage Subclauses link selected Options to Part Placements in the BOM\n"
-        "- Area Overrides allow reusing groups/options across products with "
-        "per-product price differences\n\n"
+        "Product → Areas → Groups (is_multi: single/multi-select) → Options\n"
+        "Parts → BOM items (parent→child with quantity + usage_subclauses)\n"
+        "Constraints (forbidden option combinations + conditional rules)\n\n"
+        "- Groups are linked to Areas (not directly to Products). "
+        "A group's is_multi field controls single-select vs multi-select.\n"
+        "- Options have: name, price, key, recommended (=pre-selected default).\n"
+        "- BOM items contain usage_subclauses: "
+        '[{"option_id": <id>, "factor": <multiplier>}]. '
+        "When the referenced option is selected, this BOM line is active "
+        "with quantity × factor.\n"
+        "- Per-area price/config overrides: /options/{id}/area-config "
+        "and /options/{id}/price-overrides — avoids duplicating groups.\n"
+        "- Pair-level constraints (POST /constraints): "
+        "simple option-option exclusions as {option_id1, option_id2} pairs. "
+        "Atomically replaces all pairs for a product.\n"
+        "- Constraint rules (POST /constraints/rules): conditional logic "
+        "with rule_json: "
+        '[{"if": {"option_selected": X}, "then": {"forbid_options": [Y, Z]}}].\n\n'
         "## THE #1 RULE\n"
         "NEVER build 'base product + add-ons' where the base configuration is "
         "implicit. Every configurable feature MUST have an explicit group with "
         "ALL variants as separate options — including the 'standard' variant.\n\n"
-        "WRONG: Product has 17\" wheels standard. Option: '19 inch (+500€)'. "
-        '→ No usage_subclause can add 17" parts to BOM.\n'
-        "CORRECT: Group 'Wheels': '17 inch' (default), '19 inch' (+500€). "
-        "→ Each option has a usage_subclause linking to its parts.\n\n"
+        "WRONG: Product has 17\" wheels as standard. Option: '19 inch' (price: 500). "
+        '→ No usage_subclause can include 17" wheel parts in the BOM.\n'
+        "CORRECT: Group 'Wheels' (is_multi: false):\n"
+        "  Option '17 inch' (recommended: true, price: 0)\n"
+        "  Option '19 inch' (recommended: false, price: 500)\n"
+        "BOM items:\n"
+        '  child_part: "17-inch wheel assembly", '
+        "usage_subclauses: [{option_id: <17_inch_opt>, factor: 1.0}]\n"
+        '  child_part: "19-inch wheel assembly", '
+        "usage_subclauses: [{option_id: <19_inch_opt>, factor: 1.0}]\n"
+        "→ Each option's BOM line is only active when that option is selected.\n\n"
         f"## Configuration Rules\n{rules_text}\n\n"
         f"## Anti-Patterns to Detect\n{anti_text}"
     )
@@ -311,7 +363,7 @@ def system_prompt_suggest_configuration(
     if existing_groups:
         groups_text = "\n".join(
             f"  - Group '{g.get('name', '?')}' (id={g.get('id', '?')}): "
-            f"options: {[o.get('label', '?') for o in g.get('options', [])]}"
+            f"options: {[o.get('name', '?') for o in g.get('options', [])]}"
             for g in existing_groups[:50]  # limit to avoid token overflow
         )
         reuse_section = (
@@ -321,8 +373,8 @@ def system_prompt_suggest_configuration(
             "group with the same or very similar name already exists above. "
             "If it does:\n"
             "- Set reuse_existing=true and provide the existing_group_id\n"
-            "- If prices differ for this product, use area_overrides instead "
-            "of creating a duplicate group\n"
+            "- If prices differ for this area, use option area-config or "
+            "price-overrides instead of creating a duplicate group\n"
             "- Only create a new group if the name and options genuinely differ"
         )
 
@@ -332,16 +384,21 @@ def system_prompt_suggest_configuration(
         "Generate an explicit, BOM-aware configuration structure for the Rattle "
         f"product configurator (respond in {lang_name}).\n\n"
         "For each product found in the document, produce:\n"
-        "1. **groups**: each with name, description, and options "
-        "(each option: label, is_default, price_modifier, description). "
+        "1. **groups**: each with name, description, is_multi, and options "
+        "(each option: name, recommended, price, description). "
         "If reusing existing group: set reuse_existing=true, existing_group_id, "
-        "and area_overrides for price differences.\n"
-        "2. **usage_subclauses**: for each option, a rule describing which "
-        "parts to include/exclude in the BOM (description, condition, effect).\n"
-        "3. **forbidden_combinations**: rules for invalid option combinations "
-        "across groups (description, rule, reason).\n\n"
+        "and note price_overrides for area-specific pricing.\n"
+        "2. **bom_rules**: for options that affect physical parts, describe "
+        "the BOM item with child_part_name and "
+        "usage_subclauses [{option_id, factor}] format.\n"
+        "3. **forbidden_pairs**: simple option-option exclusions as "
+        "[{option_name_1, option_name_2, reason}] — these map directly to "
+        "POST /constraints with {option_id1, option_id2} pairs.\n"
+        "4. **constraint_rules**: conditional rules as "
+        '[{"description", "rule_json": [{"if": {"option_selected": name}, '
+        '"then": {"forbid_options": [names]}}]}].\n\n'
         "Return JSON with key 'products' (array of objects with keys: "
-        "name, groups, usage_subclauses, forbidden_combinations)."
+        "name, groups, bom_rules, forbidden_pairs, constraint_rules)."
     )
 
 
@@ -424,25 +481,28 @@ def as_markdown() -> str:
     lines.append("")
     lines.append(
         "**Why?** Without an explicit option for the standard variant, "
-        "it is impossible to write a `usage_subclause` that adds the standard "
-        "parts to the BOM. The configurator cannot remove an implicit baseline — "
-        "it can only activate parts linked to selected options."
+        "no BOM item can carry a `usage_subclause` referencing it. "
+        "The configurator can only activate BOM lines linked to selected "
+        "options — it cannot remove an implicit baseline."
     )
     lines.append("")
     lines.append("**Example — WRONG (classic pricelist):**")
     lines.append(
         'Product comes with 17" wheels as standard. '
-        "Option: '19 inch wheels (+500€)'. "
-        "Problem: no way to create a usage_subclause that removes "
-        '17" wheels from BOM when 19" is selected.'
+        "Option '19 inch' (price: 500). "
+        "Problem: no BOM item can have a usage_subclause for the "
+        '17" wheels because no option represents them.'
     )
     lines.append("")
     lines.append("**Example — CORRECT (BOM-aware):**")
     lines.append(
-        "Group 'Wheels': Option '17 inch wheels' (default), "
-        "Option '19 inch wheels' (+500€). "
-        "usage_subclause: if '17 inch' selected → add 17\" parts; "
-        "if '19 inch' selected → add 19\" parts."
+        "Group 'Wheels' (is_multi: false): "
+        "Option '17 inch' (recommended: true, price: 0), "
+        "Option '19 inch' (recommended: false, price: 500). "
+        "BOM: child_part '17-inch wheel assy' with "
+        "usage_subclauses: [{option_id: <17_inch>, factor: 1.0}]; "
+        "child_part '19-inch wheel assy' with "
+        "usage_subclauses: [{option_id: <19_inch>, factor: 1.0}]."
     )
     lines.append("")
 
@@ -451,17 +511,27 @@ def as_markdown() -> str:
     lines.append("")
     lines.append("```")
     lines.append("Product")
-    lines.append("  ├── Areas (rich text content sections)")
-    lines.append("  ├── Groups (configuration groups, e.g. 'Wheels', 'Frässpindel')")
-    lines.append("  │   └── Options (choices: '17 inch', '19 inch', 'ohne', 'mit')")
-    lines.append("  ├── Parts (BOM items — physical components)")
-    lines.append("  └── Part Placements (connect parts to areas)")
-    lines.append("      └── Usage Subclauses (conditional BOM rules based on selected options)")
+    lines.append("  ├── Areas (configurable sections, assigned via /products/{id}/areas)")
+    lines.append("  │   └── Groups (linked to areas, is_multi: single/multi-select)")
+    lines.append("  │       └── Options (name, price, key, recommended)")
+    lines.append("  ├── Parts (physical components)")
+    lines.append("  │   └── BOM items (parent→child, quantity, usage_subclauses)")
+    lines.append("  └── Constraints (/constraints + /constraints/rules)")
     lines.append("```")
     lines.append("")
     lines.append(
-        "- **Area Overrides**: allow reusing groups/options across products "
-        "with per-product price differences (avoids duplicating groups)."
+        "- **usage_subclauses** on BOM items: "
+        '`[{"option_id": 301, "factor": 1.0}]` — when option 301 is '
+        "selected, this BOM line is active with quantity × factor."
+    )
+    lines.append(
+        "- **Option area-config**: per-area overrides for option price, "
+        "description, recommended flag — avoids duplicating groups."
+    )
+    lines.append(
+        "- **Constraints**: pair-level forbidden combinations + conditional "
+        'rules with `rule_json: [{"if": {"option_selected": X}, '
+        '"then": {"forbid_options": [Y, Z]}}]`.'
     )
     lines.append("")
 
