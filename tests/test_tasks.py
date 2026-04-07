@@ -294,3 +294,287 @@ class TestAIHelper:
         monkeypatch.setenv("AI_PROVIDER", "ollama")
         provider = _ai()
         assert provider.name == "ollama"
+
+
+# ---------------------------------------------------------------------------
+# analyse_pricelist
+# ---------------------------------------------------------------------------
+
+
+class TestAnalysePricelist:
+    """Pricelist analysis with consulting knowledge — heuristic + AI."""
+
+    @pytest.fixture
+    def excel_file(self, tmp_path):
+        """Create a fake Excel file and mock read_source."""
+        return [
+            {"Feature": "Aufpreis Frässpindel HSK-63F", "Price": 2500},
+            {"Feature": "Werkzeugmagazin Standard", "Price": 0},
+        ]
+
+    def test_returns_analysis_structure(self, patched_client, excel_file):
+        from rattle_api.tasks import analyse_pricelist
+
+        fake = FakeAIProvider(
+            json_response={
+                "products": [{"name": "Machine X"}],
+                "features": [{"name": "Spindle"}],
+                "anti_patterns": [],
+                "recommendations": ["Create explicit groups"],
+            }
+        )
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "excel",
+                "data": excel_file,
+                "filename": "pricelist.xlsx",
+            }
+            result = analyse_pricelist("testco", "/abs/pricelist.xlsx", provider=fake)
+
+        assert "source_file" in result
+        assert "file_type" in result
+        assert "anti_patterns_heuristic" in result
+        assert "ai_analysis" in result
+        assert result["file_type"] == "excel"
+
+    def test_includes_heuristic_anti_patterns(self, patched_client, excel_file):
+        from rattle_api.tasks import analyse_pricelist
+
+        fake = FakeAIProvider(json_response={"products": []})
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "excel",
+                "data": excel_file,
+                "filename": "pricelist.xlsx",
+            }
+            result = analyse_pricelist("testco", "/abs/pricelist.xlsx", provider=fake)
+
+        # "Aufpreis" should trigger addon-only-options anti-pattern
+        pattern_ids = {r["pattern_id"] for r in result["anti_patterns_heuristic"]}
+        assert "addon-only-options" in pattern_ids
+
+    def test_skips_heuristic_for_pdf(self, patched_client):
+        from rattle_api.tasks import analyse_pricelist
+
+        fake = FakeAIProvider(json_response={"products": []})
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "pdf",
+                "data": "Some PDF text content",
+                "filename": "doc.pdf",
+            }
+            result = analyse_pricelist("testco", "/abs/doc.pdf", provider=fake)
+
+        assert result["anti_patterns_heuristic"] == []
+        assert result["file_type"] == "pdf"
+
+    def test_handles_ai_failure_gracefully(self, patched_client, excel_file):
+        from rattle_api.tasks import analyse_pricelist
+
+        class FailProvider(FakeAIProvider):
+            def complete_json(self, *args, **kwargs):
+                raise RuntimeError("AI is down")
+
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "excel",
+                "data": excel_file,
+                "filename": "pricelist.xlsx",
+            }
+            result = analyse_pricelist("testco", "/abs/pricelist.xlsx", provider=FailProvider())
+
+        assert "error" in result["ai_analysis"]
+        # Heuristic should still work
+        assert len(result["anti_patterns_heuristic"]) > 0
+
+    def test_resolves_relative_path(self, patched_client):
+        from rattle_api.tasks import analyse_pricelist
+
+        fake = FakeAIProvider(json_response={"products": []})
+        with (
+            patch("rattle_api.source.read_source") as mock_read,
+            patch("rattle_api.tasks._resolve_source_file") as mock_resolve,
+        ):
+            mock_resolve.return_value = "/resolved/path/file.xlsx"
+            mock_read.return_value = {
+                "type": "excel",
+                "data": [],
+                "filename": "file.xlsx",
+            }
+            analyse_pricelist("testco", "pricelists/file.xlsx", provider=fake)
+
+        mock_resolve.assert_called_once_with("testco", "pricelists/file.xlsx")
+
+    def test_system_prompt_contains_knowledge(self, patched_client, excel_file):
+        from rattle_api.tasks import analyse_pricelist
+
+        fake = FakeAIProvider(json_response={"products": []})
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "excel",
+                "data": excel_file,
+                "filename": "pricelist.xlsx",
+            }
+            analyse_pricelist("testco", "/abs/pricelist.xlsx", provider=fake)
+
+        system = fake.calls[0]["system"]
+        assert "NEVER build" in system
+        assert "BOM" in system or "usage_subclause" in system
+
+
+# ---------------------------------------------------------------------------
+# suggest_configuration
+# ---------------------------------------------------------------------------
+
+
+class TestSuggestConfiguration:
+    """BOM-aware configuration recommendations with reuse strategy."""
+
+    def test_returns_products_with_groups(self, patched_client):
+        from rattle_api.tasks import suggest_configuration
+
+        fake = FakeAIProvider(
+            json_response={
+                "products": [
+                    {
+                        "name": "Machine X",
+                        "groups": [
+                            {
+                                "name": "Frässpindel",
+                                "description": "Spindle type",
+                                "reuse_existing": False,
+                                "options": [
+                                    {"label": "ISO 30", "is_default": True},
+                                    {"label": "HSK-63F", "is_default": False},
+                                ],
+                            }
+                        ],
+                        "usage_subclauses": [],
+                        "forbidden_combinations": [],
+                    }
+                ]
+            }
+        )
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "excel",
+                "data": [{"Feature": "Spindle options"}],
+                "filename": "pricelist.xlsx",
+            }
+            result = suggest_configuration("testco", "/abs/pricelist.xlsx", provider=fake)
+
+        assert "products" in result
+        assert len(result["products"]) == 1
+        assert len(result["products"][0]["groups"]) == 1
+        assert len(result["products"][0]["groups"][0]["options"]) == 2
+
+    def test_fetches_existing_groups(self, patched_client):
+        from rattle_api.tasks import suggest_configuration
+
+        patched_client.list_all.return_value = [
+            {"id": 100, "name": "Frässpindel", "options": [{"label": "ISO 30"}]}
+        ]
+
+        fake = FakeAIProvider(json_response={"products": []})
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "excel",
+                "data": [],
+                "filename": "pricelist.xlsx",
+            }
+            result = suggest_configuration("testco", "/abs/pricelist.xlsx", provider=fake)
+
+        # Should have fetched groups
+        patched_client.list_all.assert_any_call("groups")
+        assert result["existing_groups_checked"] == 1
+
+    def test_existing_groups_in_system_prompt(self, patched_client):
+        from rattle_api.tasks import suggest_configuration
+
+        patched_client.list_all.return_value = [
+            {"id": 100, "name": "Frässpindel", "options": [{"label": "ISO 30"}]}
+        ]
+
+        fake = FakeAIProvider(json_response={"products": []})
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "excel",
+                "data": [],
+                "filename": "pricelist.xlsx",
+            }
+            suggest_configuration("testco", "/abs/pricelist.xlsx", provider=fake)
+
+        system = fake.calls[0]["system"]
+        assert "Frässpindel" in system
+        assert "reuse_existing" in system
+
+    def test_product_filter_in_prompt(self, patched_client):
+        from rattle_api.tasks import suggest_configuration
+
+        patched_client.list_all.return_value = []
+        fake = FakeAIProvider(json_response={"products": []})
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "excel",
+                "data": [],
+                "filename": "pricelist.xlsx",
+            }
+            suggest_configuration(
+                "testco",
+                "/abs/pricelist.xlsx",
+                provider=fake,
+                product_filter="NIKE TM DPM",
+            )
+
+        prompt = fake.calls[0]["prompt"]
+        assert "NIKE TM DPM" in prompt
+
+    def test_handles_ai_failure_gracefully(self, patched_client):
+        from rattle_api.tasks import suggest_configuration
+
+        patched_client.list_all.return_value = []
+
+        class FailProvider(FakeAIProvider):
+            def complete_json(self, *args, **kwargs):
+                raise RuntimeError("AI is down")
+
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "excel",
+                "data": [],
+                "filename": "pricelist.xlsx",
+            }
+            result = suggest_configuration("testco", "/abs/pricelist.xlsx", provider=FailProvider())
+
+        assert "error" in result
+        assert "products" in result
+
+    def test_handles_groups_fetch_failure(self, patched_client):
+        from rattle_api.tasks import suggest_configuration
+
+        patched_client.list_all.side_effect = RuntimeError("API down")
+        fake = FakeAIProvider(json_response={"products": []})
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "excel",
+                "data": [],
+                "filename": "pricelist.xlsx",
+            }
+            result = suggest_configuration("testco", "/abs/pricelist.xlsx", provider=fake)
+
+        assert result["existing_groups_checked"] == 0
+
+    def test_uses_large_max_tokens(self, patched_client):
+        from rattle_api.tasks import suggest_configuration
+
+        patched_client.list_all.return_value = []
+        fake = FakeAIProvider(json_response={"products": []})
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "excel",
+                "data": [],
+                "filename": "pricelist.xlsx",
+            }
+            suggest_configuration("testco", "/abs/pricelist.xlsx", provider=fake)
+
+        assert fake.calls[0]["max_tokens"] >= 8192

@@ -28,3 +28,74 @@ def read_excel(filepath):
         return []
     headers = [str(h) if h is not None else f"col_{i}" for i, h in enumerate(rows[0])]
     return [dict(zip(headers, row)) for row in rows[1:]]
+
+
+def read_pdf(filepath):
+    """Extract text from a PDF file.
+
+    Returns:
+        str: full text content of the PDF.
+
+    Raises:
+        ImportError: if pymupdf is not installed.
+    """
+    try:
+        import fitz  # pymupdf
+    except ImportError:
+        raise ImportError(
+            "pymupdf is required for PDF reading. "
+            "Install it with: pip install 'rattle-ai-workspace[pdf]'"
+        )
+    doc = fitz.open(filepath)
+    pages = []
+    for page in doc:
+        pages.append(page.get_text())
+    doc.close()
+    return "\n".join(pages)
+
+
+def read_docx(filepath):
+    """Extract text from a Word .docx file.
+
+    Returns:
+        str: full text content of the document.
+
+    Raises:
+        ImportError: if python-docx is not installed.
+    """
+    try:
+        import docx
+    except ImportError:
+        raise ImportError(
+            "python-docx is required for Word document reading. "
+            "Install it with: pip install 'rattle-ai-workspace[docx]'"
+        )
+    doc = docx.Document(filepath)
+    return "\n".join(p.text for p in doc.paragraphs)
+
+
+def read_source(filepath):
+    """Read any supported source file, dispatching by extension.
+
+    Returns:
+        dict with keys:
+            type: ``"excel"`` | ``"pdf"`` | ``"docx"``
+            data: ``list[dict]`` (excel) or ``str`` (pdf/docx)
+            filename: basename of the file
+
+    Raises:
+        ValueError: for unsupported file extensions.
+    """
+    ext = os.path.splitext(filepath)[1].lower()
+    filename = os.path.basename(filepath)
+
+    if ext in (".xlsx", ".xlsm"):
+        return {"type": "excel", "data": read_excel(filepath), "filename": filename}
+    elif ext == ".pdf":
+        return {"type": "pdf", "data": read_pdf(filepath), "filename": filename}
+    elif ext == ".docx":
+        return {"type": "docx", "data": read_docx(filepath), "filename": filename}
+    else:
+        raise ValueError(
+            f"Unsupported file extension '{ext}'. Supported: .xlsx, .xlsm, .pdf, .docx"
+        )

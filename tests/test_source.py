@@ -1,7 +1,9 @@
-"""Tests for rattle_api.source — file listing and Excel parsing."""
+"""Tests for rattle_api.source — file listing, Excel/PDF/DOCX parsing."""
 
 import os
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 
 class TestListSources:
@@ -170,3 +172,184 @@ class TestReadExcel:
             read_excel("test.xlsx")
 
         mock_wb.close.assert_called_once()
+
+
+# ---------------------------------------------------------------------------
+# read_pdf
+# ---------------------------------------------------------------------------
+
+
+class TestReadPdf:
+    """read_pdf() — PDF text extraction via pymupdf."""
+
+    def test_extracts_text(self):
+        mock_page = MagicMock()
+        mock_page.get_text.return_value = "Page 1 content"
+        mock_doc = MagicMock()
+        mock_doc.__iter__ = lambda self: iter([mock_page])
+
+        with patch.dict("sys.modules", {"fitz": MagicMock()}):
+            import sys
+
+            sys.modules["fitz"].open.return_value = mock_doc
+            from rattle_api.source import read_pdf
+
+            result = read_pdf("test.pdf")
+
+        assert "Page 1 content" in result
+
+    def test_joins_multiple_pages(self):
+        pages = [MagicMock(), MagicMock()]
+        pages[0].get_text.return_value = "Page 1"
+        pages[1].get_text.return_value = "Page 2"
+        mock_doc = MagicMock()
+        mock_doc.__iter__ = lambda self: iter(pages)
+
+        with patch.dict("sys.modules", {"fitz": MagicMock()}):
+            import sys
+
+            sys.modules["fitz"].open.return_value = mock_doc
+            from rattle_api.source import read_pdf
+
+            result = read_pdf("test.pdf")
+
+        assert "Page 1" in result
+        assert "Page 2" in result
+
+    def test_closes_document(self):
+        mock_doc = MagicMock()
+        mock_doc.__iter__ = lambda self: iter([])
+
+        with patch.dict("sys.modules", {"fitz": MagicMock()}):
+            import sys
+
+            sys.modules["fitz"].open.return_value = mock_doc
+            from rattle_api.source import read_pdf
+
+            read_pdf("test.pdf")
+
+        mock_doc.close.assert_called_once()
+
+    def test_import_error_message(self):
+        with patch.dict("sys.modules", {"fitz": None}):
+            with pytest.raises(ImportError, match="pymupdf"):
+                from importlib import reload
+
+                import rattle_api.source as src
+
+                reload(src)
+                src.read_pdf("test.pdf")
+
+
+# ---------------------------------------------------------------------------
+# read_docx
+# ---------------------------------------------------------------------------
+
+
+class TestReadDocx:
+    """read_docx() — Word document text extraction via python-docx."""
+
+    def test_extracts_paragraphs(self):
+        mock_para1 = MagicMock()
+        mock_para1.text = "First paragraph"
+        mock_para2 = MagicMock()
+        mock_para2.text = "Second paragraph"
+        mock_doc = MagicMock()
+        mock_doc.paragraphs = [mock_para1, mock_para2]
+
+        mock_docx = MagicMock()
+        mock_docx.Document.return_value = mock_doc
+
+        with patch.dict("sys.modules", {"docx": mock_docx}):
+            from rattle_api.source import read_docx
+
+            result = read_docx("test.docx")
+
+        assert "First paragraph" in result
+        assert "Second paragraph" in result
+
+    def test_empty_doc_returns_empty_string(self):
+        mock_doc = MagicMock()
+        mock_doc.paragraphs = []
+        mock_docx = MagicMock()
+        mock_docx.Document.return_value = mock_doc
+
+        with patch.dict("sys.modules", {"docx": mock_docx}):
+            from rattle_api.source import read_docx
+
+            result = read_docx("empty.docx")
+
+        assert result == ""
+
+    def test_import_error_message(self):
+        with patch.dict("sys.modules", {"docx": None}):
+            with pytest.raises(ImportError, match="python-docx"):
+                from importlib import reload
+
+                import rattle_api.source as src
+
+                reload(src)
+                src.read_docx("test.docx")
+
+
+# ---------------------------------------------------------------------------
+# read_source (dispatcher)
+# ---------------------------------------------------------------------------
+
+
+class TestReadSource:
+    """read_source() — dispatch by file extension."""
+
+    def test_xlsx_dispatches_to_read_excel(self):
+        with patch("rattle_api.source.read_excel", return_value=[{"A": 1}]) as mock:
+            from rattle_api.source import read_source
+
+            result = read_source("data.xlsx")
+
+        mock.assert_called_once_with("data.xlsx")
+        assert result["type"] == "excel"
+        assert result["data"] == [{"A": 1}]
+        assert result["filename"] == "data.xlsx"
+
+    def test_xlsm_dispatches_to_read_excel(self):
+        with patch("rattle_api.source.read_excel", return_value=[]) as mock:
+            from rattle_api.source import read_source
+
+            result = read_source("macro.xlsm")
+
+        mock.assert_called_once_with("macro.xlsm")
+        assert result["type"] == "excel"
+
+    def test_pdf_dispatches_to_read_pdf(self):
+        with patch("rattle_api.source.read_pdf", return_value="PDF text") as mock:
+            from rattle_api.source import read_source
+
+            result = read_source("doc.pdf")
+
+        mock.assert_called_once_with("doc.pdf")
+        assert result["type"] == "pdf"
+        assert result["data"] == "PDF text"
+
+    def test_docx_dispatches_to_read_docx(self):
+        with patch("rattle_api.source.read_docx", return_value="Word text") as mock:
+            from rattle_api.source import read_source
+
+            result = read_source("doc.docx")
+
+        mock.assert_called_once_with("doc.docx")
+        assert result["type"] == "docx"
+        assert result["data"] == "Word text"
+
+    def test_unsupported_extension_raises(self):
+        from rattle_api.source import read_source
+
+        with pytest.raises(ValueError, match="Unsupported"):
+            read_source("data.csv")
+
+    def test_case_insensitive_extension(self):
+        with patch("rattle_api.source.read_pdf", return_value="text"):
+            from rattle_api.source import read_source
+
+            result = read_source("DOC.PDF")
+
+        assert result["type"] == "pdf"
