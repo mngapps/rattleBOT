@@ -60,6 +60,13 @@ make format                        # Auto-format with Ruff
 3. Register in the `commands` dispatch dict
 4. Add tests in `tests/test_main.py`
 
+## Rattle REST API Reference
+
+A comprehensive reference of all ~500 REST API operations is at `docs/API_REFERENCE.md`.
+Consult it before making any API calls to understand available endpoints, required parameters,
+request/response shapes, and example JSON. The `RattleClient` in `rattle_api/client.py` is a
+thin HTTP wrapper — paths are relative (e.g. `client.get("products")` calls `GET /api/v1/products`).
+
 ## Configurator Consulting Knowledge
 
 This codebase embeds deep consulting expertise about building correct product configurators. The knowledge is codified in `rattle_api/knowledge.py` and automatically applied by the AI analysis tasks (`ai-analyse-pricelist`, `ai-suggest-config`).
@@ -92,22 +99,17 @@ Product
 
 ### Configuration Rules
 
-- **explicit-options-for-all-variants**: Every configurable feature MUST have an explicit group with ALL variants as separate options — including the "standard" variant
-- **default-option-required**: Every group must have exactly one default (pre-selected) option
-- **no-implicit-standard**: The standard/base variant must be a named, selectable option, never an implicit baseline
-- **bom-coverage**: Every option must map to a clear BOM impact via usage_subclauses
-- **mutual-exclusivity**: Options within a single-select group must be mutually exclusive
+- **explicit-options-for-all-variants**: Every configurable feature MUST have an explicit group with ALL variants as separate options — including the "standard" variant. The standard variant must be a named, selectable option, never an implicit baseline.
 - **price-on-option**: Price modifiers belong on the option level, not as separate line items
 - **reuse-over-duplicate**: Always prefer reusing existing groups/options over creating duplicates; use areaOverrides for product-specific price differences
 - **forbidden-combinations**: Identify and define rules for invalid option combinations across groups (e.g., machine variant X incompatible with accessory Y)
+
+Note: Not every option maps to BOM parts. Options for software features, services, or cosmetic choices may have no usage_subclauses — that is normal. Usage subclauses are only needed for options that affect the physical bill of materials.
 
 ### Anti-Patterns to Detect
 
 - **Implicit Base Configuration** (`implicit-base-config`): Standard features listed without explicit options. Indicators: standard, Grundausstattung, Serienausstattung, im Lieferumfang, serienmäßig
 - **Add-on Only Options** (`addon-only-options`): Options listed only as surcharges without stating the default. Indicators: Aufpreis, Zuschlag, zusätzlich, extra, Mehrpreis
-- **Binary ohne/mit Without Explicit Group** (`binary-ohne-mit-no-group`): Features as 'with/without' but not in a proper group. Indicators: ohne, mit, ja/nein
-- **Options Without BOM Mapping** (`missing-bom-mapping`): Features without part/article references. Indicators: auf Anfrage, nach Absprache
-- **Ambiguous Group Boundaries** (`overlapping-groups`): Same feature in multiple groups. Indicators: siehe auch, alternativ
 
 ### AI Commands for Configuration
 

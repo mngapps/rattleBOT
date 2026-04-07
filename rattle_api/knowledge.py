@@ -111,62 +111,17 @@ CONFIGURATION_RULES: list[dict] = [
         "rule": (
             "Every configurable feature MUST have an explicit group with "
             "ALL variants as separate, selectable options — including the "
-            "'standard' or 'default' variant."
+            "'standard' or 'default' variant. The standard variant must "
+            "be a named, selectable option, never an implicit baseline."
         ),
         "rationale": (
             "Without an explicit option for the standard variant, it is "
             "impossible to write a usage_subclause that adds the standard "
             "parts to the BOM. The configurator cannot remove an implicit "
-            "baseline — it can only activate parts linked to selected options."
-        ),
-        "applies_to": ["groups", "options", "usage_subclauses"],
-    },
-    {
-        "id": "default-option-required",
-        "rule": ("Every group must have exactly one default (pre-selected) option."),
-        "rationale": (
-            "A group without a default leaves the BOM undefined until the "
-            "user makes a selection. The default option defines the initial "
-            "BOM state."
-        ),
-        "applies_to": ["groups", "options"],
-    },
-    {
-        "id": "no-implicit-standard",
-        "rule": (
-            "The standard/base variant must be a named, selectable option, "
-            "never an implicit baseline that only exists by the absence "
-            "of other selections."
-        ),
-        "rationale": (
-            "An implicit standard cannot be targeted by usage_subclauses. "
+            "baseline — it can only activate parts linked to selected options. "
             "Example: if '17 inch wheels' is implicit (not an option), "
             "there is no way to write a rule that adds 17-inch wheel parts "
             "to the BOM."
-        ),
-        "applies_to": ["options"],
-    },
-    {
-        "id": "bom-coverage",
-        "rule": (
-            "Every option must map to a clear BOM impact via "
-            "usage_subclauses, even if the impact is 'no additional parts'."
-        ),
-        "rationale": (
-            "Options without BOM mapping are decorative — they cannot "
-            "drive the configurable bill of materials."
-        ),
-        "applies_to": ["options", "usage_subclauses"],
-    },
-    {
-        "id": "mutual-exclusivity",
-        "rule": (
-            "Options within a single-select group must be mutually "
-            "exclusive — selecting one deselects the others."
-        ),
-        "rationale": (
-            "If options overlap, the BOM may double-count parts or "
-            "produce contradictory configurations."
         ),
         "applies_to": ["groups", "options"],
     },
@@ -285,89 +240,6 @@ ANTI_PATTERNS: list[dict] = [
             "Group 'Frässpindel': Option 'ISO 30 Standard' (default), "
             "Option 'HSK-63F ohne Encoder' (+1.800€), "
             "Option 'HSK-63F mit Encoder' (+2.500€)."
-        ),
-    },
-    {
-        "id": "binary-ohne-mit-no-group",
-        "name": "Binary ohne/mit Without Explicit Group",
-        "description": (
-            "Features are listed as 'with' or 'without' (ohne/mit) but "
-            "not structured as a proper group with named options."
-        ),
-        "indicators": [
-            "ohne",
-            "mit",
-            "with",
-            "without",
-            "ja/nein",
-            "yes/no",
-        ],
-        "correction": (
-            "Create a named group (e.g. 'Netzwerkanschluss') with "
-            "two explicit options: 'ohne' (default or not) and 'mit'. "
-            "Both must have usage_subclauses defining their BOM impact."
-        ),
-        "example_wrong": (
-            "Netzwerkanschluss + Teleservice: optional. "
-            "Problem: no group, no explicit options, no BOM rules."
-        ),
-        "example_correct": (
-            "Group 'Netzwerkanschluss + Teleservice': "
-            "Option 'ohne' (default), Option 'mit' (+950€)."
-        ),
-    },
-    {
-        "id": "missing-bom-mapping",
-        "name": "Options Without BOM Mapping",
-        "description": (
-            "Features or options are described without any reference to "
-            "parts, article numbers, or BOM components."
-        ),
-        "indicators": [
-            "auf Anfrage",
-            "nach Absprache",
-            "on request",
-            "to be confirmed",
-            "n/a",
-        ],
-        "correction": (
-            "Every option must eventually map to parts via "
-            "usage_subclauses. Flag these items for BOM data enrichment."
-        ),
-        "example_wrong": ("Option 'Sonderlackierung': price on request, no part number."),
-        "example_correct": (
-            "Option 'Sonderlackierung': part 'LACK-SONDER-001', "
-            "usage_subclause links selection to BOM."
-        ),
-    },
-    {
-        "id": "overlapping-groups",
-        "name": "Ambiguous Group Boundaries",
-        "description": (
-            "The same feature or component appears in multiple groups, "
-            "or group boundaries are unclear, leading to configuration "
-            "conflicts."
-        ),
-        "indicators": [
-            "siehe auch",
-            "see also",
-            "alternativ",
-            "alternatively",
-            "oder",
-        ],
-        "correction": (
-            "Each feature belongs to exactly one group. If related, "
-            "use forbidden-combination rules to express dependencies "
-            "between groups."
-        ),
-        "example_wrong": (
-            "'Externes Magazin LI' appears in both 'Mechanisches Zubehör' "
-            "and 'Mechanisches Zubehör HSK-63-F'."
-        ),
-        "example_correct": (
-            "One group 'Externes Magazin' with options for both ISO 30 "
-            "and HSK-63-F variants, plus a forbidden-combination rule "
-            "linking to the spindle group."
         ),
     },
 ]

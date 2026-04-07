@@ -221,12 +221,6 @@ class TestDetectAntiPatterns:
         pattern_ids = {r["pattern_id"] for r in results}
         assert "implicit-base-config" in pattern_ids
 
-    def test_detects_ohne_mit(self):
-        data = [{"Option": "Teleservice: ohne / mit"}]
-        results = detect_anti_patterns(data)
-        pattern_ids = {r["pattern_id"] for r in results}
-        assert "binary-ohne-mit-no-group" in pattern_ids
-
     def test_clean_data_returns_empty(self):
         data = [
             {"Name": "Drill X100", "Price": 500},
