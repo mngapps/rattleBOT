@@ -6,6 +6,8 @@ can invoke to:
   - Analyse / enrich product data
   - Transform interchange data between formats
   - Generate product descriptions, pricing suggestions, etc.
+  - Analyse pricelists for configurator anti-patterns
+  - Suggest BOM-aware configuration structures
   - Push AI-produced results back to the Rattle API
 
 All tasks are model-agnostic — the active AI provider is selected at
@@ -13,6 +15,7 @@ runtime via the ``AI_PROVIDER`` env var or explicit argument.
 """
 
 import json
+import os
 import sys
 
 from .client import RattleClient
@@ -217,6 +220,146 @@ def analyse_data(tenant, *, provider=None, question=None):
 
 
 # ---------------------------------------------------------------------------
+# Task: analyse_pricelist
+# ---------------------------------------------------------------------------
+
+
+def _resolve_source_file(tenant, source_file):
+    """Resolve source file path — absolute or relative to source/<tenant>/."""
+    if os.path.isabs(source_file):
+        return source_file
+    from .source import SOURCE_DIR
+
+    return os.path.join(SOURCE_DIR, tenant.lower(), source_file)
+
+
+def analyse_pricelist(tenant, source_file, *, provider=None, language="de"):
+    """Analyse a pricelist / technical document for configurator anti-patterns.
+
+    Two-phase analysis:
+      1. Heuristic scan (free, no AI) via :func:`knowledge.detect_anti_patterns`
+      2. AI analysis with embedded consulting knowledge
+
+    Args:
+        tenant:      Rattle tenant name.
+        source_file: Filename relative to ``source/<tenant>/``, or absolute path.
+        provider:    Optional explicit AIProvider instance.
+        language:    Output language (default ``"de"``).
+
+    Returns:
+        dict with ``source_file``, ``file_type``, ``anti_patterns_heuristic``,
+        ``ai_analysis``.
+    """
+    from .knowledge import detect_anti_patterns, system_prompt_analyse_pricelist
+    from .source import read_source
+
+    ai = _ai(provider)
+    filepath = _resolve_source_file(tenant, source_file)
+    source = read_source(filepath)
+
+    # Phase 1: heuristic scan (Excel only — structured data)
+    heuristic_results = []
+    if source["type"] == "excel":
+        heuristic_results = detect_anti_patterns(source["data"])
+
+    # Phase 2: AI analysis
+    system = system_prompt_analyse_pricelist(language=language)
+    if source["type"] == "excel":
+        content = json.dumps(source["data"], ensure_ascii=False, default=str)[:8000]
+    else:
+        content = str(source["data"])[:8000]
+
+    prompt = f"Source file: {source['filename']} ({source['type']})\n\nContent:\n{content}"
+
+    ai_analysis = {}
+    try:
+        ai_analysis = ai.complete_json(prompt, system=system, max_tokens=4096)
+        print(f"  OK  analyse_pricelist: {source['filename']}")
+    except Exception as exc:
+        print(f"  FAIL analyse_pricelist: {exc}", file=sys.stderr)
+        ai_analysis = {"error": str(exc)}
+
+    return {
+        "source_file": source_file,
+        "file_type": source["type"],
+        "anti_patterns_heuristic": heuristic_results,
+        "ai_analysis": ai_analysis,
+    }
+
+
+# ---------------------------------------------------------------------------
+# Task: suggest_configuration
+# ---------------------------------------------------------------------------
+
+
+def suggest_configuration(
+    tenant, source_file, *, provider=None, language="de", product_filter=None
+):
+    """Generate explicit BOM-aware configuration recommendations.
+
+    Fetches existing groups/options from Rattle to prefer reuse over
+    duplication.  Suggests forbidden combinations and area overrides.
+
+    Args:
+        tenant:         Rattle tenant name.
+        source_file:    Filename relative to ``source/<tenant>/``, or absolute.
+        provider:       Optional explicit AIProvider instance.
+        language:       Output language (default ``"de"``).
+        product_filter: Optional product name to focus on.
+
+    Returns:
+        dict with ``source_file``, ``existing_groups_checked``, ``products``
+        (each with ``groups``, ``usage_subclauses``, ``forbidden_combinations``).
+    """
+    from .knowledge import system_prompt_suggest_configuration
+    from .source import read_source
+
+    ai = _ai(provider)
+    client = RattleClient(tenant)
+    filepath = _resolve_source_file(tenant, source_file)
+    source = read_source(filepath)
+
+    # Fetch existing groups/options for reuse
+    existing_groups = []
+    try:
+        existing_groups = client.list_all("groups")
+    except Exception:
+        print("  WARN: could not fetch existing groups", file=sys.stderr)
+
+    system = system_prompt_suggest_configuration(
+        language=language,
+        existing_groups=existing_groups if existing_groups else None,
+    )
+
+    if source["type"] == "excel":
+        content = json.dumps(source["data"], ensure_ascii=False, default=str)[:8000]
+    else:
+        content = str(source["data"])[:8000]
+
+    prompt = f"Source file: {source['filename']} ({source['type']})\n\n"
+    if product_filter:
+        prompt += f"Focus on product: {product_filter}\n\n"
+    prompt += f"Content:\n{content}"
+
+    try:
+        result = ai.complete_json(prompt, system=system, max_tokens=8192)
+        print(f"  OK  suggest_configuration: {source['filename']}")
+    except Exception as exc:
+        print(f"  FAIL suggest_configuration: {exc}", file=sys.stderr)
+        result = {"error": str(exc), "products": []}
+
+    # Ensure top-level structure
+    if isinstance(result, dict) and "products" not in result:
+        result = {"products": result if isinstance(result, list) else [result]}
+
+    return {
+        "source_file": source_file,
+        "existing_groups_checked": len(existing_groups),
+        **result,
+    }
+
+
+# ---------------------------------------------------------------------------
 # Registry (for CLI dispatch)
 # ---------------------------------------------------------------------------
 
@@ -225,4 +368,6 @@ TASKS = {
     "classify-products": classify_products,
     "transform-interchange": transform_interchange,
     "analyse-data": analyse_data,
+    "analyse-pricelist": analyse_pricelist,
+    "suggest-configuration": suggest_configuration,
 }

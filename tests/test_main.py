@@ -107,6 +107,60 @@ class TestCLIParsing:
                 args_obj = mock_cmd.call_args[0][1]
                 assert args_obj.question is None
 
+    def test_ai_analyse_pricelist_args(self):
+        argv = ["main.py", "testco", "ai-analyse-pricelist", "prices.xlsx", "--language", "en"]
+        with patch("sys.argv", argv):
+            with patch("rattle_api.main.cmd_ai_analyse_pricelist") as mock_cmd:
+                from rattle_api.main import main
+
+                main()
+                args_obj = mock_cmd.call_args[0][1]
+                assert args_obj.source_file == "prices.xlsx"
+                assert args_obj.language == "en"
+
+    def test_ai_analyse_pricelist_defaults(self):
+        argv = ["main.py", "testco", "ai-analyse-pricelist", "data.xlsx"]
+        with patch("sys.argv", argv):
+            with patch("rattle_api.main.cmd_ai_analyse_pricelist") as mock_cmd:
+                from rattle_api.main import main
+
+                main()
+                args_obj = mock_cmd.call_args[0][1]
+                assert args_obj.source_file == "data.xlsx"
+                assert args_obj.language == "de"
+
+    def test_ai_suggest_config_args(self):
+        argv = [
+            "main.py",
+            "testco",
+            "ai-suggest-config",
+            "prices.xlsx",
+            "--language",
+            "en",
+            "--product",
+            "NIKE TM DPM",
+        ]
+        with patch("sys.argv", argv):
+            with patch("rattle_api.main.cmd_ai_suggest_config") as mock_cmd:
+                from rattle_api.main import main
+
+                main()
+                args_obj = mock_cmd.call_args[0][1]
+                assert args_obj.source_file == "prices.xlsx"
+                assert args_obj.language == "en"
+                assert args_obj.product == "NIKE TM DPM"
+
+    def test_ai_suggest_config_defaults(self):
+        argv = ["main.py", "testco", "ai-suggest-config", "data.xlsx"]
+        with patch("sys.argv", argv):
+            with patch("rattle_api.main.cmd_ai_suggest_config") as mock_cmd:
+                from rattle_api.main import main
+
+                main()
+                args_obj = mock_cmd.call_args[0][1]
+                assert args_obj.language == "de"
+                assert args_obj.product is None
+
     def test_ai_providers(self):
         with patch("sys.argv", ["main.py", "testco", "ai-providers"]):
             with patch("rattle_api.main.cmd_ai_providers") as mock_cmd:
@@ -142,6 +196,8 @@ class TestCommandDispatch:
             "ai-classify",
             "ai-transform",
             "ai-analyse",
+            "ai-analyse-pricelist",
+            "ai-suggest-config",
             "ai-providers",
         }
         # Read the commands dict from main module
@@ -152,6 +208,8 @@ class TestCommandDispatch:
             argv = ["main.py", "testco", cmd]
             if cmd == "ai-transform":
                 argv += ["src", "dst", "file.json"]
+            elif cmd in ("ai-analyse-pricelist", "ai-suggest-config"):
+                argv += ["file.xlsx"]
             with patch("sys.argv", argv):
                 handler = f"rattle_api.main.cmd_{cmd.replace('-', '_')}"
                 with patch(handler) as mock_h:

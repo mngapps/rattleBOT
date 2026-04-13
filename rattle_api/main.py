@@ -78,6 +78,31 @@ def cmd_ai_analyse(tenant, args):
     analyse_data(tenant, question=args.question)
 
 
+def cmd_ai_analyse_pricelist(tenant, args):
+    """Analyse a pricelist using AI + consulting knowledge."""
+    from .tasks import analyse_pricelist
+
+    result = analyse_pricelist(
+        tenant,
+        args.source_file,
+        language=args.language,
+    )
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+
+
+def cmd_ai_suggest_config(tenant, args):
+    """Generate BOM-aware configuration recommendations."""
+    from .tasks import suggest_configuration
+
+    result = suggest_configuration(
+        tenant,
+        args.source_file,
+        language=args.language,
+        product_filter=args.product,
+    )
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+
+
 def cmd_ai_providers(tenant, args):
     """List available AI providers."""
     from .provider import list_providers
@@ -147,6 +172,27 @@ def main():
         "--question", default=None, help="Custom question (default: data quality audit)"
     )
 
+    p_pricelist = sub.add_parser(
+        "ai-analyse-pricelist",
+        help="Analyse a pricelist for configurator anti-patterns",
+    )
+    p_pricelist.add_argument(
+        "source_file",
+        help="Source file (relative to source/<tenant>/ or absolute)",
+    )
+    p_pricelist.add_argument("--language", default="de", help="Output language (default de)")
+
+    p_suggest = sub.add_parser(
+        "ai-suggest-config",
+        help="Generate BOM-aware configuration recommendations",
+    )
+    p_suggest.add_argument(
+        "source_file",
+        help="Source file (relative to source/<tenant>/ or absolute)",
+    )
+    p_suggest.add_argument("--language", default="de", help="Output language (default de)")
+    p_suggest.add_argument("--product", default=None, help="Focus on a specific product name")
+
     sub.add_parser("ai-providers", help="List available AI providers")
 
     # -- dispatch ------------------------------------------------------------
@@ -159,6 +205,8 @@ def main():
         "ai-classify": cmd_ai_classify,
         "ai-transform": cmd_ai_transform,
         "ai-analyse": cmd_ai_analyse,
+        "ai-analyse-pricelist": cmd_ai_analyse_pricelist,
+        "ai-suggest-config": cmd_ai_suggest_config,
         "ai-providers": cmd_ai_providers,
     }
     commands[args.command](args.tenant, args)
