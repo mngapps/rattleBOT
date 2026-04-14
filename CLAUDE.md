@@ -9,11 +9,13 @@ Standard Python package layout — all source lives in `rattle_api/`:
 | Module | Purpose |
 |--------|---------|
 | `rattle_api/main.py` | CLI entry point (argparse dispatch). All AI imports are lazy to avoid import errors when a provider SDK isn't installed. |
-| `rattle_api/config.py` | Loads `.env`, resolves tenant API keys from `RATTLE_API_KEY_*` env vars, selects AI provider. |
+| `rattle_api/config.py` | Loads `.env`, resolves tenant API keys from `RATTLE_API_KEY_*` env vars, resolves frontend URLs from `RATTLE_FRONTEND_URL*` env vars, selects AI provider. |
 | `rattle_api/client.py` | `RattleClient` — HTTP client for the Rattle REST API (GET/POST/PATCH/PUT/DELETE + pagination + image upload). |
 | `rattle_api/provider.py` | `AIProvider` ABC + 4 implementations (OpenAI, Anthropic, Ollama, CustomHTTP). Registry pattern via `PROVIDERS` dict. |
-| `rattle_api/tasks.py` | Task functions: `describe_products`, `classify_products`, `transform_interchange`, `analyse_data`, `analyse_pricelist`, `suggest_configuration`. Each fetches data from Rattle, sends to AI, optionally pushes results back. |
-| `rattle_api/knowledge.py` | Configurator consulting knowledge: data model, configuration rules, anti-patterns, system prompts, heuristic detection. Source of truth for all domain expertise. |
+| `rattle_api/tasks.py` | Task functions: `describe_products`, `classify_products`, `transform_interchange`, `analyse_data`, `analyse_pricelist`, `suggest_configuration`, plus `run_build_stage` / `run_build_configurator` that drive the prompt-template pipeline. |
+| `rattle_api/knowledge.py` | Configurator consulting knowledge: data model, configuration rules, anti-patterns, system prompts, heuristic detection, `STAGE_TO_RULE_IDS`, `FEATURE_EXTRACTION_HEURISTICS`, `GUIDED_SELLING_PATTERNS`. Source of truth for all domain expertise. |
+| `rattle_api/prompt_templates.py` | Named, versioned prompt template library (`PROMPT_TEMPLATES` registry). Each template composes `knowledge.system_prompt_base` + stage-specific framing + live-Rattle-state summary + `ensure_*` operation schema + self-check. Supports per-tenant markdown overrides at `prompt_templates/<tenant>/<template_id>.md`. |
+| `rattle_api/builder.py` | `ConfigBuilder` — idempotent direct-apply runner. Takes the `ensure_*` operation lists emitted by prompt templates and executes them immediately against the Rattle REST API via `RattleClient` (get-or-create semantics, name→id resolution across ops, drift detection, `dry_run` mode, structured `BuildReport`). Zero intermediate JSON files. |
 | `rattle_api/source.py` | Reads local files from `source/<tenant>/` — Excel (.xlsx/.xlsm), PDF, and Word (.docx). |
 | `rattle_api/image.py` | Image processing — shadow generation for "ohne" (without) product options. |
 
@@ -118,3 +120,81 @@ Note: Not every option maps to BOM parts. Options for software features, service
 
 - `rattle <tenant> ai-analyse-pricelist <file>` — Analyse a pricelist for configurator anti-patterns (heuristic + AI)
 - `rattle <tenant> ai-suggest-config <file>` — Generate BOM-aware configuration recommendations (reuses existing groups, suggests forbidden combinations)
+
+## Prompt Templates & Configurator Builder
+
+rattleBOT ships a **named prompt template library** paired with a **direct-apply configurator builder** that lets users convert product documents into a correct, BOM-aware Rattle configurator end-to-end — the AI operates the Rattle REST API directly, no intermediate JSON files, no hand-apply step.
+
+### Templates (registered in `rattle_api/prompt_templates.py`)
+
+| Template | Stage | Emits |
+|----------|-------|-------|
+| `extract-products` | discovery | `ensure_product` |
+| `discover-features` | discovery | (in-memory feature map for stage 3) |
+| `model-groups-options` | modeling | `ensure_group`, `ensure_option`, `ensure_area_config` |
+| `link-bom` | modeling | `ensure_part`, `ensure_bom_item` |
+| `discover-constraints` | modeling | `ensure_constraint_pair`, `ensure_constraint_rule` |
+| `plan-areas` | structuring | `ensure_area`, `link_group_to_area` |
+| `guided-selling` | enrichment | `patch_option_recommended` |
+| `build-offer-template` | documents | `ensure_document_template`, `ensure_structure_block`, `ensure_attachment` |
+| `review-configuration` | validation | (read-only rule walk against live state) |
+| `full-configurator` | pipeline | single-shot wrapper that emits every op type in one AI call |
+
+Each template composes `knowledge.system_prompt_base()` → stage framing → live-state summary → step-by-step thinking guide → operation schema → self-check. The `TenantMemory` profile flows through automatically.
+
+### Per-tenant overrides
+
+Drop a markdown file at one of:
+
+- `prompt_templates/<tenant>/<template_id>.md` — tenant-specific guidance (wins)
+- `prompt_templates/<template_id>.md` — global override
+
+It is appended under `## Custom guidance` after the code-defined prompt, so consultants can tune wording without losing the composition chain. See `load_template_override()` in `prompt_templates.py`.
+
+### Direct-apply builder (`rattle_api/builder.py`)
+
+`ConfigBuilder` takes the `ensure_*` operations emitted by a prompt template and applies them **directly** to the Rattle REST API via `RattleClient` as idempotent get-or-create calls:
+
+1. `fetch_live_state()` primes a `(entity_type, natural_key) → id` name index from `/products`, `/areas`, `/groups` (with nested options), and `/parts`.
+2. For each operation: look up by name, create if missing, patch if drifted, record the resolved id so downstream ops in the same batch reference by name.
+3. `BuildReport` tracks `created` / `updated` / `unchanged` / `failed` entries and logs progress to stderr.
+4. `dry_run=True` skips all HTTP writes (for inspection via `--dry-run`).
+
+### CLI commands
+
+```bash
+# list and inspect templates
+rattle <tenant> ai-prompts list [--stage modeling]
+rattle <tenant> ai-prompts show extract-products [--language de]
+
+# run ONE stage against a document, applying ops directly to Rattle
+rattle <tenant> ai-build-stage extract-products cat.pdf [--dry-run]
+
+# run the full 9-stage pipeline (each stage applies directly to Rattle,
+# ending with a read-only review-configuration pass + a printed frontend URL)
+rattle <tenant> ai-build-configurator pricelist.xlsx \
+    [--language de] \
+    [--single-shot] \
+    [--dry-run] \
+    [--trace-dir out/] \
+    [--skip guided-selling,build-offer-template]
+```
+
+Validation happens in the **Rattle frontend**: the `ai-build-configurator` command prints the tenant frontend URL + the newly-created product ids so the user can click through and visually verify. Re-running the same document is a no-op (everything reports `unchanged`).
+
+### Configuring the frontend URL
+
+Set either env var so the pipeline can print a click-through validation URL:
+
+- `RATTLE_FRONTEND_URL_<TENANT>=https://tenant.rattleapp.de` — per-tenant override
+- `RATTLE_FRONTEND_URL=https://www.rattleapp.de` — default for all tenants
+
+See `rattle_api/config.py:get_frontend_url()`.
+
+### Adding a new template
+
+1. Write a `build_<name>(*, ..., tenant_profile=None, tenant=None, language="de", **_) -> str` function in `prompt_templates.py`. Start with `system_prompt_base(tenant_profile=tenant_profile)`, append stage-specific guidance, and end with `_apply_override(rendered, "<id>", tenant)`.
+2. Register a `PromptTemplate(...)` entry in the `PROMPT_TEMPLATES` dict.
+3. Add a `STAGE_FRAMING["<id>"]` string so the `full-configurator` wrapper can reference it.
+4. Update `STAGE_TO_RULE_IDS` in `knowledge.py` with the rule ids this stage honours.
+5. Add tests in `tests/test_prompt_templates.py`.

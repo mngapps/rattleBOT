@@ -683,6 +683,152 @@ STRUCTURAL_CHECKS: dict = {
 
 
 # ---------------------------------------------------------------------------
+# Stage → rule map for the prompt template library
+# ---------------------------------------------------------------------------
+#
+# Each stage in the configurator-building pipeline (see
+# ``rattle_api.prompt_templates``) must honour a specific subset of the
+# configuration rules. The ``review-configuration`` stage walks this map to
+# validate that the final Rattle state complies rule-by-rule.
+
+STAGE_TO_RULE_IDS: dict[str, list[str]] = {
+    "extract-products": [],
+    "discover-features": ["explicit-options-for-all-variants"],
+    "model-groups-options": [
+        "explicit-options-for-all-variants",
+        "price-on-option",
+        "reuse-over-duplicate",
+        "minimal-keys",
+        "shared-groups-across-products",
+        "area-config-for-scaled-prices",
+    ],
+    "link-bom": ["explicit-options-for-all-variants"],
+    "discover-constraints": ["forbidden-combinations"],
+    "plan-areas": ["no-empty-areas", "narrative-in-documents-system"],
+    "guided-selling": [],
+    "build-offer-template": [
+        "offer-requires-configuration-block",
+        "use-system-dynamic-blocks",
+        "narrative-in-documents-system",
+    ],
+    "review-configuration": [r["id"] for r in CONFIGURATION_RULES],
+    "full-configurator": [r["id"] for r in CONFIGURATION_RULES],
+}
+
+
+# ---------------------------------------------------------------------------
+# Feature-extraction heuristics (used by discover-features prompts)
+# ---------------------------------------------------------------------------
+#
+# These are keyword hints injected into the ``discover-features`` user prompt
+# so the AI knows which markers in a German/English pricelist signal an
+# implicit baseline that must be surfaced as an explicit option.
+
+FEATURE_EXTRACTION_HEURISTICS: dict[str, list[str]] = {
+    "standard_markers_de": [
+        "Serienausstattung",
+        "Grundausstattung",
+        "Basisausstattung",
+        "im Lieferumfang",
+        "serienmäßig",
+        "Standard",
+        "inkl.",
+    ],
+    "standard_markers_en": [
+        "standard",
+        "included",
+        "base",
+        "baseline",
+        "default",
+    ],
+    "addon_markers_de": [
+        "Aufpreis",
+        "Zuschlag",
+        "Mehrpreis",
+        "Aufschlag",
+        "zusätzlich",
+        "optional",
+    ],
+    "addon_markers_en": [
+        "surcharge",
+        "upgrade",
+        "add-on",
+        "extra",
+        "optional",
+    ],
+    "scope_qualifiers": [
+        "gilt für",
+        "applicable to",
+        "only for",
+        "nur für",
+        "requires",
+        "erfordert",
+    ],
+    "constraint_markers": [
+        "nur in Kombination mit",
+        "nicht wählbar wenn",
+        "not available with",
+        "requires",
+        "excludes",
+        "forbidden with",
+        "nicht kombinierbar",
+    ],
+}
+
+
+# ---------------------------------------------------------------------------
+# Guided selling patterns (used by guided-selling prompts)
+# ---------------------------------------------------------------------------
+#
+# Canonical question archetypes the AI can draw from when drafting a
+# needs-assessment flow. Each archetype is a short prompt describing what
+# the question should elicit.
+
+GUIDED_SELLING_PATTERNS: list[dict] = [
+    {
+        "id": "use-case",
+        "archetype": "Primary use case / workload",
+        "examples": [
+            "What is the primary application (one-off, batch, continuous)?",
+            "Which material family will be processed most often?",
+        ],
+    },
+    {
+        "id": "volume",
+        "archetype": "Expected throughput or frequency",
+        "examples": [
+            "How many units per shift are expected?",
+            "Daily / weekly / seasonal operation?",
+        ],
+    },
+    {
+        "id": "environment",
+        "archetype": "Physical or regulatory environment",
+        "examples": [
+            "Indoor/outdoor? Clean/dirty? Ex-zone?",
+            "Which safety or certification requirements apply?",
+        ],
+    },
+    {
+        "id": "budget",
+        "archetype": "Budget envelope / tier",
+        "examples": [
+            "Entry / mid / premium tier?",
+            "Is total cost of ownership a priority over up-front price?",
+        ],
+    },
+    {
+        "id": "integrations",
+        "archetype": "Existing systems to integrate with",
+        "examples": [
+            "ERP / MES / SCADA systems already in place?",
+            "Data / fieldbus protocols required?",
+        ],
+    },
+]
+
+
+# ---------------------------------------------------------------------------
 # System prompt builders
 # ---------------------------------------------------------------------------
 

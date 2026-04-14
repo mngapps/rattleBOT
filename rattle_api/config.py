@@ -26,6 +26,36 @@ def get_tenant(name):
 
 
 # ---------------------------------------------------------------------------
+# Frontend URL — used by the configurator builder to print click-through
+# validation links after a run. Per-tenant override takes precedence over
+# the global default.
+#   RATTLE_FRONTEND_URL              — default for all tenants
+#   RATTLE_FRONTEND_URL_<TENANT>     — override for one tenant (uppercased)
+# ---------------------------------------------------------------------------
+
+FRONTEND_URL_PREFIX = "RATTLE_FRONTEND_URL_"
+DEFAULT_FRONTEND_URL = os.environ.get("RATTLE_FRONTEND_URL", "https://www.rattleapp.de")
+
+FRONTEND_URLS = {
+    key[len(FRONTEND_URL_PREFIX) :].lower(): value
+    for key, value in os.environ.items()
+    if key.startswith(FRONTEND_URL_PREFIX)
+}
+
+
+def get_frontend_url(tenant):
+    """Return the Rattle frontend URL for *tenant*, trimmed of trailing slashes.
+
+    Lookup order:
+      1. ``RATTLE_FRONTEND_URL_<TENANT>``
+      2. ``RATTLE_FRONTEND_URL``
+      3. The built-in default (``https://www.rattleapp.de``)
+    """
+    url = FRONTEND_URLS.get(tenant.lower()) or DEFAULT_FRONTEND_URL
+    return url.rstrip("/")
+
+
+# ---------------------------------------------------------------------------
 # AI provider configuration
 # ---------------------------------------------------------------------------
 # AI_PROVIDER          – which backend to use: openai | anthropic | ollama | custom
