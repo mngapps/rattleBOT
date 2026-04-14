@@ -700,3 +700,328 @@ class TestMemoryIntegration:
         # No decisions or audit files created by the tasks themselves
         assert not decisions_path.exists()
         assert not audit_path.exists()
+
+
+# ---------------------------------------------------------------------------
+# run_build_stage + run_build_configurator
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture
+def fake_builder_client():
+    """A FakeRattleClient instance reused across the build-pipeline tests."""
+    from tests.test_builder import FakeRattleClient
+
+    return FakeRattleClient()
+
+
+class TestRunBuildStage:
+    """Single prompt-template stage runs with a fake AI + fake Rattle client."""
+
+    def test_extract_products_creates_operations_via_builder(
+        self, monkeypatch, tmp_path, fake_builder_client
+    ):
+        from rattle_api.builder import ConfigBuilder
+        from rattle_api.tasks import run_build_stage
+
+        monkeypatch.setenv("RATTLE_API_KEY_TESTCO", "test-key")
+        import rattle_api.config as config
+
+        importlib.reload(config)
+
+        fake = FakeAIProvider(
+            json_response={
+                "operations": [
+                    {"op": "ensure_product", "name": "Drill X100", "base_price": 500},
+                    {"op": "ensure_product", "name": "Excavator Z3", "base_price": 900},
+                ]
+            }
+        )
+
+        builder = ConfigBuilder(fake_builder_client, verbose=False)
+
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "pdf",
+                "data": "catalogue text",
+                "filename": "cat.pdf",
+            }
+            result = run_build_stage(
+                "testco",
+                "extract-products",
+                "/abs/cat.pdf",
+                provider=fake,
+                client=fake_builder_client,
+                builder=builder,
+            )
+
+        assert result["template_id"] == "extract-products"
+        assert result["report"]["counts"]["created"] == 2
+        assert builder.name_index[("product", "drill x100")] is not None
+
+    def test_dry_run_stage_makes_no_http_writes(self, monkeypatch, fake_builder_client):
+        from rattle_api.builder import ConfigBuilder
+        from rattle_api.tasks import run_build_stage
+
+        monkeypatch.setenv("RATTLE_API_KEY_TESTCO", "test-key")
+        import rattle_api.config as config
+
+        importlib.reload(config)
+
+        fake = FakeAIProvider(
+            json_response={"operations": [{"op": "ensure_product", "name": "Drill X100"}]}
+        )
+        builder = ConfigBuilder(fake_builder_client, dry_run=True, verbose=False)
+
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "pdf",
+                "data": "some text",
+                "filename": "x.pdf",
+            }
+            run_build_stage(
+                "testco",
+                "extract-products",
+                "/abs/x.pdf",
+                provider=fake,
+                client=fake_builder_client,
+                builder=builder,
+                dry_run=True,
+            )
+
+        assert fake_builder_client.get_writes("POST") == []
+        assert len(builder.report.created) == 1
+
+    def test_review_configuration_is_read_only(self, monkeypatch, fake_builder_client):
+        from rattle_api.builder import ConfigBuilder
+        from rattle_api.tasks import run_build_stage
+
+        monkeypatch.setenv("RATTLE_API_KEY_TESTCO", "test-key")
+        import rattle_api.config as config
+
+        importlib.reload(config)
+
+        fake = FakeAIProvider(
+            json_response={
+                "findings": [],
+                "overall": {"status": "ok", "summary": "all good"},
+                "operations": [],
+            }
+        )
+        builder = ConfigBuilder(fake_builder_client, verbose=False)
+
+        result = run_build_stage(
+            "testco",
+            "review-configuration",
+            source_file=None,
+            provider=fake,
+            client=fake_builder_client,
+            builder=builder,
+        )
+        assert result["report"]["counts"]["created"] == 0
+        assert fake_builder_client.get_writes("POST") == []
+
+
+class TestRunBuildConfigurator:
+    """End-to-end pipeline orchestration."""
+
+    def _make_pipeline_provider(self):
+        """Return a FakeAIProvider that yields a new canned response per call.
+
+        The pipeline walks 9 stages sequentially, so we cycle a list of
+        canned responses — one per stage.
+        """
+        # Note: FakeAIProvider always returns the same ``json_response``, so we
+        # subclass it to cycle through stages.
+        from tests.conftest import FakeAIProvider as _Fake
+
+        class CyclingFake(_Fake):
+            def __init__(self, responses):
+                super().__init__(json_response={})
+                self._responses = list(responses)
+                self._idx = 0
+
+            def complete_json(self, prompt, *, system=None, max_tokens=2048, temperature=0.0):
+                self.calls.append(
+                    {
+                        "prompt": prompt,
+                        "system": system,
+                        "max_tokens": max_tokens,
+                        "temperature": temperature,
+                    }
+                )
+                payload = self._responses[self._idx % len(self._responses)]
+                self._idx += 1
+                return payload
+
+        return CyclingFake
+
+    def test_pipeline_walks_nine_stages(self, monkeypatch, fake_builder_client):
+        from rattle_api.tasks import run_build_configurator
+
+        monkeypatch.setenv("RATTLE_API_KEY_TESTCO", "test-key")
+        import rattle_api.config as config
+
+        importlib.reload(config)
+
+        cycling_cls = self._make_pipeline_provider()
+        # Nine canned responses, one per stage. All trivially empty op lists
+        # except extract-products which creates a product.
+        responses = [
+            {"operations": [{"op": "ensure_product", "name": "ProdA"}]},  # extract-products
+            {
+                "features": [
+                    {
+                        "name": "wheels",
+                        "product": "ProdA",
+                        "category": "physical",
+                        "variants": [
+                            {"name": "17", "is_standard": True},
+                            {"name": "19", "is_standard": False},
+                        ],
+                    }
+                ],
+                "operations": [],
+            },  # discover-features
+            {
+                "operations": [
+                    {"op": "ensure_group", "name": "Wheels", "is_multi": False},
+                    {"op": "ensure_option", "name": "17", "group": "Wheels", "recommended": True},
+                    {"op": "ensure_option", "name": "19", "group": "Wheels", "price": 500},
+                ]
+            },  # model-groups-options
+            {
+                "operations": [
+                    {"op": "ensure_area", "name": "Mechanics", "parent_product": "ProdA"},
+                    {"op": "link_group_to_area", "group": "Wheels", "area": "Mechanics"},
+                ]
+            },  # plan-areas
+            {"operations": []},  # link-bom (nothing to do)
+            {"operations": []},  # discover-constraints
+            {"operations": []},  # guided-selling
+            {"operations": []},  # build-offer-template
+            {
+                "findings": [],
+                "overall": {"status": "ok", "summary": "ok"},
+                "operations": [],
+            },  # review-configuration
+        ]
+        fake = cycling_cls(responses)
+
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "pdf",
+                "data": "text",
+                "filename": "catalogue.pdf",
+            }
+            result = run_build_configurator(
+                "testco",
+                "/abs/catalogue.pdf",
+                provider=fake,
+                client=fake_builder_client,
+            )
+
+        assert result["summary"]["stages"][:2] == [
+            "extract-products",
+            "discover-features",
+        ]
+        # All 9 stages should have been invoked exactly once.
+        assert len(result["stages"]) == 9
+        # The builder should have posted at least the product, group,
+        # 2 options, area, and link_group_to_area.
+        post_count = len(fake_builder_client.get_writes("POST"))
+        assert post_count >= 5
+        # Frontend URL is present in the summary.
+        assert "frontend_url" in result["summary"]
+
+    def test_single_shot_uses_wrapper_and_runs_review(self, monkeypatch, fake_builder_client):
+        from rattle_api.tasks import run_build_configurator
+
+        monkeypatch.setenv("RATTLE_API_KEY_TESTCO", "test-key")
+        import rattle_api.config as config
+
+        importlib.reload(config)
+
+        cycling_cls = self._make_pipeline_provider()
+        responses = [
+            {"operations": [{"op": "ensure_product", "name": "SingleShotProd"}]},
+            {"findings": [], "overall": {"status": "ok", "summary": "ok"}, "operations": []},
+        ]
+        fake = cycling_cls(responses)
+
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "pdf",
+                "data": "text",
+                "filename": "catalogue.pdf",
+            }
+            result = run_build_configurator(
+                "testco",
+                "/abs/catalogue.pdf",
+                provider=fake,
+                client=fake_builder_client,
+                single_shot=True,
+            )
+
+        # full-configurator + review-configuration = 2 stages
+        assert len(result["stages"]) == 2
+        assert result["stages"][0]["template_id"] == "full-configurator"
+        assert result["stages"][1]["template_id"] == "review-configuration"
+
+    def test_dry_run_pipeline_makes_no_http_writes(self, monkeypatch, fake_builder_client):
+        from rattle_api.tasks import run_build_configurator
+
+        monkeypatch.setenv("RATTLE_API_KEY_TESTCO", "test-key")
+        import rattle_api.config as config
+
+        importlib.reload(config)
+
+        cycling_cls = self._make_pipeline_provider()
+        responses = [{"operations": [{"op": "ensure_product", "name": "X"}]}] * 10
+        fake = cycling_cls(responses)
+
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "pdf",
+                "data": "text",
+                "filename": "cat.pdf",
+            }
+            run_build_configurator(
+                "testco",
+                "/abs/cat.pdf",
+                provider=fake,
+                client=fake_builder_client,
+                dry_run=True,
+            )
+        assert fake_builder_client.get_writes("POST") == []
+
+    def test_skip_stages_are_not_invoked(self, monkeypatch, fake_builder_client):
+        from rattle_api.tasks import run_build_configurator
+
+        monkeypatch.setenv("RATTLE_API_KEY_TESTCO", "test-key")
+        import rattle_api.config as config
+
+        importlib.reload(config)
+
+        cycling_cls = self._make_pipeline_provider()
+        responses = [{"operations": []}] * 10
+        fake = cycling_cls(responses)
+
+        with patch("rattle_api.source.read_source") as mock_read:
+            mock_read.return_value = {
+                "type": "pdf",
+                "data": "text",
+                "filename": "cat.pdf",
+            }
+            result = run_build_configurator(
+                "testco",
+                "/abs/cat.pdf",
+                provider=fake,
+                client=fake_builder_client,
+                skip_stages=["guided-selling", "build-offer-template"],
+            )
+
+        stage_ids = [s["template_id"] for s in result["stages"]]
+        assert "guided-selling" not in stage_ids
+        assert "build-offer-template" not in stage_ids
+        assert "review-configuration" in stage_ids

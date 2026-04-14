@@ -266,3 +266,159 @@ class TestCommandListSources:
 
         captured = capsys.readouterr()
         assert "No source files" in captured.out
+
+
+# ---------------------------------------------------------------------------
+# ai-prompts / ai-build-stage / ai-build-configurator CLI wiring
+# ---------------------------------------------------------------------------
+
+
+class TestPromptTemplateCLI:
+    """CLI parsing for the new prompt-template + configurator-builder commands."""
+
+    def test_ai_prompts_list_parses(self):
+        argv = ["main.py", "testco", "ai-prompts", "list"]
+        with patch("sys.argv", argv):
+            with patch("rattle_api.main.cmd_ai_prompts") as mock_cmd:
+                from rattle_api.main import main
+
+                main()
+                args_obj = mock_cmd.call_args[0][1]
+                assert args_obj.prompts_action == "list"
+
+    def test_ai_prompts_list_with_stage_filter(self):
+        argv = ["main.py", "testco", "ai-prompts", "list", "--stage", "modeling"]
+        with patch("sys.argv", argv):
+            with patch("rattle_api.main.cmd_ai_prompts") as mock_cmd:
+                from rattle_api.main import main
+
+                main()
+                args_obj = mock_cmd.call_args[0][1]
+                assert args_obj.stage == "modeling"
+
+    def test_ai_prompts_show_parses(self):
+        argv = [
+            "main.py",
+            "testco",
+            "ai-prompts",
+            "show",
+            "extract-products",
+            "--language",
+            "en",
+        ]
+        with patch("sys.argv", argv):
+            with patch("rattle_api.main.cmd_ai_prompts") as mock_cmd:
+                from rattle_api.main import main
+
+                main()
+                args_obj = mock_cmd.call_args[0][1]
+                assert args_obj.prompts_action == "show"
+                assert args_obj.template_id == "extract-products"
+                assert args_obj.language == "en"
+
+    def test_ai_build_stage_parses(self):
+        argv = [
+            "main.py",
+            "testco",
+            "ai-build-stage",
+            "extract-products",
+            "cat.pdf",
+            "--dry-run",
+        ]
+        with patch("sys.argv", argv):
+            with patch("rattle_api.main.cmd_ai_build_stage") as mock_cmd:
+                from rattle_api.main import main
+
+                main()
+                args_obj = mock_cmd.call_args[0][1]
+                assert args_obj.template_id == "extract-products"
+                assert args_obj.source_file == "cat.pdf"
+                assert args_obj.dry_run is True
+
+    def test_ai_build_stage_allows_missing_source_file(self):
+        """review-configuration doesn't need a source file."""
+        argv = ["main.py", "testco", "ai-build-stage", "review-configuration"]
+        with patch("sys.argv", argv):
+            with patch("rattle_api.main.cmd_ai_build_stage") as mock_cmd:
+                from rattle_api.main import main
+
+                main()
+                args_obj = mock_cmd.call_args[0][1]
+                assert args_obj.template_id == "review-configuration"
+                assert args_obj.source_file is None
+
+    def test_ai_build_configurator_parses(self):
+        argv = [
+            "main.py",
+            "testco",
+            "ai-build-configurator",
+            "pricelist.xlsx",
+            "--language",
+            "de",
+            "--single-shot",
+            "--dry-run",
+            "--trace-dir",
+            "out/",
+            "--skip",
+            "guided-selling,build-offer-template",
+        ]
+        with patch("sys.argv", argv):
+            with patch("rattle_api.main.cmd_ai_build_configurator") as mock_cmd:
+                from rattle_api.main import main
+
+                main()
+                args_obj = mock_cmd.call_args[0][1]
+                assert args_obj.source_file == "pricelist.xlsx"
+                assert args_obj.language == "de"
+                assert args_obj.single_shot is True
+                assert args_obj.dry_run is True
+                assert args_obj.trace_dir == "out/"
+                assert args_obj.skip == "guided-selling,build-offer-template"
+
+    def test_ai_build_configurator_defaults(self):
+        argv = ["main.py", "testco", "ai-build-configurator", "file.xlsx"]
+        with patch("sys.argv", argv):
+            with patch("rattle_api.main.cmd_ai_build_configurator") as mock_cmd:
+                from rattle_api.main import main
+
+                main()
+                args_obj = mock_cmd.call_args[0][1]
+                assert args_obj.language == "de"
+                assert args_obj.single_shot is False
+                assert args_obj.dry_run is False
+                assert args_obj.trace_dir is None
+
+
+class TestPromptTemplateHandlers:
+    """Handler-side behaviour — ai-prompts list/show print expected content."""
+
+    def test_cmd_ai_prompts_list_prints_json(self, capsys):
+        from rattle_api.main import cmd_ai_prompts
+
+        args = MagicMock()
+        args.prompts_action = "list"
+        args.stage = None
+        cmd_ai_prompts("testco", args)
+        out = capsys.readouterr().out
+        assert "extract-products" in out
+        assert "model-groups-options" in out
+
+    def test_cmd_ai_prompts_show_prints_rendered_prompt(self, capsys):
+        from rattle_api.main import cmd_ai_prompts
+
+        args = MagicMock()
+        args.prompts_action = "show"
+        args.template_id = "extract-products"
+        args.language = "de"
+        cmd_ai_prompts("testco", args)
+        out = capsys.readouterr().out
+        assert "configurator consultant" in out
+        assert "extract-products" in out
+
+    def test_cmd_ai_prompts_unknown_action_raises(self):
+        from rattle_api.main import cmd_ai_prompts
+
+        args = MagicMock()
+        args.prompts_action = "explode"
+        with pytest.raises(SystemExit):
+            cmd_ai_prompts("testco", args)

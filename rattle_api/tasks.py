@@ -380,3 +380,311 @@ TASKS = {
     "analyse-pricelist": analyse_pricelist,
     "suggest-configuration": suggest_configuration,
 }
+
+
+# ---------------------------------------------------------------------------
+# Prompt-template stage runner + full pipeline runner
+# ---------------------------------------------------------------------------
+
+
+def _read_source_content(source_file, *, tenant):
+    """Resolve and read a source file; return (source_dict, content_str)."""
+    from .source import read_source
+
+    filepath = _resolve_source_file(tenant, source_file)
+    source = read_source(filepath)
+    if source["type"] == "excel":
+        content = json.dumps(source["data"], ensure_ascii=False, default=str)[:12000]
+    else:
+        content = str(source["data"])[:12000]
+    return source, content
+
+
+def _parse_operations(raw):
+    """Extract an ``operations`` list from the AI's JSON response."""
+    if isinstance(raw, list):
+        return raw
+    if isinstance(raw, dict):
+        ops = raw.get("operations")
+        if isinstance(ops, list):
+            return ops
+    return []
+
+
+def _write_trace(trace_dir, stage_id, *, prompt, ai_raw, report):
+    """Save a per-stage transcript under *trace_dir* if provided."""
+    if not trace_dir:
+        return
+    import os as _os
+
+    _os.makedirs(trace_dir, exist_ok=True)
+    path = _os.path.join(trace_dir, f"{stage_id}.json")
+    payload = {
+        "stage": stage_id,
+        "prompt_head": prompt[:2000],
+        "ai_output": ai_raw,
+        "report": report.to_dict() if report is not None else None,
+    }
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(payload, fh, indent=2, ensure_ascii=False, default=str)
+
+
+def run_build_stage(
+    tenant,
+    template_id,
+    source_file=None,
+    *,
+    provider=None,
+    language="de",
+    dry_run=False,
+    extra_inputs=None,
+    client=None,
+    builder=None,
+    prior_features=None,
+    trace_dir=None,
+):
+    """Run a single prompt template against live Rattle state.
+
+    Renders the template via :mod:`rattle_api.prompt_templates`, calls the
+    AI, passes the returned ``ensure_*`` operations through
+    :class:`rattle_api.builder.ConfigBuilder`, and returns the
+    :class:`BuildReport`. The builder applies operations **directly** to
+    the Rattle REST API as idempotent get-or-create calls; set
+    ``dry_run=True`` to inspect the operations without applying them.
+
+    Validation happens in the Rattle frontend — the caller should open the
+    tenant URL printed by :func:`run_build_configurator` and verify the
+    configurator behaves as expected.
+    """
+    from .builder import BuildReport, ConfigBuilder
+    from .memory import TenantMemory
+    from .prompt_templates import get_template
+
+    ai = _ai(provider)
+    tpl = get_template(template_id)
+
+    client = client or RattleClient(tenant)
+    builder = builder or ConfigBuilder(client, dry_run=dry_run)
+    if not builder.record_index:
+        live_state = builder.fetch_live_state()
+    else:
+        live_state = {
+            "products": [rec for (t, _), rec in builder.record_index.items() if t == "product"],
+            "areas": [rec for (t, _), rec in builder.record_index.items() if t == "area"],
+            "groups": [rec for (t, _), rec in builder.record_index.items() if t == "group"],
+            "parts": [rec for (t, _), rec in builder.record_index.items() if t == "part"],
+        }
+
+    tenant_profile = TenantMemory(tenant).inject_into_prompt()
+
+    source_content = ""
+    source_filename = ""
+    if source_file is not None:
+        source, source_content = _read_source_content(source_file, tenant=tenant)
+        source_filename = source["filename"]
+
+    # Heuristic pre-pass (Excel only) for stages that use it.
+    heuristic_findings = []
+    if source_file is not None:
+        from .source import read_source
+
+        filepath = _resolve_source_file(tenant, source_file)
+        parsed = read_source(filepath)
+        if parsed["type"] == "excel":
+            from .knowledge import detect_anti_patterns
+
+            heuristic_findings = detect_anti_patterns(parsed["data"])
+
+    build_kwargs = {
+        "source_content": source_content,
+        "live_state": live_state,
+        "tenant_profile": tenant_profile or None,
+        "tenant": tenant,
+        "language": language,
+        "heuristic_findings": heuristic_findings,
+        "features": (extra_inputs or {}).get("features") or prior_features,
+    }
+    for k, v in (extra_inputs or {}).items():
+        build_kwargs.setdefault(k, v)
+
+    system = tpl.render(**build_kwargs)
+
+    if source_file is not None:
+        prompt = f"Source file: {source_filename}\n\nContent:\n{source_content}"
+    else:
+        prompt = "Use the live Rattle state above to complete this stage."
+    if prior_features:
+        prompt += (
+            "\n\nFeatures discovered in the previous stage:\n"
+            + json.dumps(prior_features, ensure_ascii=False)[:6000]
+        )
+
+    try:
+        ai_raw = ai.complete_json(prompt, system=system, max_tokens=4096)
+    except Exception as exc:
+        print(f"  FAIL {template_id}: {exc}", file=sys.stderr)
+        report = BuildReport()
+        report.failed.append({"op": {"stage": template_id}, "error": str(exc)})
+        _write_trace(trace_dir, template_id, prompt=prompt, ai_raw=None, report=report)
+        return {
+            "template_id": template_id,
+            "report": report.to_dict(),
+            "ai_output": None,
+        }
+
+    operations = _parse_operations(ai_raw)
+    if tpl.read_only:
+        # Read-only stages (review-configuration) do not emit operations.
+        report = BuildReport()
+    else:
+        report = builder.apply(operations)
+
+    _write_trace(trace_dir, template_id, prompt=prompt, ai_raw=ai_raw, report=report)
+
+    return {
+        "template_id": template_id,
+        "report": report.to_dict(),
+        "ai_output": ai_raw,
+    }
+
+
+def run_build_configurator(
+    tenant,
+    source_file,
+    *,
+    provider=None,
+    language="de",
+    single_shot=False,
+    dry_run=False,
+    trace_dir=None,
+    skip_stages=None,
+    client=None,
+):
+    """Run the full configurator-building pipeline.
+
+    Each stage produces ``ensure_*`` operations that are applied
+    **directly** to the Rattle REST API via
+    :class:`rattle_api.builder.ConfigBuilder`. The ``review-configuration``
+    stage is always run last as a read-only pass against the final live
+    state. The pipeline prints the tenant frontend URL so the user can
+    click through and validate the configurator visually.
+
+    With ``single_shot=True`` the pipeline makes a single AI call via the
+    ``full-configurator`` template and applies all operations in one
+    topologically-ordered ``ConfigBuilder.apply`` pass, still running the
+    read-only review at the end.
+    """
+    from .builder import ConfigBuilder
+    from .config import get_frontend_url
+    from .prompt_templates import PIPELINE_STAGE_ORDER
+
+    ai = _ai(provider)
+    client = client or RattleClient(tenant)
+    builder = ConfigBuilder(client, dry_run=dry_run)
+    # Prime the builder's name index from the live Rattle state; stages
+    # then share this one builder instance, so each stage sees the up-to-date
+    # name→id map as earlier stages create new entities.
+    builder.fetch_live_state()
+
+    skip = set(skip_stages or [])
+    results: list[dict] = []
+
+    if single_shot:
+        result = run_build_stage(
+            tenant,
+            "full-configurator",
+            source_file,
+            provider=ai,
+            language=language,
+            dry_run=dry_run,
+            client=client,
+            builder=builder,
+            trace_dir=trace_dir,
+        )
+        results.append(result)
+    else:
+        prior_features = None
+        for stage_id in PIPELINE_STAGE_ORDER:
+            if stage_id in skip:
+                print(f"  SKIP {stage_id}", file=sys.stderr)
+                continue
+            print(f"  STAGE {stage_id}", file=sys.stderr)
+            result = run_build_stage(
+                tenant,
+                stage_id,
+                source_file,
+                provider=ai,
+                language=language,
+                dry_run=dry_run,
+                client=client,
+                builder=builder,
+                prior_features=prior_features,
+                trace_dir=trace_dir,
+            )
+            results.append(result)
+            if stage_id == "discover-features":
+                ai_out = result.get("ai_output") or {}
+                if isinstance(ai_out, dict):
+                    prior_features = ai_out.get("features")
+
+    # Final read-only review against the latest live state.
+    if "review-configuration" not in skip and not single_shot:
+        # In the 9-stage path review-configuration has already been run as
+        # the last stage; the wrapper skips it here.
+        review_already = any(r.get("template_id") == "review-configuration" for r in results)
+        if not review_already:
+            results.append(
+                run_build_stage(
+                    tenant,
+                    "review-configuration",
+                    source_file=None,
+                    provider=ai,
+                    language=language,
+                    dry_run=dry_run,
+                    client=client,
+                    builder=builder,
+                    trace_dir=trace_dir,
+                )
+            )
+    elif single_shot and "review-configuration" not in skip:
+        results.append(
+            run_build_stage(
+                tenant,
+                "review-configuration",
+                source_file=None,
+                provider=ai,
+                language=language,
+                dry_run=dry_run,
+                client=client,
+                builder=builder,
+                trace_dir=trace_dir,
+            )
+        )
+
+    # Aggregate builder report.
+    summary = {
+        "counts": builder.report.counts(),
+        "stages": [r.get("template_id") for r in results],
+        "single_shot": single_shot,
+        "dry_run": dry_run,
+    }
+    frontend_url = get_frontend_url(tenant)
+    created_product_names = [
+        entry.get("name") for entry in builder.report.created if entry.get("entity") == "product"
+    ]
+    summary["frontend_url"] = frontend_url
+    summary["created_products"] = created_product_names
+
+    print("", file=sys.stderr)
+    print(f"  DONE counts={summary['counts']}", file=sys.stderr)
+    print(f"  OPEN {frontend_url}", file=sys.stderr)
+    if created_product_names:
+        print(
+            f"  NEW PRODUCTS  {', '.join(str(n) for n in created_product_names)}",
+            file=sys.stderr,
+        )
+
+    return {
+        "summary": summary,
+        "stages": results,
+    }

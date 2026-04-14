@@ -115,6 +115,74 @@ def cmd_ai_providers(tenant, args):
 
 
 # ---------------------------------------------------------------------------
+# Prompt-template library + direct-apply configurator builder
+# ---------------------------------------------------------------------------
+
+
+def cmd_ai_prompts(tenant, args):
+    """Dispatch ``ai-prompts <action>`` sub-commands."""
+    from .prompt_templates import get_template, list_templates
+
+    action = args.prompts_action
+
+    if action == "list":
+        items = list_templates(stage=getattr(args, "stage", None))
+        print(json.dumps(items, indent=2, ensure_ascii=False))
+        return
+
+    if action == "show":
+        from .memory import TenantMemory
+
+        template_id = args.template_id
+        tpl = get_template(template_id)
+        tenant_profile = TenantMemory(tenant).inject_into_prompt()
+        rendered = tpl.render(
+            source_content="",
+            live_state=None,
+            features=None,
+            heuristic_findings=[],
+            tenant_profile=tenant_profile or None,
+            tenant=tenant,
+            language=getattr(args, "language", "de"),
+        )
+        print(rendered)
+        return
+
+    raise SystemExit(f"unknown ai-prompts action: {action}")
+
+
+def cmd_ai_build_stage(tenant, args):
+    """Run a single prompt-template stage and apply operations directly."""
+    from .tasks import run_build_stage
+
+    result = run_build_stage(
+        tenant,
+        args.template_id,
+        args.source_file,
+        language=args.language,
+        dry_run=args.dry_run,
+    )
+    print(json.dumps(result, indent=2, ensure_ascii=False, default=str))
+
+
+def cmd_ai_build_configurator(tenant, args):
+    """Run the full configurator-building pipeline against the live Rattle API."""
+    from .tasks import run_build_configurator
+
+    skip = [s.strip() for s in (args.skip or "").split(",") if s.strip()]
+    result = run_build_configurator(
+        tenant,
+        args.source_file,
+        language=args.language,
+        single_shot=args.single_shot,
+        dry_run=args.dry_run,
+        trace_dir=args.trace_dir,
+        skip_stages=skip or None,
+    )
+    print(json.dumps(result, indent=2, ensure_ascii=False, default=str))
+
+
+# ---------------------------------------------------------------------------
 # Tenant memory commands
 # ---------------------------------------------------------------------------
 
@@ -268,6 +336,86 @@ def main():
 
     sub.add_parser("ai-providers", help="List available AI providers")
 
+    # -- prompt-template library --------------------------------------------
+    p_prompts = sub.add_parser(
+        "ai-prompts",
+        help="List, inspect, and manage prompt templates for building configurators",
+    )
+    prompts_sub = p_prompts.add_subparsers(
+        dest="prompts_action",
+        required=True,
+        help="Prompt-template action",
+    )
+    p_prompts_list = prompts_sub.add_parser("list", help="List all prompt templates as JSON")
+    p_prompts_list.add_argument(
+        "--stage",
+        default=None,
+        help="Filter by stage (discovery|modeling|structuring|enrichment|"
+        "documents|validation|pipeline)",
+    )
+    p_prompts_show = prompts_sub.add_parser(
+        "show", help="Render and print a template's system prompt"
+    )
+    p_prompts_show.add_argument("template_id", help="Template id (e.g. discover-features)")
+    p_prompts_show.add_argument("--language", default="de", help="Output language (default de)")
+
+    # -- single-stage configurator build ------------------------------------
+    p_build_stage = sub.add_parser(
+        "ai-build-stage",
+        help="Run ONE prompt-template stage against a document and apply "
+        "operations to Rattle directly",
+    )
+    p_build_stage.add_argument("template_id", help="Template id (e.g. extract-products)")
+    p_build_stage.add_argument(
+        "source_file",
+        nargs="?",
+        default=None,
+        help="Source file (relative to source/<tenant>/ or absolute); "
+        "omit for read-only stages like review-configuration",
+    )
+    p_build_stage.add_argument("--language", default="de", help="Output language")
+    p_build_stage.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Print the operations the stage would apply without making any "
+        "HTTP writes to the Rattle API",
+    )
+
+    # -- full configurator pipeline -----------------------------------------
+    p_build = sub.add_parser(
+        "ai-build-configurator",
+        help="Run the full 9-stage configurator-building pipeline against a "
+        "document, applying each stage's operations directly to the Rattle "
+        "REST API. Ends with a read-only review-configuration pass and prints "
+        "the tenant frontend URL for visual validation.",
+    )
+    p_build.add_argument(
+        "source_file",
+        help="Source file (relative to source/<tenant>/ or absolute)",
+    )
+    p_build.add_argument("--language", default="de", help="Output language")
+    p_build.add_argument(
+        "--single-shot",
+        action="store_true",
+        help="Use the full-configurator single-shot wrapper (one AI call) "
+        "instead of the 9-stage pipeline",
+    )
+    p_build.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Print operations without applying them to the Rattle API",
+    )
+    p_build.add_argument(
+        "--trace-dir",
+        default=None,
+        help="Optional directory to save per-stage prompt + AI output + report",
+    )
+    p_build.add_argument(
+        "--skip",
+        default="",
+        help="Comma-separated list of stage ids to skip (e.g. guided-selling,build-offer-template)",
+    )
+
     # -- tenant memory commands ---------------------------------------------
     p_mem = sub.add_parser(
         "memory",
@@ -307,6 +455,9 @@ def main():
         "ai-analyse-pricelist": cmd_ai_analyse_pricelist,
         "ai-suggest-config": cmd_ai_suggest_config,
         "ai-providers": cmd_ai_providers,
+        "ai-prompts": cmd_ai_prompts,
+        "ai-build-stage": cmd_ai_build_stage,
+        "ai-build-configurator": cmd_ai_build_configurator,
         "memory": cmd_memory,
     }
     commands[args.command](args.tenant, args)
