@@ -7,8 +7,8 @@ Thank you for your interest in contributing! This guide will help you get starte
 1. **Fork** the repository on GitHub.
 2. **Clone** your fork locally:
    ```bash
-   git clone https://github.com/<your-username>/rattle_api.git
-   cd rattle_api
+   git clone https://github.com/<your-username>/rattleCONSULTANT.git
+   cd rattleCONSULTANT
    ```
 3. **Create a branch** for your change:
    ```bash
@@ -64,7 +64,7 @@ Write clear, concise commit messages:
 
 ## Reporting Issues
 
-- Use the [GitHub issue tracker](https://github.com/mngapps/rattle_api/issues).
+- Use the [GitHub issue tracker](https://github.com/mngapps/rattleCONSULTANT/issues).
 - Check existing issues before creating a new one.
 - Include steps to reproduce, expected behaviour, and actual behaviour.
 - For security vulnerabilities, see [SECURITY.md](SECURITY.md).
