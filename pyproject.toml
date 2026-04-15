@@ -55,11 +55,11 @@ dev = [
 rattle = "rattle_api.main:main"
 
 [project.urls]
-Homepage = "https://github.com/mngapps/rattle_api"
-Documentation = "https://github.com/mngapps/rattle_api#readme"
-Repository = "https://github.com/mngapps/rattle_api"
-Issues = "https://github.com/mngapps/rattle_api/issues"
-Changelog = "https://github.com/mngapps/rattle_api/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/mngapps/rattleCONSULTANT"
+Documentation = "https://github.com/mngapps/rattleCONSULTANT#readme"
+Repository = "https://github.com/mngapps/rattleCONSULTANT"
+Issues = "https://github.com/mngapps/rattleCONSULTANT/issues"
+Changelog = "https://github.com/mngapps/rattleCONSULTANT/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages]
 find = {}

@@ -8,8 +8,8 @@
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%2B-blue.svg" alt="Python 3.10+"></a>
-  <a href="https://github.com/mngapps/rattle_api/actions/workflows/ci.yml"><img src="https://github.com/mngapps/rattle_api/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/mngapps/rattle_api/blob/main/CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-Keep%20a%20Changelog-orange.svg" alt="Changelog"></a>
+  <a href="https://github.com/mngapps/rattleCONSULTANT/actions/workflows/ci.yml"><img src="https://github.com/mngapps/rattleCONSULTANT/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/mngapps/rattleCONSULTANT/blob/main/CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-Keep%20a%20Changelog-orange.svg" alt="Changelog"></a>
 </p>
 
 <p align="center">
@@ -46,8 +46,8 @@
 ### 1. Install
 
 ```bash
-git clone https://github.com/mngapps/rattle_api.git
-cd rattle_api
+git clone https://github.com/mngapps/rattleCONSULTANT.git
+cd rattleCONSULTANT
 python -m venv .venv && source .venv/bin/activate
 ```
 
