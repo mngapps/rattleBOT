@@ -121,12 +121,15 @@ def cmd_ai_providers(tenant, args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Rattle AI Workspace — AI-powered console CLI for the Rattle API",
+        description=(
+            "rattleGRIMOIRE — the arcane spellbook of AI-powered "
+            "product-data consulting for the Rattle API"
+        ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
-            "AI provider is selected via the AI_PROVIDER env var:\n"
+            "The AI sigil is chosen via the AI_PROVIDER env var:\n"
             "  openai (default), anthropic, ollama, custom\n\n"
-            "Examples:\n"
+            "Example incantations:\n"
             "  rattle acme test-connection\n"
             "  AI_PROVIDER=anthropic rattle acme ai-describe --limit 3\n"
             "  rattle acme ai-transform datanorm rattle data.json --push\n"

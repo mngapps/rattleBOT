@@ -1,6 +1,15 @@
-# Rattle AI Workspace
+# rattleGRIMOIRE
 
-AI-powered console CLI for the Rattle API. Users run CLI commands with their choice of AI backend (OpenAI, Anthropic, Ollama, or any custom endpoint) to enrich, classify, transform, and analyse product data. The codebase embeds deep configurator consulting expertise so AI agents working with it can guide users in building correct, BOM-aware product configurations.
+The arcane spellbook of AI-powered product-data consulting for the Rattle API.
+Users cast CLI spells with their choice of AI sigil (OpenAI, Anthropic, Ollama,
+or any custom endpoint) to enrich, classify, transform, and analyse product
+data. The codex embeds deep configurator consulting expertise so AI agents
+working with it can guide users in conjuring correct, BOM-aware product
+configurations.
+
+The CLI entry point is `rattle`. The Python distribution is published as
+`rattle-grimoire`, and the importable package (kept for historical
+compatibility with the Rattle REST API wrapper) remains `rattle_api`.
 
 ## Architecture
 

@@ -1,10 +1,10 @@
 """
-AI-agnostic provider abstraction for the Rattle AI Workspace.
+AI-agnostic provider abstraction for rattleGRIMOIRE — the arcane sigils.
 
 Supports any LLM backend (OpenAI, Anthropic, local/Ollama, or custom HTTP
-endpoints) through a unified interface.  CLI coding agents (Claude Code,
-Aider, Cursor, Continue, etc.) can use this module to drive AI-powered
-tasks against product and interchange data without being locked to a
+endpoints) through a unified interface. CLI coding agents (Claude Code,
+Aider, Cursor, Continue, etc.) can use this module to cast AI-powered
+spells against product and interchange data without being bound to a
 single vendor.
 
 Usage:

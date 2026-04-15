@@ -1,4 +1,6 @@
-# Security Policy
+# Security Policy — rattleGRIMOIRE
+
+A Grimoire is only as safe as its bindings. Report weaknesses responsibly.
 
 ## Supported Versions
 
