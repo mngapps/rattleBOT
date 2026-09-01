@@ -9,7 +9,7 @@
 - **Base URL**: `https://www.rattleapp.de/api/v1` (override via env var `RATTLE_BASE_URL`).
 - **OpenAPI version**: 3.1.0
 - **Spec version**: 1.0.0
-- **Operations**: 472 across 260 paths and 37 resource groups.
+- **Operations**: 506 across 277 paths and 41 resource groups.
 
 ## Authentication
 
@@ -114,7 +114,7 @@ Other languages should mirror these patterns — there is nothing Rattle-specifi
 | Analytics | 4 | [#analytics](#analytics) |
 | API Keys | 3 | [#api-keys](#api-keys) |
 | Area Groups | 7 | [#area-groups](#area-groups) |
-| Areas | 19 | [#areas](#areas) |
+| Areas | 20 | [#areas](#areas) |
 | Attributes | 11 | [#attributes](#attributes) |
 | Baselines | 4 | [#baselines](#baselines) |
 | Batch | 9 | [#batch](#batch) |
@@ -125,28 +125,32 @@ Other languages should mirror these patterns — there is nothing Rattle-specifi
 | Company | 14 | [#company](#company) |
 | Configurations | 9 | [#configurations](#configurations) |
 | Connectors | 22 | [#connectors](#connectors) |
-| Constraints | 16 | [#constraints](#constraints) |
+| Constraints | 17 | [#constraints](#constraints) |
 | Customer Links | 6 | [#customer-links](#customer-links) |
-| Customers | 14 | [#customers](#customers) |
-| Documents | 78 | [#documents](#documents) |
+| Customers | 15 | [#customers](#customers) |
+| Documents | 85 | [#documents](#documents) |
 | Export | 3 | [#export](#export) |
 | Groups | 11 | [#groups](#groups) |
 | Images | 18 | [#images](#images) |
 | Inbound Webhooks | 7 | [#inbound-webhooks](#inbound-webhooks) |
-| Item Revisions | 7 | [#item-revisions](#item-revisions) |
+| Item Revisions | 8 | [#item-revisions](#item-revisions) |
 | Languages | 7 | [#languages](#languages) |
 | Opportunities | 7 | [#opportunities](#opportunities) |
-| Options | 14 | [#options](#options) |
+| Options | 15 | [#options](#options) |
 | Part Documents | 11 | [#part-documents](#part-documents) |
 | Parts | 39 | [#parts](#parts) |
 | Price Lists | 8 | [#price-lists](#price-lists) |
 | Price Overrides | 6 | [#price-overrides](#price-overrides) |
+| Pricing | 5 | [#pricing](#pricing) |
 | Product Media | 10 | [#product-media](#product-media) |
-| Products | 25 | [#products](#products) |
+| Products | 29 | [#products](#products) |
+| Public Links | 7 | [#public-links](#public-links) |
 | Pull Requests | 5 | [#pull-requests](#pull-requests) |
 | Quotes | 20 | [#quotes](#quotes) |
 | Safety | 4 | [#safety](#safety) |
-| Translations | 8 | [#translations](#translations) |
+| System | 1 | [#system](#system) |
+| Translations | 10 | [#translations](#translations) |
+| Visibility | 3 | [#visibility](#visibility) |
 | Webhooks | 11 | [#webhooks](#webhooks) |
 
 ## Quick reference (all operations)
@@ -179,6 +183,7 @@ Other languages should mirror these patterns — there is nothing Rattle-specifi
 | Areas | DELETE | `/api/v1/areas/{areaId}/content` | Delete area rich content |
 | Areas | POST | `/api/v1/areas/{areaId}/content/images` | Upload content image |
 | Areas | GET | `/api/v1/areas/{areaId}/groups` | List groups in an area |
+| Areas | POST | `/api/v1/areas/{areaId}/groups/reorder` | Reorder groups within an area |
 | Areas | GET | `/api/v1/areas/{areaId}/options` | List area options |
 | Areas | GET | `/api/v1/areas/{areaId}/price-overrides` | List area price overrides |
 | Areas | POST | `/api/v1/areas/{areaId}/price-overrides` | Create area price override |
@@ -306,6 +311,7 @@ Other languages should mirror these patterns — there is nothing Rattle-specifi
 | Constraints | PUT | `/api/v1/constraints/rules/{id}` | Update a constraint rule |
 | Constraints | PATCH | `/api/v1/constraints/rules/{id}` | Partially update a constraint rule |
 | Constraints | DELETE | `/api/v1/constraints/rules/{id}` | Delete a constraint rule |
+| Constraints | DELETE | `/api/v1/constraints/{id}` | Delete one forbidden combination |
 | Customer Links | GET | `/api/v1/customer-links` | List customer links |
 | Customer Links | POST | `/api/v1/customer-links` | Create a customer link |
 | Customer Links | GET | `/api/v1/customer-links/{id}` | Get a customer link |
@@ -323,6 +329,7 @@ Other languages should mirror these patterns — there is nothing Rattle-specifi
 | Customers | GET | `/api/v1/customers/{customerId}/contacts` | List contacts for a customer |
 | Customers | POST | `/api/v1/customers/{customerId}/contacts` | Add a contact to a customer |
 | Customers | PUT | `/api/v1/customers/{customerId}/contacts/{contactId}` | Update a contact |
+| Customers | PATCH | `/api/v1/customers/{customerId}/contacts/{contactId}` | Partially update a contact |
 | Customers | DELETE | `/api/v1/customers/{customerId}/contacts/{contactId}` | Remove a contact |
 | Customers | GET | `/api/v1/customers/{customerId}/opportunities` | List customer opportunities |
 | Customers | GET | `/api/v1/customers/{customerId}/quotes` | List customer quotes |
@@ -334,11 +341,13 @@ Other languages should mirror these patterns — there is nothing Rattle-specifi
 | Documents | DELETE | `/api/v1/documents/content-blocks/images` | Delete EditorJS image by URL |
 | Documents | GET | `/api/v1/documents/content-blocks/{id}` | Get a content block with locales |
 | Documents | PUT | `/api/v1/documents/content-blocks/{id}` | Update a content block |
+| Documents | PATCH | `/api/v1/documents/content-blocks/{id}` | Partially update a content block |
 | Documents | DELETE | `/api/v1/documents/content-blocks/{id}` | Delete a content block |
 | Documents | GET | `/api/v1/documents/content-blocks/{id}/locales` | List content block locales |
 | Documents | POST | `/api/v1/documents/content-blocks/{id}/locales` | Create or upsert a content block locale |
 | Documents | GET | `/api/v1/documents/content-blocks/{id}/locales/{localeId}` | Get a content block locale |
 | Documents | PUT | `/api/v1/documents/content-blocks/{id}/locales/{localeId}` | Update a content block locale |
+| Documents | PATCH | `/api/v1/documents/content-blocks/{id}/locales/{localeId}` | Partially update a content block locale |
 | Documents | DELETE | `/api/v1/documents/content-blocks/{id}/locales/{localeId}` | Delete a content block locale |
 | Documents | POST | `/api/v1/documents/content-blocks/{id}/locales/{localeId}/translate` | Translate locale to target language |
 | Documents | POST | `/api/v1/documents/content-blocks/{id}/set-version` | Set current version |
@@ -346,6 +355,7 @@ Other languages should mirror these patterns — there is nothing Rattle-specifi
 | Documents | POST | `/api/v1/documents/content-directories` | Create a content directory |
 | Documents | GET | `/api/v1/documents/content-directories/{id}` | Get a content directory |
 | Documents | PUT | `/api/v1/documents/content-directories/{id}` | Update a content directory |
+| Documents | PATCH | `/api/v1/documents/content-directories/{id}` | Partially update a content directory |
 | Documents | DELETE | `/api/v1/documents/content-directories/{id}` | Delete a content directory |
 | Documents | GET | `/api/v1/documents/doc-types` | List registered document types |
 | Documents | GET | `/api/v1/documents/instances` | List document instances |
@@ -356,11 +366,13 @@ Other languages should mirror these patterns — there is nothing Rattle-specifi
 | Documents | POST | `/api/v1/documents/instances/{id}/attachments` | Create instance attachment |
 | Documents | GET | `/api/v1/documents/instances/{id}/attachments/{att_id}` | Get an instance attachment |
 | Documents | PUT | `/api/v1/documents/instances/{id}/attachments/{att_id}` | Update instance attachment |
+| Documents | PATCH | `/api/v1/documents/instances/{id}/attachments/{att_id}` | Partially update instance attachment |
 | Documents | DELETE | `/api/v1/documents/instances/{id}/attachments/{att_id}` | Delete instance attachment |
 | Documents | GET | `/api/v1/documents/instances/{id}/blocks` | List instance blocks (tree) |
 | Documents | POST | `/api/v1/documents/instances/{id}/blocks` | Create an instance block |
 | Documents | GET | `/api/v1/documents/instances/{id}/blocks/{block_id}` | Get an instance block |
 | Documents | PUT | `/api/v1/documents/instances/{id}/blocks/{block_id}` | Update an instance block |
+| Documents | PATCH | `/api/v1/documents/instances/{id}/blocks/{block_id}` | Partially update an instance block |
 | Documents | DELETE | `/api/v1/documents/instances/{id}/blocks/{block_id}` | Delete an instance block |
 | Documents | GET | `/api/v1/documents/instances/{id}/public-links` | List public links |
 | Documents | GET | `/api/v1/documents/instances/{id}/public-links/{link_id}` | Get a public link |
@@ -388,12 +400,14 @@ Other languages should mirror these patterns — there is nothing Rattle-specifi
 | Documents | POST | `/api/v1/documents/templates/{id}/structure/blocks` | Create a structure block |
 | Documents | GET | `/api/v1/documents/templates/{id}/structure/blocks/{block_id}` | Get a structure block |
 | Documents | PUT | `/api/v1/documents/templates/{id}/structure/blocks/{block_id}` | Update a structure block |
+| Documents | PATCH | `/api/v1/documents/templates/{id}/structure/blocks/{block_id}` | Partially update a structure block |
 | Documents | DELETE | `/api/v1/documents/templates/{id}/structure/blocks/{block_id}` | Delete a structure block (cascade) |
 | Documents | GET | `/api/v1/documents/templates/{id}/structure/blocks/{block_id}/attachments` | List block attachments |
 | Documents | POST | `/api/v1/documents/templates/{id}/structure/blocks/{block_id}/attachments` | Attach content block |
 | Documents | POST | `/api/v1/documents/templates/{id}/structure/blocks/{block_id}/attachments/reorder` | Reorder attachments |
 | Documents | GET | `/api/v1/documents/templates/{id}/structure/blocks/{block_id}/attachments/{att_id}` | Get an attachment |
 | Documents | PUT | `/api/v1/documents/templates/{id}/structure/blocks/{block_id}/attachments/{att_id}` | Update an attachment |
+| Documents | PATCH | `/api/v1/documents/templates/{id}/structure/blocks/{block_id}/attachments/{att_id}` | Partially update an attachment |
 | Documents | DELETE | `/api/v1/documents/templates/{id}/structure/blocks/{block_id}/attachments/{att_id}` | Remove an attachment |
 | Documents | GET | `/api/v1/documents/templates/{id}/structure/blocks/{block_id}/locales` | List structure block locales |
 | Documents | PUT | `/api/v1/documents/templates/{id}/structure/blocks/{block_id}/locales/{localeId}` | Upsert structure block locale title |
@@ -447,6 +461,7 @@ Other languages should mirror these patterns — there is nothing Rattle-specifi
 | Item Revisions | POST | `/api/v1/parts/{partId}/revisions` | Create a revision |
 | Item Revisions | GET | `/api/v1/parts/{partId}/revisions/{revisionId}` | Get a revision |
 | Item Revisions | PUT | `/api/v1/parts/{partId}/revisions/{revisionId}` | Update a draft revision |
+| Item Revisions | PATCH | `/api/v1/parts/{partId}/revisions/{revisionId}` | Partially update a draft revision |
 | Item Revisions | DELETE | `/api/v1/parts/{partId}/revisions/{revisionId}` | Delete a draft revision |
 | Item Revisions | POST | `/api/v1/parts/{partId}/revisions/{revisionId}/obsolete` | Obsolete a revision |
 | Item Revisions | POST | `/api/v1/parts/{partId}/revisions/{revisionId}/release` | Release a revision |
@@ -456,7 +471,7 @@ Other languages should mirror these patterns — there is nothing Rattle-specifi
 | Languages | GET | `/api/v1/languages/{id}` | Get a language |
 | Languages | PUT | `/api/v1/languages/{id}` | Update a language |
 | Languages | PATCH | `/api/v1/languages/{id}` | Partially update a language |
-| Languages | DELETE | `/api/v1/languages/{id}` | Delete a language |
+| Languages | DELETE | `/api/v1/languages/{id}` | Delete a language and its content |
 | Opportunities | GET | `/api/v1/opportunities` | List opportunities |
 | Opportunities | POST | `/api/v1/opportunities` | Create an opportunity |
 | Opportunities | GET | `/api/v1/opportunities/{id}` | Get an opportunity |
@@ -473,6 +488,7 @@ Other languages should mirror these patterns — there is nothing Rattle-specifi
 | Options | GET | `/api/v1/options/{optionId}/advanced-prices` | List advanced prices |
 | Options | POST | `/api/v1/options/{optionId}/advanced-prices` | Create an advanced price |
 | Options | PUT | `/api/v1/options/{optionId}/advanced-prices/{priceId}` | Update an advanced price |
+| Options | PATCH | `/api/v1/options/{optionId}/advanced-prices/{priceId}` | Partially update an advanced price |
 | Options | DELETE | `/api/v1/options/{optionId}/advanced-prices/{priceId}` | Delete an advanced price |
 | Options | GET | `/api/v1/options/{optionId}/area-config` | Get area-specific config for an option |
 | Options | PUT | `/api/v1/options/{optionId}/area-config` | Set area-specific config for an option |
@@ -542,6 +558,11 @@ Other languages should mirror these patterns — there is nothing Rattle-specifi
 | Price Overrides | PUT | `/api/v1/options/{optionId}/price-overrides/{overrideId}` | Update a price override |
 | Price Overrides | PATCH | `/api/v1/options/{optionId}/price-overrides/{overrideId}` | Partially update a price override |
 | Price Overrides | DELETE | `/api/v1/options/{optionId}/price-overrides/{overrideId}` | Delete a price override |
+| Pricing | GET | `/api/v1/products/{productId}/prices` | Get the resolved price matrix |
+| Pricing | POST | `/api/v1/products/{productId}/prices/bulk-calculate` | Bulk-recalculate prices |
+| Pricing | POST | `/api/v1/products/{productId}/prices/calculate` | Price a configuration |
+| Pricing | GET | `/api/v1/products/{productId}/prices/export` | Export the pricing workbook |
+| Pricing | POST | `/api/v1/products/{productId}/prices/import` | Import a pricing workbook |
 | Product Media | GET | `/api/v1/products/{productId}/models` | List 3D model links |
 | Product Media | POST | `/api/v1/products/{productId}/models` | Create 3D model link |
 | Product Media | POST | `/api/v1/products/{productId}/models/reorder` | Reorder 3D model links |
@@ -562,8 +583,11 @@ Other languages should mirror these patterns — there is nothing Rattle-specifi
 | Products | GET | `/api/v1/products/{productId}/areas` | List assigned areas |
 | Products | POST | `/api/v1/products/{productId}/areas` | Assign an area to a product |
 | Products | POST | `/api/v1/products/{productId}/areas/reorder` | Reorder product areas |
-| Products | POST | `/api/v1/products/{productId}/areas/replace` | Replace all product area assignments |
-| Products | DELETE | `/api/v1/products/{productId}/areas/{areaId}` | Remove area from product |
+| Products | POST | `/api/v1/products/{productId}/areas/replace` | Declare a product's area set |
+| Products | GET | `/api/v1/products/{productId}/areas/{areaId}` | Get one area assignment |
+| Products | PUT | `/api/v1/products/{productId}/areas/{areaId}` | Update one area assignment |
+| Products | PATCH | `/api/v1/products/{productId}/areas/{areaId}` | Partially update one area assignment |
+| Products | DELETE | `/api/v1/products/{productId}/areas/{areaId}` | Unassign an area from a product |
 | Products | GET | `/api/v1/products/{productId}/configurations` | List product configurations |
 | Products | GET | `/api/v1/products/{productId}/price-overrides` | List product price overrides |
 | Products | POST | `/api/v1/products/{productId}/price-overrides` | Create product price override |
@@ -571,12 +595,20 @@ Other languages should mirror these patterns — there is nothing Rattle-specifi
 | Products | PUT | `/api/v1/products/{productId}/price-overrides/{overrideId}` | Update product price override |
 | Products | PATCH | `/api/v1/products/{productId}/price-overrides/{overrideId}` | Partially update product price override |
 | Products | DELETE | `/api/v1/products/{productId}/price-overrides/{overrideId}` | Delete product price override |
+| Products | POST | `/api/v1/products/{productId}/prices/recalculate` | Recalculate prices in bulk |
 | Products | GET | `/api/v1/products/{productId}/pricing-presets` | List pricing presets |
 | Products | POST | `/api/v1/products/{productId}/pricing-presets` | Create pricing preset |
 | Products | POST | `/api/v1/products/{productId}/pricing-presets/reorder` | Reorder pricing presets |
 | Products | PUT | `/api/v1/products/{productId}/pricing-presets/{presetId}` | Update pricing preset |
 | Products | PATCH | `/api/v1/products/{productId}/pricing-presets/{presetId}` | Partially update pricing preset |
 | Products | DELETE | `/api/v1/products/{productId}/pricing-presets/{presetId}` | Delete pricing preset |
+| Public Links | GET | `/api/v1/public-links` | List public links |
+| Public Links | POST | `/api/v1/public-links` | Mint a public link |
+| Public Links | POST | `/api/v1/public-links/revoke` | Revoke every public link for a subject |
+| Public Links | GET | `/api/v1/public-links/{id}` | Get a public link |
+| Public Links | PATCH | `/api/v1/public-links/{id}` | Set or clear a public link's expiry |
+| Public Links | DELETE | `/api/v1/public-links/{id}` | Revoke a public link |
+| Public Links | GET | `/api/v1/public-links/{id}/events` | Access audit trail for a public link |
 | Pull Requests | GET | `/api/v1/branches/{branchId}/pull-requests` | List pull requests |
 | Pull Requests | POST | `/api/v1/branches/{branchId}/pull-requests` | Create pull request |
 | Pull Requests | GET | `/api/v1/pull-requests/{prId}` | Get pull request |
@@ -606,14 +638,20 @@ Other languages should mirror these patterns — there is nothing Rattle-specifi
 | Safety | GET | `/api/v1/hp-statements/{code}` | Resolve an H/P statement |
 | Safety | GET | `/api/v1/safety-logos` | List safety logos |
 | Safety | GET | `/api/v1/safety-notices/signal-words` | List signal words |
+| System | GET | `/api/v1/rate-limit` | Get your rate-limit status |
 | Translations | GET | `/api/v1/translations` | List translations |
 | Translations | PUT | `/api/v1/translations` | Upsert translations |
+| Translations | DELETE | `/api/v1/translations` | Delete a translation |
 | Translations | GET | `/api/v1/translations/dictionary` | List dictionary entries |
 | Translations | POST | `/api/v1/translations/dictionary` | Create or update a dictionary entry |
 | Translations | GET | `/api/v1/translations/dictionary/{entry_id}` | Get a dictionary entry |
 | Translations | PUT | `/api/v1/translations/dictionary/{entry_id}` | Replace a dictionary entry |
 | Translations | PATCH | `/api/v1/translations/dictionary/{entry_id}` | Partially update a dictionary entry |
 | Translations | DELETE | `/api/v1/translations/dictionary/{entry_id}` | Delete a dictionary entry |
+| Translations | GET | `/api/v1/translations/fields` | List the translatable vocabulary |
+| Visibility | POST | `/api/v1/products/{productId}/preview-link` | Create a preview link |
+| Visibility | POST | `/api/v1/products/{productId}/publish` | Publish or hide a product |
+| Visibility | GET | `/api/v1/products/{productId}/visibility` | Get publication status |
 | Webhooks | GET | `/api/v1/webhooks` | List webhook subscriptions |
 | Webhooks | POST | `/api/v1/webhooks` | Create a webhook subscription |
 | Webhooks | GET | `/api/v1/webhooks/deliveries/{id}` | Get delivery detail |
@@ -640,6 +678,7 @@ Query option selection analytics. Scope: `analytics:read`.
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `from` (string) — Start date (ISO 8601, e.g. 2026-01-01)
 - `to` (string) — End date (ISO 8601, e.g. 2026-03-31)
 - `product_id` (integer) — Filter by product ID
@@ -647,7 +686,7 @@ Query option selection analytics. Scope: `analytics:read`.
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/analytics/part-usage` — List part usage facts
 _operationId_: `listPartUsageFacts`
@@ -657,6 +696,7 @@ Query part usage analytics. Scope: `analytics:read`.
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `from` (string) — Start date (ISO 8601, e.g. 2026-01-01)
 - `to` (string) — End date (ISO 8601, e.g. 2026-03-31)
 - `product_id` (integer) — Filter by product ID
@@ -664,7 +704,7 @@ Query part usage analytics. Scope: `analytics:read`.
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/analytics/pipeline` — List pipeline snapshots
 _operationId_: `listPipelineSnapshots`
@@ -674,13 +714,14 @@ Query pipeline analytics snapshots (opportunity funnel data). Scope: `analytics:
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `from` (string) — Start date (ISO 8601, e.g. 2026-01-01)
 - `to` (string) — End date (ISO 8601, e.g. 2026-03-31)
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/analytics/quotes` — List quote analytics
 _operationId_: `listQuoteAnalytics`
@@ -690,13 +731,14 @@ Query quote-level analytics snapshots. Scope: `analytics:read`.
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `from` (string) — Start date (ISO 8601, e.g. 2026-01-01)
 - `to` (string) — End date (ISO 8601, e.g. 2026-03-31)
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -710,7 +752,7 @@ _operationId_: `listApiKeys`
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/api-keys/usage` — Get API key usage statistics
 _operationId_: `getApiKeyUsage`
@@ -720,7 +762,7 @@ Returns usage statistics for all API keys in the company, including active/inact
 **Responses:**
 - `200` — Usage statistics
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/api-keys/{id}` — Get an API key
 _operationId_: `getApiKey`
@@ -729,7 +771,7 @@ _operationId_: `getApiKey`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -743,12 +785,13 @@ _operationId_: `listAreaGroupResources`
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `product_id` (integer) — Filter by product
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/area-groups` — Create an area group
 _operationId_: `createAreaGroup`
@@ -764,7 +807,7 @@ _operationId_: `createAreaGroup`
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/area-groups/{id}` — Get an area group
 _operationId_: `getAreaGroup`
@@ -773,7 +816,7 @@ _operationId_: `getAreaGroup`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/area-groups/{id}` — Update an area group
 _operationId_: `updateAreaGroup`
@@ -789,7 +832,7 @@ _operationId_: `updateAreaGroup`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/area-groups/{id}` — Partially update an area group
 _operationId_: `patchAreaGroup`
@@ -805,7 +848,7 @@ _operationId_: `patchAreaGroup`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/area-groups/{id}` — Delete an area group
 _operationId_: `deleteAreaGroup`
@@ -814,7 +857,7 @@ _operationId_: `deleteAreaGroup`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/area-groups/{id}/areas` — List areas in an area group
 _operationId_: `listAreaGroupAreas`
@@ -825,7 +868,7 @@ Returns all areas belonging to this area group. Not paginated.
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -839,13 +882,14 @@ _operationId_: `listAreas`
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `product_id` (integer) — Filter by product
 - `search` (string) — Filter by name (case-insensitive partial match)
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/areas` — Create an area
 _operationId_: `createArea`
@@ -865,7 +909,7 @@ _operationId_: `createArea`
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/areas/library` — List library areas
 _operationId_: `listLibraryAreas`
@@ -875,7 +919,7 @@ List areas not assigned to any product. Not paginated.
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/areas/{areaId}` — Get an area
 _operationId_: `getArea`
@@ -884,7 +928,7 @@ _operationId_: `getArea`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/areas/{areaId}` — Update an area
 _operationId_: `updateArea`
@@ -909,7 +953,7 @@ _operationId_: `updateArea`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/areas/{areaId}` — Partially update an area
 _operationId_: `patchArea`
@@ -934,7 +978,7 @@ _operationId_: `patchArea`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/areas/{areaId}` — Delete an area
 _operationId_: `deleteArea`
@@ -943,21 +987,27 @@ _operationId_: `deleteArea`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/areas/{areaId}/content` — Get area rich content
 _operationId_: `getAreaContent`
 
-Returns the EditorJS rich content blocks for an area. Supports all block types: header, paragraph, list, table, image, quote, delimiter, warning, embed, code, safety_notice, hp_statement.
+Returns the EditorJS rich content blocks for an area, in one language. Supports all block types: header, paragraph, list, table, image, quote, delimiter, warning, embed, code, safety_notice, hp_statement.
+
+**This endpoint does not substitute languages unless you ask it to.** A language the company has not configured is a `400` naming the ones it has; a configured language with no content is a `200` with `blocks: []`. That empty is the honest answer and makes `?language=` usable as a translation-coverage check — checking presence, truthiness or block count previously returned the base language's content for every untranslated area.
+
+`EN` still resolves to a configured `EN-US`. `available_languages` lists the languages this area actually has content in.
 
 **Query parameters:**
-- `language` (string) — Language code (e.g. 'DE', 'EN')
+- `language` (string) — Language code (e.g. 'DE', 'EN-US'). Must be one the company has configured; defaults to the base language.
+- `fallback` (string) — `none` (default) returns empty blocks when this language has no content. `base` serves the base language in...
 
 **Responses:**
 - `200` — Success
+- `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/areas/{areaId}/content` — Update area rich content
 _operationId_: `updateAreaContent`
@@ -967,10 +1017,13 @@ Create or replace rich content (EditorJS blocks) for an area. Image blocks shoul
 **Request body:**
 - `application/json` **required** — schema: `AreaContentUpdateRequest`
   - `area_id` (integer) — Identifier of the related area.
+  - `available_languages` (array<string>) — Languages this area actually has content in.
   - `blocks` (array<object>) **required** — Array of EditorJS block objects. Each must have a 'type' and 'data' key.
   - `enabled` (boolean) — Whether this content is shown in the configurator
+  - `is_fallback` (boolean) — True when `blocks` are NOT in `requested_language`. Two ways that happens: the request opted in with `fallb...
   - `language` (string) — Language code (e.g. 'DE', 'EN')
   - `links` (object) — HATEOAS links to this and related resources.
+  - `requested_language` (object) — Canonical form of the requested `language` parameter; null when none was given.
 
 **Responses:**
 - `200` — Success
@@ -978,7 +1031,7 @@ Create or replace rich content (EditorJS blocks) for an area. Image blocks shoul
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/areas/{areaId}/content` — Delete area rich content
 _operationId_: `deleteAreaContent`
@@ -992,7 +1045,7 @@ Delete rich content for an area. Pass `language` query param to delete a specifi
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/areas/{areaId}/content/images` — Upload content image
 _operationId_: `uploadAreaContentImage`
@@ -1005,18 +1058,38 @@ Upload an image for use in EditorJS content blocks. Accepts multipart/form-data 
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `413` — Payload Too Large (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/areas/{areaId}/groups` — List groups in an area
 _operationId_: `listAreaGroups`
 
-Returns groups linked to this area. Not paginated.
+Returns the groups linked to this area, in the order the configurator shows them: per-area position, then the group's default `order_index`, then id. The id tiebreaker makes the order total, so identical reads always agree.
+
+Each row carries `area_order_index` — its position *here*. A group attached to many areas has a single `order_index` that cannot order all of them; the per-area position is what the configurator uses and what `POST /areas/{id}/groups/reorder` writes. Not paginated.
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `POST /api/v1/areas/{areaId}/groups/reorder` — Reorder groups within an area
+_operationId_: `reorderAreaGroups`
+
+Sets the order of this area's groups **without touching any other area**. The body must be a complete permutation of the groups linked to this area.
+
+This writes the per-area position on the group↔area link, so a group shared by many areas can sit in a different place in each. Renumbering the group's own `order_index` instead would move it in every area it belongs to.
+
+**Request body:**
+- `application/json` **required**
+  - `order` (array<integer>) **required** — Group IDs in the order they should appear in THIS area.
+
+**Responses:**
+- `200` — Reordered
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/areas/{areaId}/options` — List area options
 _operationId_: `listAreaOptions`
@@ -1026,12 +1099,13 @@ List all options available in an area (across all groups assigned to it).
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/areas/{areaId}/price-overrides` — List area price overrides
 _operationId_: `listAreaPriceOverrides`
@@ -1042,7 +1116,7 @@ List all price-list overrides for an area's base price.
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/areas/{areaId}/price-overrides` — Create area price override
 _operationId_: `createAreaPriceOverride`
@@ -1058,7 +1132,7 @@ _operationId_: `createAreaPriceOverride`
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/areas/{areaId}/price-overrides/replace` — Replace all area price overrides
 _operationId_: `replaceAreaPriceOverrides`
@@ -1074,7 +1148,7 @@ Bulk-replace all price-list overrides for an area.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/areas/{areaId}/price-overrides/{overrideId}` — Update area price override
 _operationId_: `updateAreaPriceOverride`
@@ -1088,7 +1162,7 @@ _operationId_: `updateAreaPriceOverride`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/areas/{areaId}/price-overrides/{overrideId}` — Partially update area price override
 _operationId_: `patchAreaPriceOverride`
@@ -1102,7 +1176,7 @@ _operationId_: `patchAreaPriceOverride`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/areas/{areaId}/price-overrides/{overrideId}` — Delete area price override
 _operationId_: `deleteAreaPriceOverride`
@@ -1111,7 +1185,7 @@ _operationId_: `deleteAreaPriceOverride`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -1125,11 +1199,12 @@ _operationId_: `listAttributes`
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/attributes` — Create an attribute
 _operationId_: `createAttribute`
@@ -1143,7 +1218,7 @@ _operationId_: `createAttribute`
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/attributes/values/{valueId}` — Update an attribute value
 _operationId_: `updateAttributeValue`
@@ -1161,7 +1236,7 @@ _operationId_: `updateAttributeValue`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/attributes/values/{valueId}` — Partially update an attribute value
 _operationId_: `patchAttributeValue`
@@ -1179,7 +1254,7 @@ _operationId_: `patchAttributeValue`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/attributes/values/{valueId}` — Delete an attribute value
 _operationId_: `deleteAttributeValue`
@@ -1188,7 +1263,7 @@ _operationId_: `deleteAttributeValue`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/attributes/{id}` — Get an attribute
 _operationId_: `getAttribute`
@@ -1197,7 +1272,7 @@ _operationId_: `getAttribute`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/attributes/{id}` — Update an attribute
 _operationId_: `updateAttribute`
@@ -1215,7 +1290,7 @@ _operationId_: `updateAttribute`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/attributes/{id}` — Partially update an attribute
 _operationId_: `patchAttribute`
@@ -1233,7 +1308,7 @@ _operationId_: `patchAttribute`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/attributes/{id}` — Delete an attribute
 _operationId_: `deleteAttribute`
@@ -1242,7 +1317,7 @@ _operationId_: `deleteAttribute`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/attributes/{id}/values` — List attribute values
 _operationId_: `listAttributeValues`
@@ -1255,7 +1330,7 @@ _operationId_: `listAttributeValues`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/attributes/{id}/values` — Create an attribute value
 _operationId_: `createAttributeValue`
@@ -1275,7 +1350,7 @@ _operationId_: `createAttributeValue`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -1293,7 +1368,7 @@ _operationId_: `listBaselines`
 - `200` — Success
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/baselines` — Create a baseline
 _operationId_: `createBaseline`
@@ -1309,7 +1384,7 @@ _operationId_: `createBaseline`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/baselines/{id}` — Get a baseline
 _operationId_: `getBaseline`
@@ -1320,7 +1395,7 @@ Returns the baseline with its items.
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/baselines/{id}` — Delete a baseline
 _operationId_: `deleteBaseline`
@@ -1329,7 +1404,7 @@ _operationId_: `deleteBaseline`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -1359,7 +1434,7 @@ Send `X-Idempotency-Key` to make a batch safe to retry: a replay with the same k
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/batch` — Universal batch operations
 _operationId_: `universalBatch`
@@ -1385,7 +1460,7 @@ Operation `path`s resolve to top-level collections (`/api/v1/parts`, `/api/v1/pa
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/bom/batch` — Batch bom operations
 _operationId_: `batchBom`
@@ -1409,7 +1484,7 @@ Send `X-Idempotency-Key` to make a batch safe to retry: a replay with the same k
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/customers/batch` — Batch customers operations
 _operationId_: `batchCustomers`
@@ -1433,7 +1508,7 @@ Send `X-Idempotency-Key` to make a batch safe to retry: a replay with the same k
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/groups/batch` — Batch groups operations
 _operationId_: `batchGroups`
@@ -1457,7 +1532,7 @@ Send `X-Idempotency-Key` to make a batch safe to retry: a replay with the same k
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/options/batch` — Batch options operations
 _operationId_: `batchOptions`
@@ -1481,7 +1556,7 @@ Send `X-Idempotency-Key` to make a batch safe to retry: a replay with the same k
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/parts/batch` — Batch parts operations
 _operationId_: `batchParts`
@@ -1505,7 +1580,7 @@ Send `X-Idempotency-Key` to make a batch safe to retry: a replay with the same k
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/placements/batch` — Batch placements operations
 _operationId_: `batchPlacements`
@@ -1529,12 +1604,12 @@ Send `X-Idempotency-Key` to make a batch safe to retry: a replay with the same k
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/products/batch` — Batch products operations
 _operationId_: `batchProducts`
 
-Execute up to 100 create/update/delete/upsert operations on products.
+Execute up to 100 create/update/delete/upsert operations on products. A `create` operation answers `409` with `plan_limit: "products"` when the plan's product allowance is fully used; the other operations in the batch are unaffected. Deleting a product also deletes every configuration quoted from it. When any exist, that `delete` operation answers `409` with `configurations`, `finalized_configurations` and `confirmation_required: "delete_configurations"`, and nothing is deleted — the other operations in the batch are unaffected. Repeat it with `"body": {"delete_configurations": true}` to delete both. To withdraw a product from the catalogue and keep that record, `update` it with `is_published: false` instead.
 
 **Best-effort, not all-or-nothing.** Each operation is isolated in its own database savepoint, so successful items are committed even when others fail. The response body reports `total`, `succeeded`, `failed` and a per-item `results` array (each with its own status and error), so you can retry only the failed items. HTTP `200` means every item succeeded; `207` means at least one failed. A top-level `4xx` (e.g. malformed envelope or more than 100 operations) means nothing was applied.
 
@@ -1553,7 +1628,7 @@ Send `X-Idempotency-Key` to make a batch safe to retry: a replay with the same k
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -1569,11 +1644,12 @@ List version-control branches for product configuration. Scope: `parts:read`.
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/branches` — Create branch
 _operationId_: `createBranch`
@@ -1587,7 +1663,7 @@ _operationId_: `createBranch`
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/branches/{branchId}` — Get branch
 _operationId_: `getBranch`
@@ -1596,7 +1672,7 @@ _operationId_: `getBranch`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/branches/{branchId}` — Delete branch
 _operationId_: `deleteBranch`
@@ -1605,7 +1681,7 @@ _operationId_: `deleteBranch`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -1621,7 +1697,7 @@ Returns all catalog filter dimensions with their values. Not paginated.
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/catalog-filters` — Create a catalog filter dimension
 _operationId_: `createCatalogFilter`
@@ -1640,7 +1716,7 @@ Create a new filter dimension. Maximum 5 per company.
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/catalog-filters/reorder` — Reorder catalog filter dimensions
 _operationId_: `reorderCatalogFilters`
@@ -1655,7 +1731,7 @@ Set the display order of filter dimensions.
 - `200` — Reordered
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/catalog-filters/{id}` — Get a catalog filter dimension
 _operationId_: `getCatalogFilter`
@@ -1664,7 +1740,7 @@ _operationId_: `getCatalogFilter`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/catalog-filters/{id}` — Update a catalog filter dimension
 _operationId_: `updateCatalogFilter`
@@ -1686,7 +1762,7 @@ _operationId_: `updateCatalogFilter`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/catalog-filters/{id}` — Delete a catalog filter dimension
 _operationId_: `deleteCatalogFilter`
@@ -1697,7 +1773,7 @@ Deletes the dimension and cleans up filter references from all products.
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/catalog-filters/{id}/values` — Add a value to a catalog filter dimension
 _operationId_: `createCatalogFilterValue`
@@ -1715,7 +1791,7 @@ Add a new value. Maximum 30 values per dimension.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/catalog-filters/{id}/values/reorder` — Reorder values within a dimension
 _operationId_: `reorderCatalogFilterValues`
@@ -1731,7 +1807,7 @@ Set the display order of values within a filter dimension.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/catalog-filters/{id}/values/{valueId}` — Update a catalog filter value
 _operationId_: `updateCatalogFilterValue`
@@ -1749,7 +1825,7 @@ _operationId_: `updateCatalogFilterValue`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/catalog-filters/{id}/values/{valueId}` — Delete a catalog filter value
 _operationId_: `deleteCatalogFilterValue`
@@ -1760,7 +1836,7 @@ Deletes the value and cleans up filter references from all products.
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -1775,7 +1851,7 @@ _operationId_: `getChangeOrder`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/change-orders/{ecoId}` — Update change order
 _operationId_: `updateChangeOrder`
@@ -1795,7 +1871,7 @@ _operationId_: `updateChangeOrder`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/change-orders/{ecoId}` — Partially update change order
 _operationId_: `patchChangeOrder`
@@ -1815,7 +1891,7 @@ _operationId_: `patchChangeOrder`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/change-orders/{ecoId}` — Delete change order
 _operationId_: `deleteChangeOrder`
@@ -1824,7 +1900,7 @@ _operationId_: `deleteChangeOrder`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/change-orders/{ecoId}/approvals` — List change approvals
 _operationId_: `listChangeApprovals`
@@ -1835,7 +1911,7 @@ List approval records for a change order.
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/change-orders/{ecoId}/approvals` — Create change approval
 _operationId_: `createChangeApproval`
@@ -1850,7 +1926,7 @@ _operationId_: `createChangeApproval`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/change-orders/{ecoId}/approvals/{approvalId}` — Update change approval
 _operationId_: `updateChangeApproval`
@@ -1870,7 +1946,7 @@ _operationId_: `updateChangeApproval`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/change-orders/{ecoId}/approvals/{approvalId}` — Partially update change approval
 _operationId_: `patchChangeApproval`
@@ -1890,7 +1966,7 @@ _operationId_: `patchChangeApproval`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/change-orders/{ecoId}/impacts` — List change impacts
 _operationId_: `listChangeImpacts`
@@ -1901,7 +1977,7 @@ List impacts (item-level changes) in a change order.
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/change-orders/{ecoId}/impacts` — Create change impact
 _operationId_: `createChangeImpact`
@@ -1918,7 +1994,7 @@ _operationId_: `createChangeImpact`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/change-orders/{ecoId}/impacts/{impactId}` — Update change impact
 _operationId_: `updateChangeImpact`
@@ -1939,7 +2015,7 @@ _operationId_: `updateChangeImpact`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/change-orders/{ecoId}/impacts/{impactId}` — Partially update change impact
 _operationId_: `patchChangeImpact`
@@ -1960,7 +2036,7 @@ _operationId_: `patchChangeImpact`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/change-orders/{ecoId}/impacts/{impactId}` — Delete change impact
 _operationId_: `deleteChangeImpact`
@@ -1969,7 +2045,7 @@ _operationId_: `deleteChangeImpact`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -1985,12 +2061,13 @@ List Engineering Change Requests (ECR). Scope: `parts:read`.
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `state` (string) — Filter by state (Open, Review, Approved, Rejected)
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/change-requests` — Create change request
 _operationId_: `createChangeRequest`
@@ -2004,7 +2081,7 @@ _operationId_: `createChangeRequest`
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/change-requests/{ecrId}` — Get change request
 _operationId_: `getChangeRequest`
@@ -2013,7 +2090,7 @@ _operationId_: `getChangeRequest`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/change-requests/{ecrId}` — Update change request
 _operationId_: `updateChangeRequest`
@@ -2033,7 +2110,7 @@ _operationId_: `updateChangeRequest`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/change-requests/{ecrId}` — Partially update change request
 _operationId_: `patchChangeRequest`
@@ -2053,7 +2130,7 @@ _operationId_: `patchChangeRequest`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/change-requests/{ecrId}` — Delete change request
 _operationId_: `deleteChangeRequest`
@@ -2062,7 +2139,7 @@ _operationId_: `deleteChangeRequest`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/change-requests/{ecrId}/orders` — List change orders for request
 _operationId_: `listChangeOrdersForRequest`
@@ -2072,12 +2149,13 @@ List Engineering Change Orders (ECO) under a change request.
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/change-requests/{ecrId}/orders` — Create change order
 _operationId_: `createChangeOrder`
@@ -2091,7 +2169,7 @@ _operationId_: `createChangeOrder`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -2105,7 +2183,7 @@ _operationId_: `getCompanySettings`
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/company` — Update company settings
 _operationId_: `updateCompanySettings`
@@ -2124,7 +2202,7 @@ _operationId_: `updateCompanySettings`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/company` — Partially update company settings
 _operationId_: `patchCompanySettings`
@@ -2143,7 +2221,7 @@ _operationId_: `patchCompanySettings`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/company/configurator-settings` — Get configurator settings
 _operationId_: `getConfiguratorSettings`
@@ -2153,7 +2231,7 @@ Retrieve company-level configurator display and behavior settings.
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/company/configurator-settings` — Update configurator settings
 _operationId_: `updateConfiguratorSettings`
@@ -2178,7 +2256,7 @@ _operationId_: `updateConfiguratorSettings`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/company/configurator-settings` — Partially update configurator settings
 _operationId_: `patchConfiguratorSettings`
@@ -2203,7 +2281,7 @@ _operationId_: `patchConfiguratorSettings`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/company/connector-settings` — Get connector settings
 _operationId_: `getConnectorSettings`
@@ -2213,7 +2291,7 @@ Retrieve company-level connector/integration settings.
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/company/connector-settings` — Update connector settings
 _operationId_: `updateConnectorSettings`
@@ -2225,7 +2303,7 @@ _operationId_: `updateConnectorSettings`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/company/connector-settings` — Partially update connector settings
 _operationId_: `patchConnectorSettings`
@@ -2237,7 +2315,7 @@ _operationId_: `patchConnectorSettings`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/company/contacts` — List company contacts
 _operationId_: `listCompanyContacts`
@@ -2247,7 +2325,7 @@ Returns all contact persons for the company. Not paginated.
 **Responses:**
 - `200` — Company contacts
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/company/contacts` — Create a company contact
 _operationId_: `createCompanyContact`
@@ -2269,7 +2347,7 @@ _operationId_: `createCompanyContact`
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/company/contacts/{contactId}` — Update a company contact
 _operationId_: `updateCompanyContact`
@@ -2292,7 +2370,7 @@ _operationId_: `updateCompanyContact`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/company/contacts/{contactId}` — Partially update a company contact
 _operationId_: `patchCompanyContact`
@@ -2311,7 +2389,7 @@ _operationId_: `patchCompanyContact`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/company/contacts/{contactId}` — Delete a company contact
 _operationId_: `deleteCompanyContact`
@@ -2320,7 +2398,7 @@ _operationId_: `deleteCompanyContact`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -2334,12 +2412,13 @@ _operationId_: `listConfigurations`
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `product_id` (integer) — Filter by product
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/configurations` — Create a saved configuration
 _operationId_: `createConfiguration`
@@ -2366,7 +2445,7 @@ Persist a selection set against a product as an addressable Configuration. Price
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/configurations/calculate` — Calculate a configuration
 _operationId_: `calculateConfiguration`
@@ -2389,7 +2468,7 @@ Resolve constraints, compute pricing, and return a configuration state.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/configurations/states/by-code/{code}` — Get configuration state by code
 _operationId_: `getConfigurationStateByCode`
@@ -2405,37 +2484,47 @@ Supports ETag/If-None-Match conditional caching. States are immutable, so a matc
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/configurations/states/by-code/{code}/parts` — Get configured parts (BOM)
 _operationId_: `getConfigurationParts`
 
-Returns the bill of materials for a configuration. Supports pagination via limit/offset and ETag caching.
+Returns the bill of materials for a configuration — read from the frozen `part_snapshot` when one exists, otherwise computed from the configuration's own payload. Both routes produce identical rows. Check `source` before trusting `parts`: an `error` response returns 200 with an empty list and a `warning`, and is never cacheable.
+
+Supports pagination via limit/offset and ETag caching. The ETag varies with the page, the row answering, and that row's snapshot content; a computed body's validator additionally expires with the response's `max-age`, since live placements cannot be fingerprinted.
 
 **Query parameters:**
 - `limit` (integer) — Max parts per page (default 200, max 500)
 - `offset` (integer) — Number of parts to skip
 
+**Header parameters:**
+- `If-None-Match` (string) — ETag from a prior response. Returns 304 if unchanged.
+
 **Responses:**
 - `200` — Success
+- `304` — Not Modified — the ETag matched.
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 - `504` — Gateway Timeout (`application/json` → `ProblemDetails`)
 
 ### `GET /api/v1/configurations/states/by-code/{code}/selections` — Get enriched selected options
 _operationId_: `getConfigurationSelections`
 
-Returns each selected option enriched with group name, option name, price, quantity, and wishlist status. Supports ETag caching.
+Returns each selected option enriched with group name, option name, price, quantity, and wishlist status. Supports ETag caching; the validator folds in a freshness window because option and group names and prices are editable, so a 304 means 'unchanged within the advertised max-age', not 'unchanged forever'.
+
+**Header parameters:**
+- `If-None-Match` (string) — ETag from a prior response. Returns 304 if unchanged.
 
 **Responses:**
 - `200` — Success
+- `304` — Not Modified — the ETag matched.
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/configurations/states/{hash}` — Get configuration state by hash
 _operationId_: `getConfigurationState`
@@ -2444,7 +2533,7 @@ _operationId_: `getConfigurationState`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/configurations/{id}` — Get a saved configuration
 _operationId_: `getConfiguration`
@@ -2453,7 +2542,7 @@ _operationId_: `getConfiguration`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/configurations/{id}/finalize` — Finalize a configuration
 _operationId_: `finalizeConfiguration`
@@ -2465,7 +2554,7 @@ Lock the configuration so it cannot be modified.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -2479,7 +2568,7 @@ _operationId_: `listConnectors`
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/connectors` — Create a connector
 _operationId_: `createConnector`
@@ -2496,7 +2585,7 @@ _operationId_: `createConnector`
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/connectors/endpoints/{id}` — Delete a connector endpoint
 _operationId_: `deleteConnectorEndpoint`
@@ -2505,7 +2594,7 @@ _operationId_: `deleteConnectorEndpoint`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/connectors/jobs` — List connector jobs
 _operationId_: `listConnectorJobs`
@@ -2513,12 +2602,13 @@ _operationId_: `listConnectorJobs`
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `status` (string) — Filter by status
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/connectors/jobs/{jobId}` — Get a connector job
 _operationId_: `getConnectorJob`
@@ -2527,7 +2617,7 @@ _operationId_: `getConnectorJob`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/connectors/jobs/{jobId}/logs` — List job logs
 _operationId_: `listConnectorJobLogs`
@@ -2537,12 +2627,13 @@ List execution log entries for a connector job.
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/connectors/jobs/{jobId}/replay` — Replay a connector job
 _operationId_: `replayConnectorJob`
@@ -2553,7 +2644,7 @@ Re-execute a completed or failed job using its original input context.
 - `202` — Accepted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/connectors/tasks/{id}` — Get a connector task
 _operationId_: `getConnectorTask`
@@ -2562,7 +2653,7 @@ _operationId_: `getConnectorTask`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/connectors/tasks/{id}` — Delete a connector task
 _operationId_: `deleteConnectorTask`
@@ -2571,7 +2662,7 @@ _operationId_: `deleteConnectorTask`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/connectors/tasks/{id}/run` — Run a connector task
 _operationId_: `runConnectorTask`
@@ -2584,7 +2675,7 @@ _operationId_: `runConnectorTask`
 - `202` — Task queued
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/connectors/triggers` — List connector triggers
 _operationId_: `listConnectorTriggers`
@@ -2594,7 +2685,7 @@ Returns all triggers. Not paginated.
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/connectors/triggers` — Create a connector trigger
 _operationId_: `createConnectorTrigger`
@@ -2615,7 +2706,7 @@ _operationId_: `createConnectorTrigger`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/connectors/triggers/{triggerId}` — Update a connector trigger
 _operationId_: `updateConnectorTrigger`
@@ -2634,7 +2725,7 @@ _operationId_: `updateConnectorTrigger`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/connectors/triggers/{triggerId}` — Delete a connector trigger
 _operationId_: `deleteConnectorTrigger`
@@ -2643,7 +2734,7 @@ _operationId_: `deleteConnectorTrigger`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/connectors/{id}` — Get a connector
 _operationId_: `getConnector`
@@ -2652,7 +2743,7 @@ _operationId_: `getConnector`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/connectors/{id}` — Update a connector
 _operationId_: `updateConnector`
@@ -2676,7 +2767,7 @@ _operationId_: `updateConnector`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/connectors/{id}` — Partially update a connector
 _operationId_: `patchConnector`
@@ -2700,7 +2791,7 @@ _operationId_: `patchConnector`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/connectors/{id}` — Delete a connector
 _operationId_: `deleteConnector`
@@ -2709,7 +2800,7 @@ _operationId_: `deleteConnector`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/connectors/{id}/endpoints` — List connector endpoints
 _operationId_: `listConnectorEndpoints`
@@ -2718,7 +2809,7 @@ _operationId_: `listConnectorEndpoints`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/connectors/{id}/endpoints` — Create a connector endpoint
 _operationId_: `createConnectorEndpoint`
@@ -2743,7 +2834,7 @@ _operationId_: `createConnectorEndpoint`
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/connectors/{id}/tasks` — List connector tasks
 _operationId_: `listConnectorTasks`
@@ -2752,7 +2843,7 @@ _operationId_: `listConnectorTasks`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/connectors/{id}/tasks` — Create a connector task
 _operationId_: `createConnectorTask`
@@ -2771,7 +2862,7 @@ _operationId_: `createConnectorTask`
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -2782,7 +2873,9 @@ Rules that forbid certain option or area combinations. Includes pair-level forbi
 ### `GET /api/v1/constraints` — List option-level forbidden combinations
 _operationId_: `listConstraints`
 
-Returns all pair-level forbidden combinations for a product. These prevent two specific options from being selected together.
+Returns the pair-level forbidden combinations that belong to this product — those where **both** options are reachable from it. These prevent two specific options from being selected together.
+
+What this returns is exactly what `POST /constraints` accepts and exactly the set it would replace, so a read → modify → write-back round-trips. Groups are shared between products, so a pair can straddle two of them; such a pair belongs to the product that can reach both of its options, and is not listed here for the other.
 
 **Query parameters:**
 - `product_id` (integer) **required** — Product ID
@@ -2790,7 +2883,7 @@ Returns all pair-level forbidden combinations for a product. These prevent two s
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/constraints` — Replace option-level forbidden combinations
 _operationId_: `replaceConstraints`
@@ -2810,7 +2903,7 @@ Atomically replaces all option-level forbidden combinations for a product. Read 
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/constraints/area` — List area-level forbidden combinations
 _operationId_: `listAreaConstraints`
@@ -2821,7 +2914,7 @@ _operationId_: `listAreaConstraints`
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/constraints/area` — Replace area-level forbidden combinations
 _operationId_: `replaceAreaConstraints`
@@ -2841,7 +2934,7 @@ Atomically replaces all area-level forbidden combinations for a product. Send th
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/constraints/check` — Check if a combination is forbidden
 _operationId_: `checkConstraint`
@@ -2856,7 +2949,7 @@ _operationId_: `checkConstraint`
 - `200` — Check result
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/constraints/combination-rules` — List combination rules
 _operationId_: `listCombinationRules`
@@ -2872,7 +2965,7 @@ Combination rules express how options and areas relate beyond simple forbidden p
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/constraints/combination-rules` — Create a combination rule
 _operationId_: `createCombinationRule`
@@ -2902,7 +2995,7 @@ Combination rules express how options and areas relate beyond simple forbidden p
 - `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/constraints/combination-rules/{id}` — Get a combination rule
 _operationId_: `getCombinationRule`
@@ -2911,7 +3004,7 @@ _operationId_: `getCombinationRule`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/constraints/combination-rules/{id}` — Update a combination rule
 _operationId_: `updateCombinationRule`
@@ -2942,7 +3035,7 @@ Combination rules express how options and areas relate beyond simple forbidden p
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/constraints/combination-rules/{id}` — Delete a combination rule
 _operationId_: `deleteCombinationRule`
@@ -2952,7 +3045,7 @@ _operationId_: `deleteCombinationRule`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/constraints/rules` — List constraint rules
 _operationId_: `listConstraintRules`
@@ -2964,7 +3057,7 @@ _operationId_: `listConstraintRules`
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/constraints/rules` — Create a constraint rule
 _operationId_: `createConstraintRule`
@@ -2987,7 +3080,7 @@ Both shapes accept an optional `"requires"` list of condition clauses (`anyOf` /
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/constraints/rules/{id}` — Get a constraint rule
 _operationId_: `getConstraintRule`
@@ -2996,7 +3089,7 @@ _operationId_: `getConstraintRule`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/constraints/rules/{id}` — Update a constraint rule
 _operationId_: `updateConstraintRule`
@@ -3015,7 +3108,7 @@ _operationId_: `updateConstraintRule`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/constraints/rules/{id}` — Partially update a constraint rule
 _operationId_: `patchConstraintRule`
@@ -3034,7 +3127,7 @@ _operationId_: `patchConstraintRule`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/constraints/rules/{id}` — Delete a constraint rule
 _operationId_: `deleteConstraintRule`
@@ -3043,7 +3136,18 @@ _operationId_: `deleteConstraintRule`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `DELETE /api/v1/constraints/{id}` — Delete one forbidden combination
+_operationId_: `deleteConstraintPair`
+
+Removes a single option pair without restating the whole set. Bumps `constraints_version` on every product the pair was visible in. Idempotent: deleting an already-deleted pair returns 204.
+
+**Responses:**
+- `204` — Deleted
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -3057,85 +3161,111 @@ _operationId_: `listCustomerLinks`
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `product_id` (integer) — Filter by product
+- `scope_broken` (boolean) — Only links whose area scope no longer resolves to anything
+- `include_public_url` (boolean) — Set false to skip minting envelope URLs (no writes)
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/customer-links` — Create a customer link
 _operationId_: `createCustomerLink`
 
+Creates the link *policy* — which products, areas, price list, who may open it, for how long. The URL a customer receives is an envelope minted from it and managed under /public-links.
+
 **Request body:**
 - `application/json` **required**
-  - `expires_at` (string(date-time))
+  - `allowed_product_ids` (array|null) — Replace the multi-product allowlist. [] clears it.
+  - `allowed_user_ids` (array<integer>) — Users whose e-mail may open a protected link. Required while is_protected is true — an empty allowlist lock...
+  - `area_ids` (array|null) — Replace the area scope. [] removes it and serves every visible area; omit the key to leave it untouched.
+  - `expires_at` (string|null)
   - `is_protected` (boolean)
-  - `max_completed_configs` (integer)
-  - `name` (string) **required**
+  - `link_purpose` (string) — What the link opens onto. Omit to derive: 'configurator' when a single product is given, 'select' otherwise.
+  - `max_completed_configs` (integer|null)
+  - `name` (string)
   - `price_list_id` (integer)
-  - `product_id` (integer) **required**
+  - `price_visibility` (string) — How much of the price build-up the audience sees: full (base, area, option and advanced prices), net_only (...
+  - `product_finder_config` (object|null) — Per-link Product Finder overrides. null inherits company defaults.
+  - `product_id` (integer)
 
 **Responses:**
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/customer-links/{id}` — Get a customer link
 _operationId_: `getCustomerLink`
+
+**Query parameters:**
+- `include_public_url` (boolean) — Set false to skip minting the envelope URL (no writes)
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/customer-links/{id}` — Update a customer link
 _operationId_: `updateCustomerLink`
 
 **Request body:**
 - `application/json` **required**
+  - `allowed_product_ids` (array|null) — Replace the multi-product allowlist. [] clears it.
+  - `allowed_user_ids` (array<integer>) — Users whose e-mail may open a protected link. Required while is_protected is true — an empty allowlist lock...
+  - `area_ids` (array|null) — Replace the area scope. [] removes it and serves every visible area; omit the key to leave it untouched.
   - `expires_at` (string|null)
   - `is_protected` (boolean)
   - `max_completed_configs` (integer|null)
   - `name` (string)
   - `price_list_id` (integer)
+  - `price_visibility` (string) — How much of the price build-up the audience sees: full (base, area, option and advanced prices), net_only (...
+  - `product_finder_config` (object|null) — Per-link Product Finder overrides. null inherits company defaults.
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/customer-links/{id}` — Partially update a customer link
 _operationId_: `patchCustomerLink`
 
 **Request body:**
 - `application/json` **required**
+  - `allowed_product_ids` (array|null) — Replace the multi-product allowlist. [] clears it.
+  - `allowed_user_ids` (array<integer>) — Users whose e-mail may open a protected link. Required while is_protected is true — an empty allowlist lock...
+  - `area_ids` (array|null) — Replace the area scope. [] removes it and serves every visible area; omit the key to leave it untouched.
   - `expires_at` (string|null)
   - `is_protected` (boolean)
   - `max_completed_configs` (integer|null)
   - `name` (string)
   - `price_list_id` (integer)
+  - `price_visibility` (string) — How much of the price build-up the audience sees: full (base, area, option and advanced prices), net_only (...
+  - `product_finder_config` (object|null) — Per-link Product Finder overrides. null inherits company defaults.
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/customer-links/{id}` — Delete a customer link
 _operationId_: `deleteCustomerLink`
+
+Destroys the link policy; every URL minted from it stops working. To kill the URLs but keep the link, POST /public-links/revoke.
 
 **Responses:**
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -3149,13 +3279,14 @@ _operationId_: `listCustomers`
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `search` (string) — Filter by organization, email, or ID (case-insensitive)
 - `country` (string) — Filter by address country
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/customers` — Create a customer
 _operationId_: `createCustomer`
@@ -3176,7 +3307,7 @@ _operationId_: `createCustomer`
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/customers/search` — Search customers
 _operationId_: `searchCustomers`
@@ -3190,7 +3321,7 @@ Quick search across organization, email, and customer ID. Returns up to 50 resul
 - `200` — Matching customers
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/customers/{customerId}` — Get a customer
 _operationId_: `getCustomer`
@@ -3199,7 +3330,7 @@ _operationId_: `getCustomer`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/customers/{customerId}` — Update a customer
 _operationId_: `updateCustomer`
@@ -3225,7 +3356,7 @@ _operationId_: `updateCustomer`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/customers/{customerId}` — Partially update a customer
 _operationId_: `patchCustomer`
@@ -3251,7 +3382,7 @@ _operationId_: `patchCustomer`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/customers/{customerId}` — Delete a customer
 _operationId_: `deleteCustomer`
@@ -3260,7 +3391,7 @@ _operationId_: `deleteCustomer`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/customers/{customerId}/configurations` — List customer configurations
 _operationId_: `listCustomerConfigurations`
@@ -3270,12 +3401,13 @@ List all configurations for a customer.
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/customers/{customerId}/contacts` — List contacts for a customer
 _operationId_: `listContacts`
@@ -3286,7 +3418,7 @@ Returns all contact persons for this customer. Not paginated.
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/customers/{customerId}/contacts` — Add a contact to a customer
 _operationId_: `createContact`
@@ -3304,7 +3436,7 @@ _operationId_: `createContact`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/customers/{customerId}/contacts/{contactId}` — Update a contact
 _operationId_: `updateContact`
@@ -3322,7 +3454,25 @@ _operationId_: `updateContact`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `PATCH /api/v1/customers/{customerId}/contacts/{contactId}` — Partially update a contact
+_operationId_: `patchContact`
+
+**Request body:**
+- `application/json` **required** — schema: `ContactUpdateRequest`
+  - `email` (object) — Email address.
+  - `first_name` (object) — First name.
+  - `last_name` (object) — Last name.
+  - `phone` (object) — Phone number.
+  - `position` (object) — Position within its collection (0-based).
+
+**Responses:**
+- `200` — Success
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/customers/{customerId}/contacts/{contactId}` — Remove a contact
 _operationId_: `deleteContact`
@@ -3331,7 +3481,7 @@ _operationId_: `deleteContact`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/customers/{customerId}/opportunities` — List customer opportunities
 _operationId_: `listCustomerOpportunities`
@@ -3341,12 +3491,13 @@ List all opportunities for a customer.
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/customers/{customerId}/quotes` — List customer quotes
 _operationId_: `listCustomerQuotes`
@@ -3356,12 +3507,13 @@ List all quotes associated with a customer (via opportunities).
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -3386,7 +3538,7 @@ Evaluate a conditions clause list against a configuration or inline selection. R
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/content-blocks` — List content blocks
 _operationId_: `listContentBlocks`
@@ -3396,6 +3548,7 @@ List reusable content blocks with cursor-based pagination. Filter by product, di
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `product_id` (integer) — Filter by product
 - `directory_id` (integer) — Filter by directory
 - `tag` (string) — Filter by tag
@@ -3405,7 +3558,7 @@ List reusable content blocks with cursor-based pagination. Filter by product, di
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/content-blocks` — Create a content block
 _operationId_: `createContentBlock`
@@ -3430,7 +3583,7 @@ Create a reusable content block. Optionally include an initial locale with Edito
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/content-blocks/batch` — Batch content block operations
 _operationId_: `batchContentBlocks`
@@ -3445,7 +3598,7 @@ Create, update, or delete up to 100 content blocks in a single request. Each ope
 - `207` — Multi-Status (`application/json` → `BatchResponse`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/content-blocks/images` — Upload EditorJS image
 _operationId_: `uploadEditorJsImage`
@@ -3457,7 +3610,7 @@ Upload an image for use in EditorJS content blocks. Send as multipart/form-data 
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `413` — Payload Too Large (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/documents/content-blocks/images` — Delete EditorJS image by URL
 _operationId_: `deleteEditorJsImage`
@@ -3471,7 +3624,7 @@ Delete an EditorJS image by its URL, supplied as a query parameter (bodies on DE
 - `204` — Deleted
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/content-blocks/{id}` — Get a content block with locales
 _operationId_: `getContentBlock`
@@ -3482,7 +3635,7 @@ Returns the content block metadata along with all associated locale payloads. Ea
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/documents/content-blocks/{id}` — Update a content block
 _operationId_: `updateContentBlock`
@@ -3512,7 +3665,37 @@ Update content block metadata. Dynamic/system blocks only allow `directory_id` a
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `PATCH /api/v1/documents/content-blocks/{id}` — Partially update a content block
+_operationId_: `patchContentBlock`
+
+Update content block metadata. Dynamic/system blocks only allow `directory_id` and `order_index` changes (returns 403 for other fields). Key changes are validated for uniqueness (409 on conflict).
+
+**Request body:**
+- `application/json` **required** — schema: `ContentBlockUpdateRequest`
+  - `conditions` (object)
+  - `created_at` (object) — Timestamp (ISO 8601).
+  - `current_version` (integer) — Server-managed version counter for optimistic concurrency.
+  - `description` (object) — Free-text description.
+  - `directory_id` (object) — Identifier of the related directory.
+  - `id` (integer) — Unique identifier.
+  - `is_active` (object) — Whether active.
+  - `is_dynamic` (boolean) — Whether dynamic.
+  - `key` (object) — Stable identifier key.
+  - `links` (object) — HATEOAS links to this and related resources.
+  - `locales` (array<object>)
+  - `order_index` (object) — Sort order within its collection (ascending).
+  - _...4 more — see `components.schemas` in `openapi.json`_
+
+**Responses:**
+- `200` — Success
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `409` — Conflict (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/documents/content-blocks/{id}` — Delete a content block
 _operationId_: `deleteContentBlock`
@@ -3524,7 +3707,7 @@ Delete a content block and all its locales. Automatically cleans up EditorJS ima
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/content-blocks/{id}/locales` — List content block locales
 _operationId_: `listContentBlockLocales`
@@ -3535,7 +3718,7 @@ List all locale versions for a content block, sorted by language.
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/content-blocks/{id}/locales` — Create or upsert a content block locale
 _operationId_: `createContentBlockLocale`
@@ -3555,7 +3738,7 @@ Create a locale for a content block. If a locale with the same language and vers
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/content-blocks/{id}/locales/{localeId}` — Get a content block locale
 _operationId_: `getContentBlockLocale`
@@ -3564,7 +3747,7 @@ _operationId_: `getContentBlockLocale`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/documents/content-blocks/{id}/locales/{localeId}` — Update a content block locale
 _operationId_: `updateContentBlockLocale`
@@ -3589,7 +3772,32 @@ _operationId_: `updateContentBlockLocale`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `PATCH /api/v1/documents/content-blocks/{id}/locales/{localeId}` — Partially update a content block locale
+_operationId_: `patchContentBlockLocale`
+
+**Request body:**
+- `application/json` **required** — schema: `ContentBlockLocaleUpdateRequest`
+  - `block_id` (integer) — Identifier of the related block.
+  - `blocks` (object)
+  - `created_at` (object) — Timestamp (ISO 8601).
+  - `id` (integer) — Unique identifier.
+  - `is_active` (object) — Whether active.
+  - `is_stale` (boolean) — Whether stale.
+  - `language` (object) — Language code (e.g. `EN`, `DE`).
+  - `links` (object) — HATEOAS links to this and related resources.
+  - `source_content_hash` (object) — Content hash.
+  - `template_name` (object) — Name.
+  - `updated_at` (object) — Timestamp (ISO 8601).
+  - `version` (object) — Version number.
+
+**Responses:**
+- `200` — Success
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/documents/content-blocks/{id}/locales/{localeId}` — Delete a content block locale
 _operationId_: `deleteContentBlockLocale`
@@ -3598,7 +3806,7 @@ _operationId_: `deleteContentBlockLocale`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/content-blocks/{id}/locales/{localeId}/translate` — Translate locale to target language
 _operationId_: `translateContentBlockLocale`
@@ -3615,7 +3823,7 @@ Translate the source locale's EditorJS content to the target language via DeepL.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 - `504` — Gateway Timeout (`application/json` → `ProblemDetails`)
 
 ### `POST /api/v1/documents/content-blocks/{id}/set-version` — Set current version
@@ -3632,7 +3840,7 @@ Set the `current_version` pointer for a content block. This determines which loc
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/content-directories` — List content directories (tree)
 _operationId_: `listContentDirectories`
@@ -3642,7 +3850,7 @@ Returns all content directories as a nested hierarchical tree. Root directories 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/content-directories` — Create a content directory
 _operationId_: `createContentDirectory`
@@ -3658,7 +3866,7 @@ _operationId_: `createContentDirectory`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/content-directories/{id}` — Get a content directory
 _operationId_: `getContentDirectory`
@@ -3667,7 +3875,7 @@ _operationId_: `getContentDirectory`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/documents/content-directories/{id}` — Update a content directory
 _operationId_: `updateContentDirectory`
@@ -3683,7 +3891,23 @@ _operationId_: `updateContentDirectory`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `PATCH /api/v1/documents/content-directories/{id}` — Partially update a content directory
+_operationId_: `patchContentDirectory`
+
+**Request body:**
+- `application/json` **required** — schema: `ContentDirectoryUpdateRequest`
+  - `name` (object) — Human-readable name.
+  - `order_index` (object) — Sort order within its collection (ascending).
+  - `parent_id` (object) — Identifier of the related parent.
+
+**Responses:**
+- `200` — Success
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/documents/content-directories/{id}` — Delete a content directory
 _operationId_: `deleteContentDirectory`
@@ -3694,7 +3918,7 @@ Delete a directory. Content blocks in this directory are orphaned to root (direc
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/doc-types` — List registered document types
 _operationId_: `listDocumentTypes`
@@ -3704,7 +3928,7 @@ Return all registered document types and their default layouts, supported output
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/instances` — List document instances
 _operationId_: `listDocumentInstances`
@@ -3712,6 +3936,7 @@ _operationId_: `listDocumentInstances`
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `template_id` (integer) — Filter by template
 - `quote_id` (integer) — Filter by quote
 - `context_type` (string) — Filter by context type
@@ -3719,7 +3944,7 @@ _operationId_: `listDocumentInstances`
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/instances` — Create a document instance (enriched)
 _operationId_: `createDocumentInstance`
@@ -3740,7 +3965,7 @@ Create a document instance from a template for a specific context (quote, config
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/instances/{id}` — Get a document instance
 _operationId_: `getDocumentInstance`
@@ -3749,7 +3974,7 @@ _operationId_: `getDocumentInstance`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/documents/instances/{id}` — Delete a document instance
 _operationId_: `deleteDocumentInstance`
@@ -3758,7 +3983,7 @@ _operationId_: `deleteDocumentInstance`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/instances/{id}/attachments` — List instance attachments
 _operationId_: `listInstanceAttachments`
@@ -3770,7 +3995,7 @@ _operationId_: `listInstanceAttachments`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/instances/{id}/attachments` — Create instance attachment
 _operationId_: `createInstanceAttachment`
@@ -3789,7 +4014,7 @@ _operationId_: `createInstanceAttachment`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/instances/{id}/attachments/{att_id}` — Get an instance attachment
 _operationId_: `getInstanceAttachment`
@@ -3798,7 +4023,7 @@ _operationId_: `getInstanceAttachment`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/documents/instances/{id}/attachments/{att_id}` — Update instance attachment
 _operationId_: `updateInstanceAttachment`
@@ -3819,7 +4044,28 @@ _operationId_: `updateInstanceAttachment`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `PATCH /api/v1/documents/instances/{id}/attachments/{att_id}` — Partially update instance attachment
+_operationId_: `patchInstanceAttachment`
+
+**Request body:**
+- `application/json` **required** — schema: `InstanceAttachmentUpdateRequest`
+  - `block_id` (integer) — Identifier of the related block.
+  - `content_block_id` (integer) — Identifier of the related content block.
+  - `content_snapshot` (object)
+  - `id` (integer) — Unique identifier.
+  - `is_active` (object) — Whether active.
+  - `is_required` (object) — Whether required.
+  - `links` (object) — HATEOAS links to this and related resources.
+  - `order_index` (object) — Sort order within its collection (ascending).
+
+**Responses:**
+- `200` — Success
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/documents/instances/{id}/attachments/{att_id}` — Delete instance attachment
 _operationId_: `deleteInstanceAttachment`
@@ -3828,7 +4074,7 @@ _operationId_: `deleteInstanceAttachment`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/instances/{id}/blocks` — List instance blocks (tree)
 _operationId_: `listInstanceBlocks`
@@ -3840,7 +4086,7 @@ _operationId_: `listInstanceBlocks`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/instances/{id}/blocks` — Create an instance block
 _operationId_: `createInstanceBlock`
@@ -3863,7 +4109,7 @@ Add a new block (chapter / section / container) to a document instance.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/instances/{id}/blocks/{block_id}` — Get an instance block
 _operationId_: `getInstanceBlock`
@@ -3872,7 +4118,7 @@ _operationId_: `getInstanceBlock`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/documents/instances/{id}/blocks/{block_id}` — Update an instance block
 _operationId_: `updateInstanceBlock`
@@ -3888,7 +4134,23 @@ _operationId_: `updateInstanceBlock`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `PATCH /api/v1/documents/instances/{id}/blocks/{block_id}` — Partially update an instance block
+_operationId_: `patchInstanceBlock`
+
+**Request body:**
+- `application/json` **required** — schema: `InstanceBlockUpdateRequest`
+  - `is_active` (object) — Whether active.
+  - `order_index` (object) — Sort order within its collection (ascending).
+  - `title` (object) — Title.
+
+**Responses:**
+- `200` — Success
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/documents/instances/{id}/blocks/{block_id}` — Delete an instance block
 _operationId_: `deleteInstanceBlock`
@@ -3897,7 +4159,7 @@ _operationId_: `deleteInstanceBlock`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/instances/{id}/public-links` — List public links
 _operationId_: `listPublicLinks`
@@ -3906,7 +4168,7 @@ _operationId_: `listPublicLinks`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/instances/{id}/public-links/{link_id}` — Get a public link
 _operationId_: `getPublicLink`
@@ -3915,7 +4177,7 @@ _operationId_: `getPublicLink`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/documents/instances/{id}/public-links/{link_id}` — Delete a public link
 _operationId_: `deletePublicLink`
@@ -3924,7 +4186,7 @@ _operationId_: `deletePublicLink`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/instances/{id}/publish` — Publish document instance
 _operationId_: `publishInstance`
@@ -3943,7 +4205,7 @@ Render the instance as HTML, PDF, or Markdown. Optionally create a public link.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/renders/document` — Render a document instance PDF
 _operationId_: `renderDocumentPdf`
@@ -3959,7 +4221,7 @@ _operationId_: `renderDocumentPdf`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 - `500` — Internal server error (`application/json` → `ProblemDetails`)
 - `502` — Upstream dependency failure (`application/json` → `ProblemDetails`)
 
@@ -3980,7 +4242,7 @@ Queue an offer PDF render for a customer link + configuration. Returns ``202 Acc
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 - `500` — Internal server error (`application/json` → `ProblemDetails`)
 - `502` — Upstream dependency failure (`application/json` → `ProblemDetails`)
 
@@ -3999,7 +4261,7 @@ _operationId_: `renderQuotePdf`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 - `500` — Internal server error (`application/json` → `ProblemDetails`)
 - `502` — Upstream dependency failure (`application/json` → `ProblemDetails`)
 
@@ -4011,7 +4273,7 @@ _operationId_: `getRenderJobStatus`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `410` — Gone — resource has expired (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/documents/renders/{job_id}` — Invalidate a render job
 _operationId_: `invalidateRenderJob`
@@ -4022,7 +4284,7 @@ Remove the cached PDF and mark the job expired.
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/renders/{job_id}/content` — Stream rendered PDF bytes
 _operationId_: `getRenderJobContent`
@@ -4035,7 +4297,7 @@ Stream the completed PDF.  Returns ``202`` if the job is still running, ``410`` 
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `410` — Gone — resource has expired (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 - `500` — Internal server error (`application/json` → `ProblemDetails`)
 
 ### `GET /api/v1/documents/templates` — List document templates
@@ -4044,13 +4306,14 @@ _operationId_: `listDocumentTemplates`
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `doc_type` (string) — Filter by type
 - `product_id` (integer) — Filter by product
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/templates` — Create a document template
 _operationId_: `createDocumentTemplate`
@@ -4067,7 +4330,7 @@ _operationId_: `createDocumentTemplate`
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/templates/resolve` — Preview template resolution
 _operationId_: `previewTemplateResolution`
@@ -4084,7 +4347,7 @@ Preview which template will win the resolution cascade for a given (doc_type, pr
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/templates/{id}` — Get a document template
 _operationId_: `getDocumentTemplate`
@@ -4093,7 +4356,7 @@ _operationId_: `getDocumentTemplate`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/documents/templates/{id}` — Update a document template
 _operationId_: `updateDocumentTemplate`
@@ -4118,7 +4381,7 @@ _operationId_: `updateDocumentTemplate`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/documents/templates/{id}` — Partially update a document template
 _operationId_: `patchDocumentTemplate`
@@ -4143,7 +4406,7 @@ _operationId_: `patchDocumentTemplate`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/documents/templates/{id}` — Delete a document template
 _operationId_: `deleteDocumentTemplate`
@@ -4152,7 +4415,7 @@ _operationId_: `deleteDocumentTemplate`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/templates/{id}/assign-products` — Assign a template to products
 _operationId_: `assignTemplateProducts`
@@ -4169,7 +4432,7 @@ Assign a template to one or many products. Single product updates in place; mult
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/templates/{id}/clone` — Deep clone a template
 _operationId_: `cloneTemplate`
@@ -4187,7 +4450,7 @@ Create a full deep copy of a template including all structure blocks, locale tit
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/templates/{id}/publish` — Publish a template
 _operationId_: `publishDocumentTemplate`
@@ -4198,7 +4461,7 @@ Mark the template as published so it becomes a candidate for the resolution casc
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/templates/{id}/resolve` — Get the resolved template tree
 _operationId_: `resolveTemplateTree`
@@ -4214,7 +4477,7 @@ Return the fully resolved template tree (structure blocks, content blocks, and l
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/templates/{id}/structure` — Get template structure tree
 _operationId_: `getStructureTree`
@@ -4228,7 +4491,7 @@ Returns the full hierarchical tree of structure blocks (chapters, sections, cont
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/templates/{id}/structure/batch` — Batch structure operations
 _operationId_: `batchStructureOperations`
@@ -4242,7 +4505,7 @@ _operationId_: `batchStructureOperations`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/templates/{id}/structure/blocks` — Create a structure block
 _operationId_: `createStructureBlock`
@@ -4268,7 +4531,7 @@ Add a chapter, section, container, repeater, or placeholder block to the templat
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/templates/{id}/structure/blocks/{block_id}` — Get a structure block
 _operationId_: `getStructureBlock`
@@ -4277,7 +4540,7 @@ _operationId_: `getStructureBlock`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/documents/templates/{id}/structure/blocks/{block_id}` — Update a structure block
 _operationId_: `updateStructureBlock`
@@ -4301,7 +4564,31 @@ _operationId_: `updateStructureBlock`
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `PATCH /api/v1/documents/templates/{id}/structure/blocks/{block_id}` — Partially update a structure block
+_operationId_: `patchStructureBlock`
+
+**Request body:**
+- `application/json` **required** — schema: `StructureBlockUpdateRequest`
+  - `conditions` (object)
+  - `is_active` (object) — Whether active.
+  - `node_type` (object) — Structure node type.
+  - `order_index` (object) — Sort order within its collection (ascending).
+  - `parent_id` (object) — Identifier of the related parent.
+  - `repeat_for` (object)
+  - `slug` (object) — URL-safe slug.
+  - `title` (object) — Title.
+  - `visibility` (object)
+
+**Responses:**
+- `200` — Success
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `409` — Conflict (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/documents/templates/{id}/structure/blocks/{block_id}` — Delete a structure block (cascade)
 _operationId_: `deleteStructureBlock`
@@ -4313,7 +4600,7 @@ Delete a structure block and all its descendants (children, locales, attachments
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/templates/{id}/structure/blocks/{block_id}/attachments` — List block attachments
 _operationId_: `listStructureAttachments`
@@ -4322,7 +4609,7 @@ _operationId_: `listStructureAttachments`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/templates/{id}/structure/blocks/{block_id}/attachments` — Attach content block
 _operationId_: `createStructureAttachment`
@@ -4343,7 +4630,7 @@ Attach a reusable content block to a structure block. The content block's locale
 - `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/templates/{id}/structure/blocks/{block_id}/attachments/reorder` — Reorder attachments
 _operationId_: `reorderStructureAttachments`
@@ -4358,7 +4645,7 @@ _operationId_: `reorderStructureAttachments`
 - `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/templates/{id}/structure/blocks/{block_id}/attachments/{att_id}` — Get an attachment
 _operationId_: `getStructureAttachment`
@@ -4367,7 +4654,7 @@ _operationId_: `getStructureAttachment`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/documents/templates/{id}/structure/blocks/{block_id}/attachments/{att_id}` — Update an attachment
 _operationId_: `updateStructureAttachment`
@@ -4391,7 +4678,31 @@ _operationId_: `updateStructureAttachment`
 - `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `PATCH /api/v1/documents/templates/{id}/structure/blocks/{block_id}/attachments/{att_id}` — Partially update an attachment
+_operationId_: `patchStructureAttachment`
+
+**Request body:**
+- `application/json` **required** — schema: `AttachmentUpdateRequest`
+  - `conditions` (object)
+  - `content_block_id` (integer) — Identifier of the related content block.
+  - `content_block_key` (object)
+  - `content_block_title` (object)
+  - `id` (integer) — Unique identifier.
+  - `is_active` (object) — Whether active.
+  - `is_required` (object) — Whether required.
+  - `links` (object) — HATEOAS links to this and related resources.
+  - `order_index` (object) — Sort order within its collection (ascending).
+  - `structure_id` (integer) — Identifier of the related structure.
+
+**Responses:**
+- `200` — Success
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/documents/templates/{id}/structure/blocks/{block_id}/attachments/{att_id}` — Remove an attachment
 _operationId_: `deleteStructureAttachment`
@@ -4401,7 +4712,7 @@ _operationId_: `deleteStructureAttachment`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/templates/{id}/structure/blocks/{block_id}/locales` — List structure block locales
 _operationId_: `listStructureBlockLocales`
@@ -4410,7 +4721,7 @@ _operationId_: `listStructureBlockLocales`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/documents/templates/{id}/structure/blocks/{block_id}/locales/{localeId}` — Upsert structure block locale title
 _operationId_: `upsertStructureBlockLocale`
@@ -4427,7 +4738,7 @@ Set the translated title for a structure block in a specific language. Creates t
 - `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/documents/templates/{id}/structure/blocks/{block_id}/locales/{localeId}` — Delete structure block locale
 _operationId_: `deleteStructureBlockLocale`
@@ -4437,7 +4748,7 @@ _operationId_: `deleteStructureBlockLocale`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/templates/{id}/structure/blocks/{block_id}/move` — Move block to new parent
 _operationId_: `moveStructureBlock`
@@ -4453,7 +4764,7 @@ _operationId_: `moveStructureBlock`
 - `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/templates/{id}/structure/reorder` — Reorder structure blocks
 _operationId_: `reorderStructureBlocks`
@@ -4468,7 +4779,7 @@ _operationId_: `reorderStructureBlocks`
 - `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/templates/{id}/translate` — Translate entire template
 _operationId_: `translateTemplate`
@@ -4485,7 +4796,7 @@ Translate all structure block titles and attached content block locales to the t
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 - `504` — Gateway Timeout (`application/json` → `ProblemDetails`)
 
 ### `POST /api/v1/documents/templates/{id}/unpublish` — Unpublish a template
@@ -4495,7 +4806,7 @@ _operationId_: `unpublishDocumentTemplate`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/documents/templates/{id}/validate-config` — Validate a configuration against a template
 _operationId_: `validateTemplateConfig`
@@ -4508,7 +4819,7 @@ _operationId_: `validateTemplateConfig`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/documents/templates/{id}/variants` — Create an inheritance variant
 _operationId_: `createVariant`
@@ -4526,7 +4837,7 @@ Create a derived template linked to this template as its origin. **link**: read-
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -4545,7 +4856,7 @@ Stream all customers as NDJSON for bulk export.
 **Responses:**
 - `200` — NDJSON stream (one JSON object per line)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts/export` — Export parts (NDJSON)
 _operationId_: `exportParts`
@@ -4558,7 +4869,7 @@ Stream all parts as NDJSON for bulk export.
 **Responses:**
 - `200` — NDJSON stream (one JSON object per line)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/products/export` — Export products (NDJSON)
 _operationId_: `exportProducts`
@@ -4571,7 +4882,7 @@ Stream all products as NDJSON for bulk export. Use `updated_after` for increment
 **Responses:**
 - `200` — NDJSON stream (one JSON object per line)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -4587,13 +4898,14 @@ Returns a paginated list of groups. Use `search` to filter by name, `area_id` to
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `search` (string) — Filter by name (case-insensitive partial match)
 - `area_id` (integer) — Filter by area assignment
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/groups` — Create a group
 _operationId_: `createGroup`
@@ -4615,7 +4927,7 @@ _operationId_: `createGroup`
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/groups/{groupId}` — Get a group
 _operationId_: `getGroup`
@@ -4624,7 +4936,7 @@ _operationId_: `getGroup`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/groups/{groupId}` — Update a group
 _operationId_: `updateGroup`
@@ -4632,6 +4944,7 @@ _operationId_: `updateGroup`
 **Request body:**
 - `application/json` **required** — schema: `GroupUpdateRequest`
   - `area_ids` (array<integer>)
+  - `area_order_index` (object) — This group's position **within the area being listed**. Present only on `GET /areas/{id}/groups`, which is ...
   - `description` (object) — Free-text description.
   - `id` (integer) — Unique identifier.
   - `is_multi` (object) — Whether multi.
@@ -4642,14 +4955,14 @@ _operationId_: `updateGroup`
   - `name` (object) — Human-readable name.
   - `order_index` (object) — Sort order within its collection (ascending).
   - `selection_max` (object)
-  - `selection_min` (object)
+  - _...1 more — see `components.schemas` in `openapi.json`_
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/groups/{groupId}` — Partially update a group
 _operationId_: `patchGroup`
@@ -4657,6 +4970,7 @@ _operationId_: `patchGroup`
 **Request body:**
 - `application/json` **required** — schema: `GroupUpdateRequest`
   - `area_ids` (array<integer>)
+  - `area_order_index` (object) — This group's position **within the area being listed**. Present only on `GET /areas/{id}/groups`, which is ...
   - `description` (object) — Free-text description.
   - `id` (integer) — Unique identifier.
   - `is_multi` (object) — Whether multi.
@@ -4667,14 +4981,14 @@ _operationId_: `patchGroup`
   - `name` (object) — Human-readable name.
   - `order_index` (object) — Sort order within its collection (ascending).
   - `selection_max` (object)
-  - `selection_min` (object)
+  - _...1 more — see `components.schemas` in `openapi.json`_
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/groups/{groupId}` — Delete a group
 _operationId_: `deleteGroup`
@@ -4683,7 +4997,7 @@ _operationId_: `deleteGroup`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/groups/{groupId}/areas` — List areas linked to a group
 _operationId_: `listGroupAreas`
@@ -4694,7 +5008,7 @@ Returns all areas the group is currently linked to. Not paginated.
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/groups/{groupId}/areas` — Link a group to areas
 _operationId_: `linkGroupAreas`
@@ -4710,18 +5024,18 @@ Link a group to one or more areas. Already-linked areas are silently skipped (id
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/groups/{groupId}/areas/{areaId}` — Unlink a group from an area
 _operationId_: `unlinkGroupArea`
 
-Remove the group-area association and clean up area-specific data (OptionAreaConfig, OptionPriceOverride, OptionAdvancedPrice rows).
+Remove the group-area association and clean up the area-specific data for that area: option area configs, price overrides, and advanced price rules.
 
 **Responses:**
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/groups/{groupId}/duplicate` — Duplicate a group
 _operationId_: `duplicateGroup`
@@ -4732,7 +5046,7 @@ Deep-copy the group including all options.
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/groups/{groupId}/options` — List options in a group
 _operationId_: `listGroupOptions`
@@ -4743,7 +5057,7 @@ Returns options belonging to this group. Not paginated.
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -4764,7 +5078,7 @@ _operationId_: `uploadAreaImage`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `413` — Payload Too Large (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/areas/{areaId}/image` — Delete area image
 _operationId_: `deleteAreaImage`
@@ -4773,7 +5087,7 @@ _operationId_: `deleteAreaImage`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/options/{optionId}/image` — Upload option image
 _operationId_: `uploadOptionImage`
@@ -4790,7 +5104,7 @@ Upload or replace the option's base image.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `413` — Payload Too Large (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/options/{optionId}/image` — Delete option image
 _operationId_: `deleteOptionImage`
@@ -4799,7 +5113,7 @@ _operationId_: `deleteOptionImage`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/options/{optionId}/image/areas/{areaId}` — Upload option area override image
 _operationId_: `uploadOptionAreaImage`
@@ -4816,7 +5130,7 @@ Upload or replace an area-specific image override for the option.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `413` — Payload Too Large (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/options/{optionId}/image/areas/{areaId}` — Delete option area override image
 _operationId_: `deleteOptionAreaImage`
@@ -4825,7 +5139,7 @@ _operationId_: `deleteOptionAreaImage`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/parts/{partId}/image` — Upload part image
 _operationId_: `uploadPartImage`
@@ -4842,7 +5156,7 @@ Upload or replace the part's image (e.g. for spare-parts catalogues and exploded
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `413` — Payload Too Large (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/parts/{partId}/image` — Delete part image
 _operationId_: `deletePartImage`
@@ -4851,7 +5165,7 @@ _operationId_: `deletePartImage`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/products/{productId}/background` — Upload product background
 _operationId_: `uploadProductBackground`
@@ -4866,7 +5180,7 @@ _operationId_: `uploadProductBackground`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `413` — Payload Too Large (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/products/{productId}/background` — Delete product background
 _operationId_: `deleteProductBackground`
@@ -4875,7 +5189,7 @@ _operationId_: `deleteProductBackground`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/products/{productId}/gallery` — List gallery images
 _operationId_: `listGalleryImages`
@@ -4886,7 +5200,7 @@ Returns gallery images ordered by position.
 - `200` — Gallery images
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/products/{productId}/gallery` — Upload gallery image
 _operationId_: `uploadGalleryImage`
@@ -4903,7 +5217,7 @@ Upload a new gallery image (max 10 per product).
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `413` — Payload Too Large (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/products/{productId}/gallery/reorder` — Reorder gallery images
 _operationId_: `reorderGalleryImages`
@@ -4917,7 +5231,7 @@ _operationId_: `reorderGalleryImages`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/products/{productId}/gallery/{imageId}` — Get gallery image
 _operationId_: `getGalleryImage`
@@ -4928,7 +5242,7 @@ Get metadata for a single gallery image by ID.
 - `200` — Gallery image metadata
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/products/{productId}/gallery/{imageId}` — Replace gallery image
 _operationId_: `replaceGalleryImage`
@@ -4945,7 +5259,7 @@ Replace the file for a gallery image, preserving its ID and order position.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `413` — Payload Too Large (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/products/{productId}/gallery/{imageId}` — Delete gallery image
 _operationId_: `deleteGalleryImage`
@@ -4954,7 +5268,7 @@ _operationId_: `deleteGalleryImage`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/products/{productId}/image` — Upload product image
 _operationId_: `uploadProductImage`
@@ -4969,7 +5283,7 @@ _operationId_: `uploadProductImage`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `413` — Payload Too Large (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/products/{productId}/image` — Delete product image
 _operationId_: `deleteProductImage`
@@ -4978,7 +5292,7 @@ _operationId_: `deleteProductImage`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -4999,7 +5313,7 @@ Fire a connector task with optional runtime context.
 - `202` — Task triggered
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/inbound/customers` — Upsert an inbound customer
 _operationId_: `upsertInboundCustomer`
@@ -5022,7 +5336,7 @@ Create or update a customer from an external system.
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/inbound/customers/batch` — Batch upsert inbound customers
 _operationId_: `batchUpsertInboundCustomers`
@@ -5038,7 +5352,7 @@ Create or update multiple customers in one request.
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/inbound/events` — Send an inbound event
 _operationId_: `sendInboundEvent`
@@ -5056,7 +5370,7 @@ Submit a generic event for processing.
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/inbound/opportunities` — Create an inbound opportunity
 _operationId_: `createInboundOpportunity`
@@ -5083,7 +5397,7 @@ Create an opportunity with optional configuration and quote from an external sys
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/inbound/parts/batch` — Batch upsert inbound parts
 _operationId_: `batchUpsertInboundParts`
@@ -5103,7 +5417,7 @@ Create or update part placements for a product/area.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/inbound/triggers/{triggerId}` — Fire a webhook trigger by path
 _operationId_: `fireWebhookTrigger`
@@ -5117,7 +5431,7 @@ Fire a webhook-type trigger by its configured path suffix. External systems POST
 - `202` — Trigger accepted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -5132,7 +5446,7 @@ _operationId_: `listItemRevisions`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/parts/{partId}/revisions` — Create a revision
 _operationId_: `createItemRevision`
@@ -5148,7 +5462,7 @@ _operationId_: `createItemRevision`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts/{partId}/revisions/{revisionId}` — Get a revision
 _operationId_: `getItemRevision`
@@ -5157,7 +5471,7 @@ _operationId_: `getItemRevision`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/parts/{partId}/revisions/{revisionId}` — Update a draft revision
 _operationId_: `updateItemRevision`
@@ -5181,7 +5495,31 @@ Only Draft or Review revisions can be updated.
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `PATCH /api/v1/parts/{partId}/revisions/{revisionId}` — Partially update a draft revision
+_operationId_: `patchItemRevision`
+
+Only Draft or Review revisions can be updated.
+
+**Request body:**
+- `application/json` **required** — schema: `ItemRevisionUpdateRequest`
+  - `code` (object) — Short code.
+  - `created_at` (object) — Timestamp (ISO 8601).
+  - `id` (integer) — Unique identifier.
+  - `lifecycle_state` (string) — Lifecycle state.
+  - `links` (object) — HATEOAS links to this and related resources.
+  - `note` (object) — Free-text note.
+  - `part_id` (integer) — Identifier of the related part.
+  - `released_at` (object) — Timestamp (ISO 8601).
+
+**Responses:**
+- `200` — Success
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `409` — Conflict (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/parts/{partId}/revisions/{revisionId}` — Delete a draft revision
 _operationId_: `deleteItemRevision`
@@ -5193,7 +5531,7 @@ Only Draft or Review revisions can be deleted.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/parts/{partId}/revisions/{revisionId}/obsolete` — Obsolete a revision
 _operationId_: `obsoleteItemRevision`
@@ -5205,7 +5543,7 @@ Marks a Released revision as Obsolete.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/parts/{partId}/revisions/{revisionId}/release` — Release a revision
 _operationId_: `releaseItemRevision`
@@ -5217,7 +5555,7 @@ Transitions to Released state. Obsoletes the previous released revision for the 
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -5231,7 +5569,7 @@ _operationId_: `listLanguages`
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/languages` — Create a language
 _operationId_: `createLanguage`
@@ -5246,7 +5584,7 @@ _operationId_: `createLanguage`
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/languages/reorder` — Reorder languages
 _operationId_: `reorderLanguages`
@@ -5259,7 +5597,7 @@ _operationId_: `reorderLanguages`
 - `200` — Reordered
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/languages/{id}` — Get a language
 _operationId_: `getLanguage`
@@ -5268,7 +5606,7 @@ _operationId_: `getLanguage`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/languages/{id}` — Update a language
 _operationId_: `updateLanguage`
@@ -5287,7 +5625,7 @@ _operationId_: `updateLanguage`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/languages/{id}` — Partially update a language
 _operationId_: `patchLanguage`
@@ -5306,16 +5644,24 @@ _operationId_: `patchLanguage`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
-### `DELETE /api/v1/languages/{id}` — Delete a language
+### `DELETE /api/v1/languages/{id}` — Delete a language and its content
 _operationId_: `deleteLanguage`
 
+**Destructive and irreversible.** Deletes the language *and everything written in it*: entity translations, area rich content, document content-block and structure-block locales, published document instances and their public links. The storage they used is credited back to the company's quota, and `meta.deleted` reports the row counts per table.
+
+Requires `?confirm=true`. The base language cannot be deleted — promote another language to base first.
+
+**Query parameters:**
+- `confirm` (boolean) — Required. Acknowledges that content in this language will be deleted.
+
 **Responses:**
-- `204` — Deleted
+- `200` — Language and its content deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -5329,6 +5675,7 @@ _operationId_: `listOpportunities`
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `stage` (string) — Filter by stage
 - `customer_id` (integer) — Filter by customer
 - `search` (string) — Search by name
@@ -5336,7 +5683,7 @@ _operationId_: `listOpportunities`
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/opportunities` — Create an opportunity
 _operationId_: `createOpportunity`
@@ -5358,7 +5705,7 @@ _operationId_: `createOpportunity`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/opportunities/{id}` — Get an opportunity
 _operationId_: `getOpportunity`
@@ -5367,7 +5714,7 @@ _operationId_: `getOpportunity`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/opportunities/{id}` — Update an opportunity
 _operationId_: `updateOpportunity`
@@ -5393,7 +5740,7 @@ _operationId_: `updateOpportunity`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/opportunities/{id}` — Partially update an opportunity
 _operationId_: `patchOpportunity`
@@ -5419,7 +5766,7 @@ _operationId_: `patchOpportunity`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/opportunities/{id}` — Delete an opportunity
 _operationId_: `deleteOpportunity`
@@ -5428,7 +5775,7 @@ _operationId_: `deleteOpportunity`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/opportunities/{id}/quotes` — List quotes for an opportunity
 _operationId_: `listOpportunityQuotes`
@@ -5439,7 +5786,7 @@ Returns all quotes belonging to this opportunity. Not paginated.
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -5453,13 +5800,14 @@ _operationId_: `listOptions`
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `group_id` (integer) — Filter by group
 - `search` (string) — Filter by name (case-insensitive partial match)
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/options` — Create an option
 _operationId_: `createOption`
@@ -5485,7 +5833,7 @@ _operationId_: `createOption`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/options/{optionId}` — Get an option
 _operationId_: `getOption`
@@ -5494,7 +5842,7 @@ _operationId_: `getOption`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/options/{optionId}` — Update an option
 _operationId_: `updateOption`
@@ -5520,7 +5868,7 @@ _operationId_: `updateOption`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/options/{optionId}` — Partially update an option
 _operationId_: `patchOption`
@@ -5546,7 +5894,7 @@ _operationId_: `patchOption`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/options/{optionId}` — Delete an option
 _operationId_: `deleteOption`
@@ -5555,18 +5903,23 @@ _operationId_: `deleteOption`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/options/{optionId}/advanced-prices` — List advanced prices
 _operationId_: `listAdvancedPrices`
 
-List cross-option conditional prices for an option. Cross-option conditional pricing: set what this option costs **when** another option (`condition_option_id`) is also selected, optionally scoped to an area and/or price list. An advanced price outranks an option price-override during pricing resolution. Not paginated.
+List cross-option conditional prices for an option. Cross-option conditional pricing: set what this option costs **when** another option (`condition_option_id`) is also selected, optionally scoped to an area and/or price list. An advanced price outranks an option price-override during pricing resolution. Rules multiply across (area × price list × condition); use the filters below to narrow the result. Ordered by (area_id, price_list_id, condition_option_id) so two responses can be diffed. Not paginated.
+
+**Query parameters:**
+- `price_list_id` (integer) — Only rules on this price list. Pass the base price list's id to read the base layer.
+- `area_id` (integer) — Only rules for this area.
+- `condition_option_id` (integer) — Only rules triggered by this option.
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/options/{optionId}/advanced-prices` — Create an advanced price
 _operationId_: `createAdvancedPrice`
@@ -5585,7 +5938,7 @@ Cross-option conditional pricing: set what this option costs **when** another op
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/options/{optionId}/advanced-prices/{priceId}` — Update an advanced price
 _operationId_: `updateAdvancedPrice`
@@ -5606,7 +5959,28 @@ Cross-option conditional pricing: set what this option costs **when** another op
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `PATCH /api/v1/options/{optionId}/advanced-prices/{priceId}` — Partially update an advanced price
+_operationId_: `patchAdvancedPrice`
+
+Cross-option conditional pricing: set what this option costs **when** another option (`condition_option_id`) is also selected, optionally scoped to an area and/or price list. An advanced price outranks an option price-override during pricing resolution.
+
+**Request body:**
+- `application/json` **required** — schema: `AdvancedPriceUpdateRequest`
+  - `advanced_price` (string) **required** — New decimal-string price.
+  - `area_id` (integer|null) — Restrict to one area, or null for all.
+  - `condition_option_id` (integer) — The option whose selection triggers this price.
+  - `id` (integer) — Unique identifier.
+  - `option_id` (integer) — The option this price applies to (from the URL).
+  - `price_list_id` (integer|null) — Restrict to one price list, or null for all.
+
+**Responses:**
+- `200` — Success
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/options/{optionId}/advanced-prices/{priceId}` — Delete an advanced price
 _operationId_: `deleteAdvancedPrice`
@@ -5615,7 +5989,7 @@ _operationId_: `deleteAdvancedPrice`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/options/{optionId}/area-config` — Get area-specific config for an option
 _operationId_: `getOptionAreaConfig`
@@ -5627,10 +6001,12 @@ _operationId_: `getOptionAreaConfig`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/options/{optionId}/area-config` — Set area-specific config for an option
 _operationId_: `setOptionAreaConfig`
+
+Partial update: only the fields present in the body are written, and an explicit `null` means "leave this override alone". Use `DELETE` with `field=` to clear one. `price_scalings` requires a numbered option — send `is_numbered: true` in the same request or set it on the option first, otherwise the write is rejected with 422 rather than silently discarded. Scope: `prices:write`.
 
 **Query parameters:**
 - `area_id` (integer) **required** — Area ID
@@ -5645,6 +6021,7 @@ _operationId_: `setOptionAreaConfig`
   - `option_description` (string)
   - `option_key` (string)
   - `price` (string)
+  - `price_scalings` (object) — Per-area quantity tiers; requires a numbered option.
   - `recommended` (boolean)
 
 **Responses:**
@@ -5652,7 +6029,7 @@ _operationId_: `setOptionAreaConfig`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/options/{optionId}/area-config` — Clear area-specific config for an option
 _operationId_: `deleteOptionAreaConfig`
@@ -5669,22 +6046,33 @@ Clear an option's area-specific override(s). Pass `field` to clear a single over
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/options/{optionId}/effective` — Get effective price for an option
 _operationId_: `getEffectivePrice`
 
-Returns the effective price considering overrides.
+Resolve the complete price chain for one option and return the number the configurator would charge.
+
+Layers, in order, each overriding the one before it: the option's own price → its area-specific price (only for groups assigned to more than one area) → the price override for this price list and area → an advanced price rule (when one of `selected_option_ids` matches the rule's condition) → quantity scaling (when `quantity` is given).
+
+Omit `price_list_id` to price against the base layer. Advanced price rules always carry a price list, so the base layer's rules are those on the company's base price list; the list actually used is returned as `resolved_price_list_id`.
+
+When several advanced rules match, the one with the lowest `condition_option_id` wins — the same deterministic tie-break the configurator applies, so both surfaces always quote the same price.
+
+`effective_price` is always the UNIT price. `scaled_price` is the price at `quantity` for a numbered option (unit + tier); for a non-numbered option it equals `effective_price`. Scope: `prices:read`.
 
 **Query parameters:**
-- `price_list_id` (integer) — Price list ID
-- `area_id` (integer) — Area ID
+- `price_list_id` (integer) — Price list ID. Omit for the base layer.
+- `area_id` (integer) — Area ID. Required for the area-scoped layers.
+- `selected_option_ids` (string) — CSV of option IDs selected elsewhere in the configuration; triggers advanced price rules.
+- `quantity` (integer) — Quantity for a numbered option; drives scaled_price.
 
 **Responses:**
 - `200` — Effective price
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -5698,6 +6086,7 @@ _operationId_: `listPartDocuments`
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `doc_type` (string) — Filter by doc type (CAD, Drawing, Spec, Manual, Other)
 - `lifecycle_state` (string) — Filter by lifecycle state
 - `search` (string) — Search by document number
@@ -5705,7 +6094,7 @@ _operationId_: `listPartDocuments`
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/part-documents` — Create a part document
 _operationId_: `createPartDocument`
@@ -5722,7 +6111,7 @@ _operationId_: `createPartDocument`
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/part-documents/{id}` — Get a part document
 _operationId_: `getPartDocument`
@@ -5731,7 +6120,7 @@ _operationId_: `getPartDocument`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/part-documents/{id}` — Update a part document
 _operationId_: `updatePartDocument`
@@ -5753,7 +6142,7 @@ _operationId_: `updatePartDocument`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/part-documents/{id}` — Partially update a part document
 _operationId_: `patchPartDocument`
@@ -5775,7 +6164,7 @@ _operationId_: `patchPartDocument`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/part-documents/{id}` — Delete a part document
 _operationId_: `deletePartDocument`
@@ -5784,7 +6173,7 @@ _operationId_: `deletePartDocument`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts/{partId}/document-links` — List document links for a part
 _operationId_: `listPartDocumentLinks`
@@ -5793,7 +6182,7 @@ _operationId_: `listPartDocumentLinks`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/parts/{partId}/document-links` — Create a document link for a part
 _operationId_: `createPartDocumentLink`
@@ -5808,7 +6197,7 @@ _operationId_: `createPartDocumentLink`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/parts/{partId}/document-links/{linkId}` — Remove a document link
 _operationId_: `deletePartDocumentLink`
@@ -5817,7 +6206,7 @@ _operationId_: `deletePartDocumentLink`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts/{partId}/revisions/{revisionId}/document-links` — List document links for a revision
 _operationId_: `listRevisionDocumentLinks`
@@ -5826,7 +6215,7 @@ _operationId_: `listRevisionDocumentLinks`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/parts/{partId}/revisions/{revisionId}/document-links` — Create a document link for a revision
 _operationId_: `createRevisionDocumentLink`
@@ -5841,7 +6230,7 @@ _operationId_: `createRevisionDocumentLink`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -5863,7 +6252,7 @@ The bulk read path for a configurable BOM: returns **every** part placement on t
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/areas/{areaId}/placements` — Replace an area's placements (bulk, declarative)
 _operationId_: `syncAreaPlacements`
@@ -5886,7 +6275,7 @@ The bulk **write** counterpart to the GET: send the desired set of placements an
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/areas/{areaId}/placements` — Clear an area's placements (bulk)
 _operationId_: `clearAreaPlacements`
@@ -5897,7 +6286,7 @@ Delete **every** placement on the area in one request — the bulk counterpart t
 - `200` — Cleared
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts` — List parts
 _operationId_: `listParts`
@@ -5907,6 +6296,7 @@ Lists parts (cursor-paginated). Only the documented query parameters are accepte
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `status` (string) — Filter by lifecycle status
 - `part_type` (string) — Filter by part type
 - `search` (string) — Search by number or name
@@ -5917,7 +6307,7 @@ Lists parts (cursor-paginated). Only the documented query parameters are accepte
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/parts` — Create a part
 _operationId_: `createPart`
@@ -5943,7 +6333,7 @@ _operationId_: `createPart`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts/bom/{id}` — Get a BOM item
 _operationId_: `getBomItem`
@@ -5954,7 +6344,7 @@ Read a single BOM item (child edge) by its id.
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/parts/bom/{id}` — Update a BOM item
 _operationId_: `updateBomItem`
@@ -5980,7 +6370,7 @@ _operationId_: `updateBomItem`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/parts/bom/{id}` — Partially update a BOM item
 _operationId_: `patchBomItem`
@@ -6006,7 +6396,7 @@ _operationId_: `patchBomItem`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/parts/bom/{id}` — Delete a BOM item
 _operationId_: `deleteBomItem`
@@ -6015,7 +6405,7 @@ _operationId_: `deleteBomItem`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts/ghosts` — List ghost parts
 _operationId_: `listGhostParts`
@@ -6025,6 +6415,7 @@ List ghost (phantom assembly) parts — parts whose `bom_structure` is `ghost`. 
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `status` (string) — Filter by lifecycle status
 - `part_type` (string) — Filter by part type
 - `search` (string) — Search by number or name
@@ -6032,7 +6423,7 @@ List ghost (phantom assembly) parts — parts whose `bom_structure` is `ghost`. 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts/groups` — List part groups
 _operationId_: `listPartGroups`
@@ -6042,25 +6433,28 @@ List logical part groups.
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/parts/groups` — Create part group
 _operationId_: `createPartGroup`
 
 **Request body:**
 - `application/json` **required** — schema: `PartGroupCreateRequest`
+  - `area_id` (integer) **required** — The area to create the group in. Required — a part group only exists inside an area.
   - `description` (string) — Free-text description.
   - `name` (string) **required** — Human-readable name.
+  - `order_index` (integer) — Sort order within its collection (ascending).
 
 **Responses:**
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts/groups/{groupId}` — Get part group
 _operationId_: `getPartGroup`
@@ -6069,45 +6463,43 @@ _operationId_: `getPartGroup`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/parts/groups/{groupId}` — Update part group
 _operationId_: `updatePartGroup`
 
 **Request body:**
 - `application/json` **required** — schema: `PartGroupUpdateRequest`
-  - `company_id` (integer) — Identifier of the related company.
-  - `created_at` (string(date-time)) — Timestamp (ISO 8601).
+  - `area_id` (integer) — Move the group to another area of the same company.
   - `description` (string) — Free-text description.
   - `id` (integer) — Unique identifier.
   - `name` (string) — Human-readable name.
-  - `updated_at` (string(date-time)) — Timestamp (ISO 8601).
+  - `order_index` (integer) — Sort order within its collection (ascending).
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/parts/groups/{groupId}` — Partially update part group
 _operationId_: `patchPartGroup`
 
 **Request body:**
 - `application/json` **required** — schema: `PartGroupUpdateRequest`
-  - `company_id` (integer) — Identifier of the related company.
-  - `created_at` (string(date-time)) — Timestamp (ISO 8601).
+  - `area_id` (integer) — Move the group to another area of the same company.
   - `description` (string) — Free-text description.
   - `id` (integer) — Unique identifier.
   - `name` (string) — Human-readable name.
-  - `updated_at` (string(date-time)) — Timestamp (ISO 8601).
+  - `order_index` (integer) — Sort order within its collection (ascending).
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/parts/groups/{groupId}` — Delete part group
 _operationId_: `deletePartGroup`
@@ -6116,7 +6508,7 @@ _operationId_: `deletePartGroup`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts/placements/{id}` — Get a part placement
 _operationId_: `getPartPlacement`
@@ -6127,7 +6519,7 @@ Read a single placement by its id.
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/parts/placements/{id}` — Update a part placement
 _operationId_: `updatePartPlacement`
@@ -6149,7 +6541,7 @@ _operationId_: `updatePartPlacement`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/parts/placements/{id}` — Partially update a part placement
 _operationId_: `patchPartPlacement`
@@ -6171,7 +6563,7 @@ _operationId_: `patchPartPlacement`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/parts/placements/{id}` — Delete a part placement
 _operationId_: `deletePartPlacement`
@@ -6180,7 +6572,7 @@ _operationId_: `deletePartPlacement`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts/{partId}` — Get a part
 _operationId_: `getPart`
@@ -6189,7 +6581,7 @@ _operationId_: `getPart`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/parts/{partId}` — Update a part
 _operationId_: `updatePart`
@@ -6216,7 +6608,7 @@ _operationId_: `updatePart`
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/parts/{partId}` — Partially update a part
 _operationId_: `patchPart`
@@ -6243,7 +6635,7 @@ _operationId_: `patchPart`
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/parts/{partId}` — Delete a part
 _operationId_: `deletePart`
@@ -6252,7 +6644,7 @@ _operationId_: `deletePart`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts/{partId}/bom` — List BOM children
 _operationId_: `listBomChildren`
@@ -6263,7 +6655,7 @@ Returns the part's direct BOM children in a single `{"data": [...]}` response (n
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/parts/{partId}/bom` — Add a BOM child
 _operationId_: `createBomItem`
@@ -6289,7 +6681,7 @@ _operationId_: `createBomItem`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/parts/{partId}/bom` — Replace a part's BOM children (bulk, declarative)
 _operationId_: `syncPartBom`
@@ -6313,7 +6705,7 @@ The bulk **write** counterpart to the GET: send the desired set of direct BOM ch
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/parts/{partId}/bom` — Clear a part's BOM children (bulk)
 _operationId_: `clearPartBom`
@@ -6324,7 +6716,7 @@ Delete **every** direct BOM child of the part in one request — the bulk counte
 - `200` — Cleared
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/parts/{partId}/bom/explode` — Explode a BOM tree
 _operationId_: `explodeBom`
@@ -6346,7 +6738,7 @@ Explode a part's BOM with ghost resolution, effectivity (`as_of`), alternate han
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts/{partId}/bom/flat` — Get flattened BOM
 _operationId_: `getBomFlat`
@@ -6360,7 +6752,7 @@ Returns a flat list of all BOM items with level indicators.
 - `200` — Flattened BOM
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts/{partId}/bom/tree` — Get multi-level BOM tree
 _operationId_: `getBomTree`
@@ -6375,7 +6767,7 @@ Returns a recursive tree of BOM items with cycle detection.
 - `200` — BOM tree
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/parts/{partId}/bom/validate` — Validate BOM integrity
 _operationId_: `validateBom`
@@ -6386,7 +6778,7 @@ Check for cycles, missing children, duplicates, and self-references.
 - `200` — Validation result
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts/{partId}/changelog` — List part changelog
 _operationId_: `listPartChangelog`
@@ -6396,12 +6788,13 @@ List change history entries for a part.
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/parts/{partId}/ghost/materialize` — Materialize a ghost assembly
 _operationId_: `materializeGhostAssembly`
@@ -6424,7 +6817,7 @@ Materialize a ghost (phantom) part's resolved BOM into a concrete assembly, or d
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/parts/{partId}/ghost/resolve` — Resolve a ghost assembly
 _operationId_: `resolveGhostAssembly`
@@ -6441,7 +6834,7 @@ Resolve a ghost (phantom) assembly into its configured 100% BOM. Scope: `parts:r
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts/{partId}/ghost/status` — Get ghost status for a part
 _operationId_: `getGhostStatus`
@@ -6452,7 +6845,7 @@ Check ghost (phantom assembly) status and ghost-toggle eligibility for a part. S
 - `200` — Ghost status
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts/{partId}/placements` — List part placements
 _operationId_: `listPartPlacements`
@@ -6463,7 +6856,7 @@ Returns **all** placements for this part in a single `{"data": [...]}` response 
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/parts/{partId}/placements` — Create a part placement
 _operationId_: `createPartPlacement`
@@ -6484,7 +6877,7 @@ _operationId_: `createPartPlacement`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/parts/{partId}/where-used` — Find where a part is used
 _operationId_: `getWhereUsed`
@@ -6495,7 +6888,7 @@ Reverse BOM lookup: find all parent assemblies that reference this part.
 - `200` — Where-used list
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -6509,7 +6902,7 @@ _operationId_: `listPriceLists`
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/price-lists` — Create a price list
 _operationId_: `createPriceList`
@@ -6529,7 +6922,7 @@ _operationId_: `createPriceList`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/price-lists/reorder` — Reorder price lists
 _operationId_: `reorderPriceLists`
@@ -6546,7 +6939,7 @@ _operationId_: `reorderPriceLists`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/price-lists/{priceListId}` — Get a price list
 _operationId_: `getPriceList`
@@ -6555,7 +6948,7 @@ _operationId_: `getPriceList`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/price-lists/{priceListId}` — Update a price list
 _operationId_: `updatePriceList`
@@ -6582,7 +6975,7 @@ _operationId_: `updatePriceList`
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/price-lists/{priceListId}` — Partially update a price list
 _operationId_: `patchPriceList`
@@ -6609,7 +7002,7 @@ _operationId_: `patchPriceList`
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/price-lists/{priceListId}` — Delete a price list
 _operationId_: `deletePriceList`
@@ -6622,22 +7015,18 @@ _operationId_: `deletePriceList`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/price-lists/{priceListId}/overrides` — List price list overrides
 _operationId_: `listPriceListOverrides`
 
-List all option price overrides for a given price list.
-
-**Query parameters:**
-- `cursor` (string) — Opaque cursor for the next page
-- `limit` (integer) — Items per page (server enforces configured maximum)
+Everything this price list carries, grouped by what it prices: `products`, `areas`, `options`, and `advanced` (conditional rules). Advanced rules supersede the option price whenever their condition is selected, so a list's contents cannot be read without them; for the base price list this section is the base layer's conditional prices. Money is a fixed 2-decimal string. Not paginated — `meta` carries per-section counts. Scope: `prices:read`.
 
 **Responses:**
-- `200` — Success
+- `200` — Price list contents
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -6652,7 +7041,7 @@ _operationId_: `listPriceOverrides`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/options/{optionId}/price-overrides` — Create a price override
 _operationId_: `createPriceOverride`
@@ -6668,7 +7057,7 @@ _operationId_: `createPriceOverride`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/options/{optionId}/price-overrides/replace` — Replace all price overrides
 _operationId_: `replacePriceOverrides`
@@ -6684,7 +7073,7 @@ Delete all existing overrides and replace with the provided set.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/options/{optionId}/price-overrides/{overrideId}` — Update a price override
 _operationId_: `updatePriceOverride`
@@ -6702,7 +7091,7 @@ _operationId_: `updatePriceOverride`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/options/{optionId}/price-overrides/{overrideId}` — Partially update a price override
 _operationId_: `patchPriceOverride`
@@ -6720,7 +7109,7 @@ _operationId_: `patchPriceOverride`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/options/{optionId}/price-overrides/{overrideId}` — Delete a price override
 _operationId_: `deletePriceOverride`
@@ -6729,7 +7118,143 @@ _operationId_: `deletePriceOverride`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+---
+
+## Pricing
+
+The pricing engine end to end: read a product's resolved price matrix, price a configuration and get the per-area/per-option breakdown, recalculate every layer in bulk, and round-trip a pricing workbook. Prices resolve through `Option.option_price` → `OptionAreaConfig.price` (shared groups only) → `OptionPriceOverride` → `OptionAdvancedPrice` → quantity scaling; these endpoints report and write the same values the configurator, quotes and offer PDFs use. Writes are transactional, optimistically versioned via `X-Pricing-Version`, and fan version bumps out to every product a shared group touches. Scope: `prices:read`, `prices:write`.
+
+### `GET /api/v1/products/{productId}/prices` — Get the resolved price matrix
+_operationId_: `getProductPrices`
+
+Every price the resolver will actually charge for this product, per area and per price list.
+
+Each option entry reports the layer its price came from — `base` (`Option.option_price`), `area` (`OptionAreaConfig.price`), or `price_list` (`OptionPriceOverride`) — so a connector can tell an inherited price from an explicitly overridden one.
+
+**Area prices apply only to shared groups.** A group assigned to a single area is *solo*: its per-area price is ignored in favour of the global base, and this endpoint reports it the same way. `group_is_shared` is included per option so the distinction is visible rather than implied.
+
+Omit `price_list_id` to receive one block per price list plus the base layer.
+
+**Query parameters:**
+- `price_list_id` (integer) — Resolve against this price list only.
+- `area_id` (integer) — Restrict the matrix to a single area.
+
+**Responses:**
+- `200` — Resolved price matrix
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `POST /api/v1/products/{productId}/prices/bulk-calculate` — Bulk-recalculate prices
+_operationId_: `bulkCalculateProductPrices`
+
+Apply `target = round(source × factor + delta)` across every selected layer in one transaction. `source` and `target` each name either `"base"` (the entity's own column) or a price-list id (that list's override layer), so one call can lift the product base, the area surcharges, the option bases, the quantity tiers and the conditional advanced prices together.
+
+**Preview with `dry_run: true` first** — it runs the whole calculation, rolls back, and returns the identical summary of how many rows each layer would write.
+
+An identity run (`factor: 1.0`, `delta: 0`, `rounding.mode: "none"`) is a guaranteed no-op: scaling tiers are compared numerically rather than by JSON spelling, so `pricing_version` does not move and open tabs are not invalidated for a price that did not change.
+
+Because a bulk calc legitimately touches shared groups, the version bump fans out to every other product those groups reach; `other_products_bumped` reports how many.
+
+**Header parameters:**
+- `X-Pricing-Version` (integer) — Optimistic-concurrency token. Read `pricing_version` from GET /products/{productId}/prices; if you send a s...
+
+**Request body:**
+- `application/json` **required** — schema: `BulkCalculateRequest`
+  - `current_area_id` (integer|null) — Identifier of the related current area.
+  - `delta` (number) — Flat amount added after the multiplication. Applied ONCE to a numbered option, not to every scaling tier.
+  - `dry_run` (boolean) — Run the full calculation, roll back, and return the summary. Nothing is written and no version moves.
+  - `factor` (number) **required** — Multiplier. Required. Must be finite and |factor| ≤ 1e6.
+  - `include` (object) — Which layers the calculation touches. All default to true.
+  - `pricing_version` (integer|null) — Optimistic-concurrency token; also accepted as the `X-Pricing-Version` header. A stale value 409s.
+  - `rounding` (object)
+  - `scope` (string) — `current` restricts the calculation to one area and requires `current_area_id`.
+  - `source` (object) — `"base"` reads the entity's own column; an integer reads that price list's override layer.
+  - `target` (object) — Where the computed value is written.
+
+**Responses:**
+- `200` — Calculation summary
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `409` — Conflict (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+- `503` — Concurrent update conflict — retry (`application/json` → `ProblemDetails`)
+
+### `POST /api/v1/products/{productId}/prices/calculate` — Price a configuration
+_operationId_: `calculateProductPrice`
+
+Price a configuration and return the full breakdown: product base, each enabled area's surcharge, and every selected option priced through the complete chain — area override, price-list override, conditional advanced rule, then quantity scaling.
+
+Send either `configuration_code` (price an existing configuration; add `price_list_id` to re-price it onto another list) or `selections` (price an inline selection without persisting anything).
+
+`total_price` comes from the same traversal that emits the per-area and per-option lines, and from the same function that stamps `ConfigurationState.price_snapshot` — so the parts always add up to the total, and pricing here then quoting cannot disagree.
+
+**Request body:**
+- `application/json` **required** — schema: `PriceCalculateRequest`
+  - `amounts` (object) — Quantities for numbered options. Key on `"<option_id>:<area_id>"` to set a per-area quantity, or `"<option_...
+  - `configuration_code` (string) — Hash of an existing configuration state.
+  - `disabled_areas` (array<integer>)
+  - `enabled_areas` (array<integer>)
+  - `price_list_id` (integer) — Price the configuration on this list. For an existing configuration this re-prices it onto another list.
+  - `selections` (object) — Map of group id (as a string) → selected option ids.
+
+**Responses:**
+- `200` — Pricing breakdown
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `GET /api/v1/products/{productId}/prices/export` — Export the pricing workbook
+_operationId_: `exportProductPrices`
+
+Download an `.xlsx` covering every pricing layer: product base and per-pricelist overrides, area base and overrides, per-option per-area effective base, numbered fields, `price_scalings`, per-pricelist option overrides, and advanced prices.
+
+Edit it and POST it back to `/prices/import` — the round trip is lossless. The `_Meta` sheet carries the product id and the `pricing_version` at export time, both of which the import verifies.
+
+**Responses:**
+- `200` — Pricing workbook
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `POST /api/v1/products/{productId}/prices/import` — Import a pricing workbook
+_operationId_: `importProductPrices`
+
+Apply an edited pricing workbook. Send it as `multipart/form-data` in the `file` field; it must be one this product's `/prices/export` produced.
+
+`?dry_run=true` parses and applies in memory, rolls back, and returns the identical summary so you can preview the diff.
+
+Import is conservative on purpose: a price list absent from the sheet keeps its existing overrides rather than being treated as a deletion, and an unparseable money cell is reported as a warning and left unchanged rather than read as "clear this price".
+
+A workbook exported before someone else's change is rejected with 409 rather than silently reverting their edit.
+
+**Query parameters:**
+- `dry_run` (boolean) — Parse and apply in memory, then roll back.
+
+**Request body:**
+- `multipart/form-data` **required**
+  - `file` (string(binary)) **required** — The .xlsx workbook to apply (max 10 MB).
+
+**Responses:**
+- `200` — Import summary
+- `400` — Bad Request (`application/json` → `ProblemDetails`)
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `409` — Conflict (`application/json` → `ProblemDetails`)
+- `413` — Payload Too Large (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+- `503` — Concurrent update conflict — retry (`application/json` → `ProblemDetails`)
 
 ---
 
@@ -6746,7 +7271,7 @@ List 3D model links for a product (max 20).
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/products/{productId}/models` — Create 3D model link
 _operationId_: `createModelLink`
@@ -6760,7 +7285,7 @@ _operationId_: `createModelLink`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/products/{productId}/models/reorder` — Reorder 3D model links
 _operationId_: `reorderModelLinks`
@@ -6774,7 +7299,7 @@ _operationId_: `reorderModelLinks`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/products/{productId}/models/{modelId}` — Update 3D model link
 _operationId_: `updateModelLink`
@@ -6791,7 +7316,7 @@ _operationId_: `updateModelLink`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/products/{productId}/models/{modelId}` — Delete 3D model link
 _operationId_: `deleteModelLink`
@@ -6800,7 +7325,7 @@ _operationId_: `deleteModelLink`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/products/{productId}/videos` — List video links
 _operationId_: `listVideoLinks`
@@ -6811,7 +7336,7 @@ List video links for a product (max 20).
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/products/{productId}/videos` — Create video link
 _operationId_: `createVideoLink`
@@ -6825,7 +7350,7 @@ _operationId_: `createVideoLink`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/products/{productId}/videos/reorder` — Reorder video links
 _operationId_: `reorderVideoLinks`
@@ -6839,7 +7364,7 @@ _operationId_: `reorderVideoLinks`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/products/{productId}/videos/{videoId}` — Update video link
 _operationId_: `updateVideoLink`
@@ -6856,7 +7381,7 @@ _operationId_: `updateVideoLink`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/products/{productId}/videos/{videoId}` — Delete video link
 _operationId_: `deleteVideoLink`
@@ -6865,7 +7390,7 @@ _operationId_: `deleteVideoLink`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -6881,6 +7406,7 @@ Returns a paginated list of products for your company. Use `search` to filter by
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `search` (string) — Filter by name (case-insensitive partial match)
 - `sku` (string) — Exact match on the product's external article number (SKU).
 - `status` (string) — Filter: `active` (default), `inactive`, or `all`
@@ -6888,12 +7414,14 @@ Returns a paginated list of products for your company. Use `search` to filter by
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/products` — Create a product
 _operationId_: `createProduct`
 
 Create a new product in your catalog. Returns the created product with a `Location` header pointing to the new resource. A duplicate `sku` returns 409.
+
+Also returns `409` when your plan's product allowance is fully used, carrying `plan_limit: "products"` with `used` and `allowed` counts. Free a slot by deleting a product, or raise the allowance on your subscription.
 
 **Request body:**
 - `application/json` **required** — schema: `ProductCreateRequest`
@@ -6903,6 +7431,7 @@ Create a new product in your catalog. Returns the created product with a `Locati
   - `description` (string) — Product description
   - `integration_metadata` (object) — Metadata for external integrations
   - `is_active` (boolean) — Whether the product is active
+  - `is_published` (boolean) — Whether the product is visible to public customers
   - `language` (string) — Language code
   - `name` (string) **required** — Product name
   - `sku` (object) — External article number / ERP join key. Unique per tenant; filter with GET /products?sku=. A duplicate SKU ...
@@ -6912,7 +7441,7 @@ Create a new product in your catalog. Returns the created product with a `Locati
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/products/reorder` — Reorder products
 _operationId_: `reorderProducts`
@@ -6925,7 +7454,7 @@ _operationId_: `reorderProducts`
 - `200` — Reordered
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/products/{productId}` — Get a product
 _operationId_: `getProduct`
@@ -6933,13 +7462,13 @@ _operationId_: `getProduct`
 Retrieve a single product by ID. Use `expand` to inline related resources. Supported expansions: `areas`, `areas.groups`, `areas.groups.options`, `gallery`.
 
 **Query parameters:**
-- `expand` (string) — Comma-separated list of expansions: `areas`, `gallery`
+- `expand` (string) — Comma-separated list of expansions: `areas`, `gallery` Dot-notation nests expansions, to a maximum depth of...
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/products/{productId}` — Update a product
 _operationId_: `updateProduct`
@@ -6950,6 +7479,7 @@ _operationId_: `updateProduct`
   - `background_url` (object) — URL.
   - `base_price` (object) — Price. Monetary value as a **decimal string**, e.g. `"12.50"` — a plain number with `.` as the decimal sepa...
   - `catalog_meta` (object) — Catalog display metadata (tags, badges, specs_summary, sort_priority, filters)
+  - `confirm` (boolean) — Acknowledge the consequences reported by a previous 422 `confirmation_required` response and apply the chan...
   - `constraints_version` (integer) — Server-managed version counter for optimistic concurrency.
   - `created_at` (object) — Timestamp (ISO 8601).
   - `currency` (object) — Accepted but ignored — currency is derived from the company's base price list
@@ -6957,8 +7487,7 @@ _operationId_: `updateProduct`
   - `gallery_count` (integer) — Count.
   - `id` (integer) — Unique identifier.
   - `image_url` (object) — URL.
-  - `integration_metadata` (object) — Arbitrary key/value metadata for your external integrations.
-  - _...11 more — see `components.schemas` in `openapi.json`_
+  - _...13 more — see `components.schemas` in `openapi.json`_
 
 **Responses:**
 - `200` — Success
@@ -6966,7 +7495,7 @@ _operationId_: `updateProduct`
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/products/{productId}` — Partially update a product
 _operationId_: `patchProduct`
@@ -6977,6 +7506,7 @@ _operationId_: `patchProduct`
   - `background_url` (object) — URL.
   - `base_price` (object) — Price. Monetary value as a **decimal string**, e.g. `"12.50"` — a plain number with `.` as the decimal sepa...
   - `catalog_meta` (object) — Catalog display metadata (tags, badges, specs_summary, sort_priority, filters)
+  - `confirm` (boolean) — Acknowledge the consequences reported by a previous 422 `confirmation_required` response and apply the chan...
   - `constraints_version` (integer) — Server-managed version counter for optimistic concurrency.
   - `created_at` (object) — Timestamp (ISO 8601).
   - `currency` (object) — Accepted but ignored — currency is derived from the company's base price list
@@ -6984,8 +7514,7 @@ _operationId_: `patchProduct`
   - `gallery_count` (integer) — Count.
   - `id` (integer) — Unique identifier.
   - `image_url` (object) — URL.
-  - `integration_metadata` (object) — Arbitrary key/value metadata for your external integrations.
-  - _...11 more — see `components.schemas` in `openapi.json`_
+  - _...13 more — see `components.schemas` in `openapi.json`_
 
 **Responses:**
 - `200` — Success
@@ -6993,33 +7522,49 @@ _operationId_: `patchProduct`
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/products/{productId}` — Delete a product
 _operationId_: `deleteProduct`
+
+Permanently deletes the product.
+
+Deleting a product also deletes every configuration quoted from it, along with the record of what those customers were quoted. When any exist, the first call answers `409` with `configurations`, `finalized_configurations` and `confirmation_required: "delete_configurations"`, and nothing is deleted. Repeat the call with `?delete_configurations=true` to delete both.
+
+To withdraw a product from the catalogue and keep that record, set `is_published` to false instead.
+
+**Query parameters:**
+- `delete_configurations` (boolean) — Acknowledge that the product's configurations will be deleted with it. Required when any exist.
 
 **Responses:**
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `409` — Conflict (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/products/{productId}/areas` — List assigned areas
 _operationId_: `listProductAreas`
 
-List all areas assigned to this product with their assignment metadata (area_id, area_name, order_index, enabled). Not paginated.
+Every area assigned to this product with its assignment metadata (area_id, area_name, order_index, enabled, area_group_id), ordered as the configurator renders them. Includes areas that are hidden from the public configurator — read `enabled` to tell them apart. Not paginated.
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/products/{productId}/areas` — Assign an area to a product
 _operationId_: `assignProductArea`
 
+Adds one assignment. Returns 409 if the area is already assigned — use `PUT /products/{productId}/areas/{areaId}` to change an existing one.
+
+**Header parameters:**
+- `X-Areas-Version` (integer) — Optimistic-concurrency token. Read `meta.areas_version` (or the `X-Areas-Version` response header) from any...
+
 **Request body:**
 - `application/json` **required**
+  - `area_group_id` (integer|null) — Section within this product's configurator.
   - `area_id` (integer) **required**
   - `enabled` (boolean)
   - `order_index` (integer)
@@ -7030,10 +7575,15 @@ _operationId_: `assignProductArea`
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/products/{productId}/areas/reorder` — Reorder product areas
 _operationId_: `reorderProductAreas`
+
+`order` must be a complete permutation of the product's assigned area ids — a partial list is rejected rather than silently reordering a subset. Bumps `areas_version`.
+
+**Header parameters:**
+- `X-Areas-Version` (integer) — Optimistic-concurrency token. Read `meta.areas_version` (or the `X-Areas-Version` response header) from any...
 
 **Request body:**
 - `application/json` **required**
@@ -7043,31 +7593,128 @@ _operationId_: `reorderProductAreas`
 - `200` — Reordered
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
+- `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
-### `POST /api/v1/products/{productId}/areas/replace` — Replace all product area assignments
+### `POST /api/v1/products/{productId}/areas/replace` — Declare a product's area set
 _operationId_: `replaceProductAreas`
+
+The list you send becomes the product's areas, in the order given. With the default `prune: true` areas absent from the list are unassigned; with `prune: false` this upserts only and leaves the rest alone.
+
+**Reconciling, not rebuilding.** The change is applied as a diff — assignments are added, updated in place, or removed. It is not a delete-and-recreate, which would preserve only the properties named in the request and churn rows that did not change.
+
+**Omitted fields preserve the current value.** Send only what you want to change: `{"area_id": 7}` keeps area 7's visibility, order and section exactly as they are. A NEW assignment takes the defaults (visible, order 0, no section). This is what makes it safe to re-send the list to reorder it.
+
+**Impact confirmation.** Removing or hiding areas can leave the product with nothing visible, or break public links scoped to them. Both are analysed TOGETHER — hiding two of three areas is unremarkable one at a time but can be what kills a link — and the call is refused with **422** carrying an `impact` object until re-sent with `confirm: true`.
+
+`meta` reports what actually changed: `added`, `removed`, `updated`, `unchanged`. A no-op call does not bump `areas_version`.
+
+**Header parameters:**
+- `X-Areas-Version` (integer) — Optimistic-concurrency token. Read `meta.areas_version` (or the `X-Areas-Version` response header) from any...
 
 **Request body:**
 - `application/json` **required**
   - `areas` (array<object>) **required**
+  - `confirm` (boolean)
+  - `prune` (boolean) — False to upsert only, leaving unlisted areas assigned.
 
 **Responses:**
-- `200` — Replaced
+- `200` — Area set reconciled
+- `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
+- `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
-### `DELETE /api/v1/products/{productId}/areas/{areaId}` — Remove area from product
+### `GET /api/v1/products/{productId}/areas/{areaId}` — Get one area assignment
+_operationId_: `getProductArea`
+
+Read ONE area's assignment to this product — its `enabled` flag, `order_index` and section — without fetching the whole `/areas` collection and filtering client-side.
+
+Returns the current `areas_version` in `meta` and in the `X-Areas-Version` header, so this is the call to make before a conditional update.
+
+**Responses:**
+- `200` — Success
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `PUT /api/v1/products/{productId}/areas/{areaId}` — Update one area assignment
+_operationId_: `updateProductArea`
+
+Change ONE area's public visibility, position and/or section, without touching any other assignment. Every field is optional and omitting it preserves the current value.
+
+Use this for a single change; use `/areas/replace` when you want to declare the product's whole area set at once.
+
+**Impact confirmation.** Hiding an area can take something offline invisibly: it may be the product's LAST visible area, or public links may be scoped to it — a link scoped to only this area stops working entirely, because an area scope fails closed rather than widening to all areas. Either case is refused with **422** carrying an `impact` object; re-send with `confirm: true` to apply. Enabling never needs confirmation.
+
+Bumps `areas_version` (also returned as `X-Areas-Version`).
+
+**Header parameters:**
+- `X-Areas-Version` (integer) — Optimistic-concurrency token. Read `meta.areas_version` (or the `X-Areas-Version` response header) from any...
+
+**Request body:**
+- `application/json` **required**
+  - `area_group_id` (integer|null) — Section within this product's configurator. Omit to leave it unchanged.
+  - `confirm` (boolean) — Acknowledge the impact reported by a previous 422 `confirmation_required` response and apply the change.
+  - `enabled` (boolean) — Public visibility of this area on this product. `false` removes it from every public surface (configurator,...
+  - `order_index` (integer) — Position in the configurator.
+
+**Responses:**
+- `200` — Success
+- `400` — Bad Request (`application/json` → `ProblemDetails`)
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `409` — Conflict (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `PATCH /api/v1/products/{productId}/areas/{areaId}` — Partially update one area assignment
+_operationId_: `patchProductArea`
+
+Identical to PUT — both are partial updates.
+
+**Header parameters:**
+- `X-Areas-Version` (integer) — Optimistic-concurrency token. Read `meta.areas_version` (or the `X-Areas-Version` response header) from any...
+
+**Request body:**
+- `application/json` **required**
+  - `area_group_id` (integer|null) — Section within this product's configurator. Omit to leave it unchanged.
+  - `confirm` (boolean) — Acknowledge the impact reported by a previous 422 `confirmation_required` response and apply the change.
+  - `enabled` (boolean) — Public visibility of this area on this product. `false` removes it from every public surface (configurator,...
+  - `order_index` (integer) — Position in the configurator.
+
+**Responses:**
+- `200` — Success
+- `400` — Bad Request (`application/json` → `ProblemDetails`)
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `409` — Conflict (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `DELETE /api/v1/products/{productId}/areas/{areaId}` — Unassign an area from a product
 _operationId_: `removeProductArea`
+
+Strictly more destructive than hiding the area: it stops being served AND the assignment's order and section are gone. It therefore guards the same way — if this would leave the product with nothing visible, or break a public link scoped to the area, the call is refused with **422** and an `impact` object. Re-send with `?confirm=true`.
+
+Idempotent: unassigning an area that is not assigned is a 204.
+
+**Query parameters:**
+- `confirm` (boolean) — Acknowledge the reported impact and apply.
+
+**Header parameters:**
+- `X-Areas-Version` (integer) — Optimistic-concurrency token. Read `meta.areas_version` (or the `X-Areas-Version` response header) from any...
 
 **Responses:**
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `409` — Conflict (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/products/{productId}/configurations` — List product configurations
 _operationId_: `listProductConfigurations`
@@ -7077,12 +7724,13 @@ List all configurations created for a product.
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/products/{productId}/price-overrides` — List product price overrides
 _operationId_: `listProductPriceOverrides`
@@ -7093,7 +7741,7 @@ List all price-list overrides for a product's base price.
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/products/{productId}/price-overrides` — Create product price override
 _operationId_: `createProductPriceOverride`
@@ -7109,7 +7757,7 @@ _operationId_: `createProductPriceOverride`
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/products/{productId}/price-overrides/replace` — Replace all product price overrides
 _operationId_: `replaceProductPriceOverrides`
@@ -7125,7 +7773,7 @@ Bulk-replace all price-list overrides for a product.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/products/{productId}/price-overrides/{overrideId}` — Update product price override
 _operationId_: `updateProductPriceOverride`
@@ -7142,7 +7790,7 @@ _operationId_: `updateProductPriceOverride`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/products/{productId}/price-overrides/{overrideId}` — Partially update product price override
 _operationId_: `patchProductPriceOverride`
@@ -7159,7 +7807,7 @@ _operationId_: `patchProductPriceOverride`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/products/{productId}/price-overrides/{overrideId}` — Delete product price override
 _operationId_: `deleteProductPriceOverride`
@@ -7168,7 +7816,43 @@ _operationId_: `deleteProductPriceOverride`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `POST /api/v1/products/{productId}/prices/recalculate` — Recalculate prices in bulk
+_operationId_: `recalculateProductPrices`
+
+Apply `target = round(source × factor + delta)` across a product in one transaction — product price, area prices, option prices, quantity-scaling tiers and advanced (conditional) prices, each selectable via `include`.
+
+`source` and `target` are `"base"` or a price-list id, so one endpoint covers a yearly uplift (base → base), deriving a price list from base, and re-deriving one list from another.
+
+**This compounds if repeated** — ×1.05 twice is ×1.1025. Three independent protections, and a client should use them:
+- `dry_run: true` returns the exact counters a real run would produce, then rolls back. Nothing is written and no version bumps.
+- `expected_pricing_version`: read `pricing_version` from `GET /products/{id}`, send it back, and a concurrent change becomes a 409 carrying the current version instead of stacking onto it.
+- `X-Idempotency-Key` makes a retry after a timeout replay the cached response rather than recalculating.
+
+Groups and areas are reusable across products, so a run can move prices on siblings that share one; every affected product's `pricing_version` bumps. Scope: `prices:write`.
+
+**Request body:**
+- `application/json` **required**
+  - `area_id` (integer) — Required when scope is "current".
+  - `delta` (number) — Flat amount added after the multiplication.
+  - `dry_run` (boolean)
+  - `expected_pricing_version` (integer) — Optimistic lock; a mismatch returns 409.
+  - `factor` (number) — Multiplier.
+  - `include` (object) — Which layers to touch. All default to true.
+  - `rounding` (object)
+  - `scope` (string) — "all" covers every area of the product; "current" only area_id.
+  - `source` (object) — Layer to read from: "base" or a price-list id.
+  - `target` (object) — Layer to write to: "base" or a price-list id.
+
+**Responses:**
+- `200` — Recalculation summary
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `409` — Conflict (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+- `503` — Concurrent update conflict — retry (`application/json` → `ProblemDetails`)
 
 ### `GET /api/v1/products/{productId}/pricing-presets` — List pricing presets
 _operationId_: `listPricingPresets`
@@ -7179,7 +7863,7 @@ List pricing adjustment presets (surcharges, discounts, fees) for a product.
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/products/{productId}/pricing-presets` — Create pricing preset
 _operationId_: `createPricingPreset`
@@ -7200,7 +7884,7 @@ _operationId_: `createPricingPreset`
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/products/{productId}/pricing-presets/reorder` — Reorder pricing presets
 _operationId_: `reorderPricingPresets`
@@ -7214,7 +7898,7 @@ _operationId_: `reorderPricingPresets`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/products/{productId}/pricing-presets/{presetId}` — Update pricing preset
 _operationId_: `updatePricingPreset`
@@ -7239,7 +7923,7 @@ _operationId_: `updatePricingPreset`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/products/{productId}/pricing-presets/{presetId}` — Partially update pricing preset
 _operationId_: `patchPricingPreset`
@@ -7264,7 +7948,7 @@ _operationId_: `patchPricingPreset`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/products/{productId}/pricing-presets/{presetId}` — Delete pricing preset
 _operationId_: `deletePricingPreset`
@@ -7273,7 +7957,134 @@ _operationId_: `deletePricingPreset`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+---
+
+## Public Links
+
+The URLs your customers actually receive — minting, expiry, revocation, and the access audit trail, across customer links, quotes and documents. Scope: `public-links:read`, `public-links:write`, plus the read/write scope of each subject you touch.
+
+### `GET /api/v1/public-links` — List public links
+_operationId_: `listLinkEnvelopes`
+
+Which of your URLs are live right now, across customer links, quotes and documents at once. Results are limited to subject types whose read scope the key holds.
+
+**Query parameters:**
+- `cursor` (string) — Opaque cursor for the next page
+- `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
+- `subject_type` (string) — customer_link, quote, or document_public_link
+- `subject_id` (integer) — Narrow to one subject (requires subject_type)
+- `kind` (string) — Envelope kind
+- `status` (string)
+- `include_url` (boolean)
+
+**Responses:**
+- `200` — Success
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `POST /api/v1/public-links` — Mint a public link
+_operationId_: `mintLinkEnvelope`
+
+Asking twice for the same (kind, subject) returns the URL that already exists (200) rather than scattering new ones. Requesting an expiry, a language or single_use always mints a fresh URL (201), because those are not part of the reuse key and a reused URL would not carry the lifetime you asked for.
+
+Requires the subject's **write** scope as well as public-links:write — the URL grants read access to the subject, so minting one is a grant, not a read. A quote is published as part of minting, and must be approved first (409 otherwise).
+
+**Request body:**
+- `application/json` **required**
+  - `expires_at` (string|null)
+  - `kind` (string) **required**
+  - `language` (string|null)
+  - `product_id` (integer|null)
+  - `single_use` (boolean)
+  - `subject_id` (integer) **required**
+  - `subject_type` (string) **required**
+
+**Responses:**
+- `201` — Created
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `409` — Conflict (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `POST /api/v1/public-links/revoke` — Revoke every public link for a subject
+_operationId_: `revokeSubjectEnvelopes`
+
+The cut-off-access-now button: every URL minted from the subject dies at once, including ones whose ids you no longer have. The subject itself keeps working internally. Idempotent.
+
+**Request body:**
+- `application/json` **required**
+  - `subject_id` (integer) **required**
+  - `subject_type` (string) **required**
+
+**Responses:**
+- `200` — Revocation summary
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `GET /api/v1/public-links/{id}` — Get a public link
+_operationId_: `getLinkEnvelope`
+
+**Responses:**
+- `200` — Success
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `PATCH /api/v1/public-links/{id}` — Set or clear a public link's expiry
+_operationId_: `updateLinkEnvelope`
+
+Expiry is the only mutable property. What a URL points at and whether it is single-use are fixed at mint time — changing them would repoint a link that is already in someone's inbox. Returns 409 for a revoked or consumed link.
+
+**Request body:**
+- `application/json` **required**
+  - `expires_at` (string|null) **required** — null removes the expiry. The key is required — omitting it is rejected rather than read as null.
+
+**Responses:**
+- `200` — Success
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `409` — Conflict (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `DELETE /api/v1/public-links/{id}` — Revoke a public link
+_operationId_: `revokeLinkEnvelope`
+
+The URL stops working immediately and permanently — mint a new one instead of undoing this. The record is kept so the access audit trail survives, which is why this returns the revoked link rather than 204. Idempotent.
+
+**Responses:**
+- `200` — Success
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `GET /api/v1/public-links/{id}/events` — Access audit trail for a public link
+_operationId_: `listLinkEnvelopeEvents`
+
+Who reached this URL, when, and what happened — views, single-use consumption, refusals, and operator actions. Newest first.
+
+**Query parameters:**
+- `limit` (integer) — Rows to return. Clamped to a server-side maximum (200 by default); meta.truncated reports whether more rows...
+
+**Responses:**
+- `200` — Success
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `403` — Insufficient scopes (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -7289,12 +8100,13 @@ List pull requests for a branch. Scope: `parts:read`.
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/branches/{branchId}/pull-requests` — Create pull request
 _operationId_: `createPullRequest`
@@ -7309,7 +8121,7 @@ _operationId_: `createPullRequest`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/pull-requests/{prId}` — Get pull request
 _operationId_: `getPullRequest`
@@ -7318,7 +8130,7 @@ _operationId_: `getPullRequest`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/pull-requests/{prId}` — Update pull request
 _operationId_: `updatePullRequest`
@@ -7340,7 +8152,7 @@ _operationId_: `updatePullRequest`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/pull-requests/{prId}` — Partially update pull request
 _operationId_: `patchPullRequest`
@@ -7362,7 +8174,7 @@ _operationId_: `patchPullRequest`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -7376,13 +8188,14 @@ _operationId_: `listQuotes`
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 - `status` (string) — Filter by status
 - `opportunity_id` (integer) — Filter by opportunity
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/quotes` — Create a quote
 _operationId_: `createQuote`
@@ -7404,7 +8217,7 @@ Create a quote for an opportunity. If no opportunity_id is given but a customer_
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/quotes/{quoteId}` — Get a quote
 _operationId_: `getQuote`
@@ -7415,7 +8228,7 @@ Returns the quote with embedded line items.
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/quotes/{quoteId}` — Update a quote
 _operationId_: `updateQuote`
@@ -7441,7 +8254,7 @@ _operationId_: `updateQuote`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/quotes/{quoteId}` — Partially update a quote
 _operationId_: `patchQuote`
@@ -7467,7 +8280,7 @@ _operationId_: `patchQuote`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/quotes/{quoteId}` — Delete a quote
 _operationId_: `deleteQuote`
@@ -7476,7 +8289,7 @@ _operationId_: `deleteQuote`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/quotes/{quoteId}/contacts` — List quote contacts
 _operationId_: `listQuoteContacts`
@@ -7487,7 +8300,7 @@ List contact persons linked to a quote.
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/quotes/{quoteId}/contacts` — Add contact to quote
 _operationId_: `addQuoteContact`
@@ -7502,7 +8315,7 @@ _operationId_: `addQuoteContact`
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/quotes/{quoteId}/contacts/{contactId}` — Remove contact from quote
 _operationId_: `removeQuoteContact`
@@ -7511,7 +8324,7 @@ _operationId_: `removeQuoteContact`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/quotes/{quoteId}/details` — Get quote details
 _operationId_: `getQuoteDetails`
@@ -7522,7 +8335,7 @@ Retrieve extended details for a quote (payment terms, shipping, internal notes).
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/quotes/{quoteId}/details` — Upsert quote details
 _operationId_: `upsertQuoteDetails`
@@ -7542,7 +8355,7 @@ Create or update extended details for a quote.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/quotes/{quoteId}/details` — Partially update quote details
 _operationId_: `patchQuoteDetails`
@@ -7560,7 +8373,7 @@ _operationId_: `patchQuoteDetails`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/quotes/{quoteId}/line-items` — List line items
 _operationId_: `listLineItems`
@@ -7569,7 +8382,7 @@ _operationId_: `listLineItems`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/quotes/{quoteId}/line-items` — Add a line item
 _operationId_: `createLineItem`
@@ -7589,7 +8402,7 @@ _operationId_: `createLineItem`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/quotes/{quoteId}/line-items/{item_id}` — Update a line item
 _operationId_: `updateLineItem`
@@ -7609,7 +8422,7 @@ _operationId_: `updateLineItem`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/quotes/{quoteId}/line-items/{item_id}` — Partially update a line item
 _operationId_: `patchLineItem`
@@ -7629,7 +8442,7 @@ _operationId_: `patchLineItem`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/quotes/{quoteId}/line-items/{item_id}` — Remove a line item
 _operationId_: `deleteLineItem`
@@ -7638,7 +8451,7 @@ _operationId_: `deleteLineItem`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/quotes/{quoteId}/revise` — Create a new revision
 _operationId_: `reviseQuote`
@@ -7649,7 +8462,7 @@ Create a new version of this quote, incrementing the version number.
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/quotes/{quoteId}/revisions` — List quote revisions
 _operationId_: `listQuoteRevisions`
@@ -7658,7 +8471,7 @@ _operationId_: `listQuoteRevisions`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/quotes/{quoteId}/status` — Update quote status
 _operationId_: `updateQuoteStatus`
@@ -7672,7 +8485,7 @@ _operationId_: `updateQuoteStatus`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -7700,7 +8513,7 @@ Hazard/precautionary statement codes and texts for a locale, with an optional GH
 **Responses:**
 - `200` — H/P statements
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/hp-statements/{code}` — Resolve an H/P statement
 _operationId_: `getHpStatement`
@@ -7717,7 +8530,7 @@ Resolve a single H/P statement by code, optionally filling slot placeholders. Sc
 - `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/safety-logos` — List safety logos
 _operationId_: `listSafetyLogos`
@@ -7731,7 +8544,7 @@ GHS/CLP safety logos grouped by category. Scope: `products:read`.
 - `200` — Safety logos
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/safety-notices/signal-words` — List signal words
 _operationId_: `listSignalWords`
@@ -7744,7 +8557,29 @@ ANSI Z535 / ISO 3864 signal words for one locale (pass `locale`) or all locales 
 **Responses:**
 - `200` — Signal words
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+---
+
+## System
+
+### `GET /api/v1/rate-limit` — Get your rate-limit status
+_operationId_: `getRateLimitStatus`
+
+Your current plan allowance, what the limit is counted against, how much of the window is left, and the endpoints that carry a tighter ceiling than the plan.
+
+**Limits are counted per API key, not per company.** Each key you issue has its own independent allowance, so one runaway integration cannot starve the others.
+
+Calling this does not consume your plan budget — a client backing off has to be able to ask when it may resume. It carries its own generous ceiling (60/minute) so it cannot be used as a free endpoint to hammer.
+
+`remaining` reports the window for the endpoint named in `?endpoint=` (default `api_v1.list_products`), because buckets are per endpoint. It is `null` rather than a guess when the limiter's storage cannot be reached.
+
+**Query parameters:**
+- `endpoint` (string) — Endpoint name to report remaining budget for, e.g. `api_v1.list_products`.
+
+**Responses:**
+- `200` — Rate-limit status
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
 
 ---
 
@@ -7755,22 +8590,36 @@ Product catalog translations and dictionary entries. Scope: `products:read`, `pr
 ### `GET /api/v1/translations` — List translations
 _operationId_: `listTranslations`
 
-Returns translations filtered by entity and language.
+Lists translations. **Every parameter is optional.**
+
+Passing `entity_type` *and* `entity_id` returns that one entity's rows, unpaginated. Anything else lists across the tenant with cursor pagination — `?language=EN-US` is the direct answer to "what is translated in this tenant".
+
+`entity_id` requires `entity_type`. See `GET /translations/fields` for the valid `entity_type` / `field` vocabulary.
 
 **Query parameters:**
 - `entity_type` (string) — Entity type (product, area, group, option)
-- `entity_id` (integer) — Entity ID
-- `language` (string) — Language code
+- `entity_id` (integer) — Entity ID. Requires entity_type.
+- `field` (string) — Field name (name, description)
+- `language` (string) — Language code; canonicalised, so `en_us` matches `EN-US`
+- `cursor` (string) — Opaque cursor for the next page
+- `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 
 **Responses:**
 - `200` — Translations
+- `400` — Bad Request (`application/json` → `ProblemDetails`)
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/translations` — Upsert translations
 _operationId_: `upsertTranslations`
 
 Create or update translations in bulk.
+
+**Validated before anything is written**, so a batch either applies completely or not at all: `entity_type` and `field` must be in the vocabulary (`GET /translations/fields`), and `language` must be one the company has configured (`GET /languages`). An unconfigured language is a 422 — storing one would create a row no listing, edit or language-delete could reach afterwards.
+
+`value` is normalised on write: line endings canonicalised, trailing whitespace removed, leading whitespace preserved. The same rule applies to the base-language wording on the entity itself, so a value reads back identically whichever it is stored as.
 
 **Request body:**
 - `application/json` **required**
@@ -7780,7 +8629,26 @@ Create or update translations in bulk.
 - `200` — Updated
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `DELETE /api/v1/translations` — Delete a translation
+_operationId_: `deleteTranslation`
+
+Deletes one translation row, addressed by its natural key. All four parameters are required. Idempotent.
+
+The language is **not** validated against the configured languages here — that is deliberate, so a row written under a code the tenant never had can still be removed.
+
+**Query parameters:**
+- `entity_type` (string) **required** — Entity type
+- `entity_id` (integer) **required** — Entity ID
+- `field` (string) **required** — Field name
+- `language` (string) **required** — Language code
+
+**Responses:**
+- `204` — Deleted
+- `400` — Bad Request (`application/json` → `ProblemDetails`)
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/translations/dictionary` — List dictionary entries
 _operationId_: `listDictionaryEntries`
@@ -7790,7 +8658,7 @@ Returns company-wide translation dictionary entries.
 **Responses:**
 - `200` — Dictionary entries
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/translations/dictionary` — Create or update a dictionary entry
 _operationId_: `upsertDictionaryEntry`
@@ -7804,7 +8672,7 @@ _operationId_: `upsertDictionaryEntry`
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/translations/dictionary/{entry_id}` — Get a dictionary entry
 _operationId_: `getDictionaryEntry`
@@ -7815,7 +8683,7 @@ Retrieve a single translation dictionary entry. Scope: `products:read`.
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/translations/dictionary/{entry_id}` — Replace a dictionary entry
 _operationId_: `updateDictionaryEntry`
@@ -7834,7 +8702,7 @@ Update an entry; a supplied `translations` map fully replaces the existing one. 
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/translations/dictionary/{entry_id}` — Partially update a dictionary entry
 _operationId_: `patchDictionaryEntry`
@@ -7853,7 +8721,7 @@ Merge update — a supplied `translations` map is merged into the existing one (
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `409` — Conflict (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/translations/dictionary/{entry_id}` — Delete a dictionary entry
 _operationId_: `deleteDictionaryEntry`
@@ -7863,7 +8731,83 @@ Idempotent — returns 204 even if the entry does not exist. Scope: `products:wr
 **Responses:**
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `GET /api/v1/translations/fields` — List the translatable vocabulary
+_operationId_: `listTranslatableFields`
+
+Every `entity_type` that can be translated and which `field` names it accepts, plus the tenant's configured languages and base language. Read from the same maps the write path validates against, so it cannot drift from what `PUT /translations` accepts.
+
+**Responses:**
+- `200` — Translatable vocabulary
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+---
+
+## Visibility
+
+Control what customers can reach. A product is publicly visible only when it is BOTH active and published — `is_published` is the tenant's own switch, `is_active` is owned by the plan-limit reconciler, and `/products/{id}/visibility` reports which one is holding a product back. Areas have the same split one level down via `PUT /products/{id}/areas/{areaId}`: a disabled area disappears from every public surface while staying fully editable internally. Write endpoints refuse a change that takes something offline until the caller confirms the reported impact. Scope: `products:read`, `products:write`.
+
+### `POST /api/v1/products/{productId}/preview-link` — Create a preview link
+_operationId_: `createProductPreviewLink`
+
+Mint a short-lived link that renders a HIDDEN product's configurator exactly as a customer would see it — the deliberate exception to the publish gate, so a product can be checked before it goes live.
+
+View-only and short-lived by construction: it can never finalize or save a configuration, cannot invoke public connector actions or write contact persons, expires after 24 hours, and is invisible to the rest of the API (never listed by `GET /customer-links`; get/update/delete return 404, so it cannot be handed out as a real link or made permanent by clearing its expiry).
+
+Creating one replaces any previous preview link for the product. Returns **409** for a product disabled by a plan limit — a preview cannot work around that.
+
+**Responses:**
+- `201` — Created
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `409` — Conflict (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `POST /api/v1/products/{productId}/publish` — Publish or hide a product
+_operationId_: `setProductPublished`
+
+`{"published": false}` makes the product unreachable for customers **everywhere at once**: the selection page, the configurator, the public options/constraints endpoints, the product finder, loading a configuration by code, and public offer PDFs — including links already shared. The team keeps full dashboard access and nothing is deleted.
+
+`published` is REQUIRED. A missing key is a 422, never a silent hide.
+
+**Impact confirmation.** Hiding a product with in-progress customer configurations or live public links is refused with **422** carrying an `impact` object (`in_progress_count`, `public_links_count`); re-send with `confirm: true` to apply it. Publishing never needs confirmation.
+
+Independent of `is_active` — see `/visibility`.
+
+**Request body:**
+- `application/json` **required**
+  - `confirm` (boolean)
+  - `published` (boolean) **required** — Required.
+
+**Responses:**
+- `200` — Visibility updated
+- `400` — Bad Request (`application/json` → `ProblemDetails`)
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `422` — Validation error (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
+
+### `GET /api/v1/products/{productId}/visibility` — Get publication status
+_operationId_: `getProductVisibility`
+
+Everything that decides whether a customer can reach this product, in one call.
+
+Two independent switches keep a product offline and they are reported separately on purpose:
+
+* `is_published` — the tenant's own visibility switch.
+* `is_active` — the PLAN-LIMIT state, owned by the subscription reconciler. Publishing will not bring back a product a plan limit disabled, and the reconciler keeps overriding a manual flip.
+
+`hidden_reason` collapses them to `null` / `unpublished` / `plan_limit` / `both`, and `is_publicly_visible` is the effective answer.
+
+Also reports per-area visibility (with which area is the last visible one) and, for every non-preview public link, its effective area scope and whether that scope still resolves to anything.
+
+**Responses:**
+- `200` — Publication status
+- `401` — Authentication required (`application/json` → `ProblemDetails`)
+- `404` — Not found (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
@@ -7877,7 +8821,7 @@ _operationId_: `listWebhooks`
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/webhooks` — Create a webhook subscription
 _operationId_: `createWebhook`
@@ -7895,7 +8839,7 @@ Create a subscription for one or more event types. If you provide a `secret`, ea
 - `201` — Created
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/webhooks/deliveries/{id}` — Get delivery detail
 _operationId_: `getWebhookDelivery`
@@ -7904,7 +8848,7 @@ _operationId_: `getWebhookDelivery`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/webhooks/events` — List available webhook events
 _operationId_: `listWebhookEvents`
@@ -7914,7 +8858,7 @@ Returns the catalog of all event types available for webhook subscriptions.
 **Responses:**
 - `200` — Event catalog
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/webhooks/{id}` — Get a webhook subscription
 _operationId_: `getWebhook`
@@ -7923,7 +8867,7 @@ _operationId_: `getWebhook`
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PUT /api/v1/webhooks/{id}` — Update a webhook subscription
 _operationId_: `updateWebhook`
@@ -7940,7 +8884,7 @@ _operationId_: `updateWebhook`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `PATCH /api/v1/webhooks/{id}` — Partially update a webhook subscription
 _operationId_: `patchWebhook`
@@ -7957,7 +8901,7 @@ _operationId_: `patchWebhook`
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `DELETE /api/v1/webhooks/{id}` — Delete a webhook subscription
 _operationId_: `deleteWebhook`
@@ -7966,7 +8910,7 @@ _operationId_: `deleteWebhook`
 - `204` — Deleted
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `GET /api/v1/webhooks/{id}/deliveries` — List delivery attempts
 _operationId_: `listWebhookDeliveries`
@@ -7974,12 +8918,13 @@ _operationId_: `listWebhookDeliveries`
 **Query parameters:**
 - `cursor` (string) — Opaque cursor for the next page
 - `limit` (integer) — Items per page (server enforces configured maximum)
+- `include_total` (boolean) — Return `meta.total_count`, the number of rows matching the filters across all pages. Off by default: it cos...
 
 **Responses:**
 - `200` — Success
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/webhooks/{id}/rotate-secret` — Rotate webhook signing secret
 _operationId_: `rotateWebhookSecret`
@@ -7990,7 +8935,7 @@ Generate a new signing secret. The new secret is returned in the response (shown
 - `200` — Secret rotated
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ### `POST /api/v1/webhooks/{id}/test` — Send a test event
 _operationId_: `testWebhook`
@@ -8002,7 +8947,7 @@ Queue a test delivery to verify the webhook endpoint.
 - `401` — Authentication required (`application/json` → `ProblemDetails`)
 - `404` — Not found (`application/json` → `ProblemDetails`)
 - `422` — Validation error (`application/json` → `ProblemDetails`)
-- `429` — Rate limited (`application/json` → `ProblemDetails`)
+- `429` — Rate limited (`application/json` → `RateLimitProblem`)
 
 ---
 
